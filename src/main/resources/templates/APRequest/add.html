@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SgOVI - Nueva Petición de Asistencia</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/usuarioOVI.css}" />
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-5">
+    <div class="container">
+        <a class="navbar-brand text-teal fw-bold" th:href="@{/UsuarioOVI/dashboard}">
+            SgOVI - Área Personal
+        </a>
+        <div class="d-flex align-items-center">
+            <a th:href="@{/UsuarioOVI/logout}" class="btn btn-outline-danger btn-sm fw-bold">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container mb-5">
+
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-teal mb-3">Realizar Petición</h1>
+        <p class="lead text-muted">
+            Los campos marcados con un asterisco * son obligatorios
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5">
+
+                <form th:action="@{/APRequest/add}" th:object="${apRequest}" method="post">
+
+                    <input type="hidden" th:field="*{idRequest}" />
+                    <input type="hidden" th:field="*{idUsuario}" />
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-secondary" for="titulo">
+                            Título o Asunto breve <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="titulo" th:field="*{titulo}"
+                               class="form-control form-control-lg"
+                               placeholder="Ej: Acompañamiento a la universidad" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold text-secondary" for="zona">
+                                Zona <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="zona" th:field="*{zona}"
+                                   class="form-control"
+                                   placeholder="Ej: Castellón Centro, Vila-real..." required>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold text-secondary" for="horario">
+                                Horario / Disponibilidad <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="horario" th:field="*{horario}"
+                                   class="form-control"
+                                   placeholder="Ej: L a V mañanas, Fines de semana..." required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-secondary" for="preferencias">
+                            Preferencias <span class="text-danger"></span>
+                        </label>
+                        <input type="text" id="preferencias" th:field="*{preferencias}"
+                               class="form-control"
+                               placeholder="Ej: Carnet de conducir, conocimientos médicos..." >
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-secondary" for="descripcion">
+                            Detalles adicionales (Descripción) <span class="text-danger"></span>
+                        </label>
+                        <textarea id="descripcion" th:field="*{descripcion}"
+                                  class="form-control"
+                                  rows="5"
+                                  placeholder="Describe aquí cualquier otro detalle importante..."></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-5">
+                        <a th:href="@{/UsuarioOVI/dashboard}" class="btn btn-light border px-4">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-teal fw-bold px-4">
+                            Enviar petición
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    background-color: white;
+}
+
+h1 {
+    font-size: 2rem;
+    color: #0d9488;
+    font-weight: 700;
+}
+
+.error {
+    color: #dc3545;
+    font-size: 90%;
+}
+
+.needcorrection {
+    color: red;
+    background-color: yellow;
+}
+
+.container {
+    max-width: 900px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+th {
+    background-color: #0d9488;
+    color: white;
+}

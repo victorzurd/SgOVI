@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SgOVI - Cuenta Pendiente</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/usuarioOVI.css}" />
+    <style>
+        body { height: 100vh; display: flex; align-items: center; background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <div class="card shadow-sm border-0 rounded-4 p-5">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="#20c997" class="bi bi-clock-history" viewBox="0 0 16 16">
+                            <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.24l.585-.811c.19.137.373.284.55.441l-.696.71zm1.71 1.99a7.017 7.017 0 0 0-.21-.454l.842-.54c.105.163.203.332.292.507l-.924.487zM8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+                        </svg>
+                    </div>
+                    <h2 class="fw-bold text-teal mb-3">Cuenta en Revisión</h2>
+                    <p class="text-muted mb-4">
+                        ¡Hola! Hemos recibido tu solicitud correctamente. Un técnico de <strong>SgOVI</strong> debe revisar tus datos y activar tu cuenta antes de que puedas acceder al panel.
+                    </p>
+                    <div class="mt-4">
+                        <a th:href="@{/}" class="btn btn-teal px-4 fw-bold">Volver al Inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

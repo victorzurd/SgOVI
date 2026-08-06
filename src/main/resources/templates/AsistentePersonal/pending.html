@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SgOVI - Solicitudes de asistentes</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet"
+          type="text/css"
+          th:href="@{/css/asistentePersonal.css}" />
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+
+    <div class="container">
+
+        <a class="navbar-brand fw-bold text-teal"
+           th:href="@{/TecnicoOVI/dashboard}">
+
+            SgOVI - Gestión Técnica
+        </a>
+
+        <div class="d-flex gap-2">
+
+            <a th:href="@{/TecnicoOVI/dashboard}"
+               class="btn btn-outline-secondary btn-sm fw-bold">
+
+                Panel
+            </a>
+
+        </div>
+    </div>
+</nav>
+
+<main class="container mb-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="fw-bold text-teal mb-2">
+                Solicitudes de asistentes personales
+            </h1>
+
+            <p class="text-muted mb-0">
+                Revisa y aprueba nuevas solicitudes de asistentes personales.
+            </p>
+
+        </div>
+
+        <span class="badge bg-primary rounded-pill px-3 py-2"
+              th:text="${#lists.size(asistentes)} + ' pendientes'">
+
+            3 pendientes
+        </span>
+
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Zona</th>
+                    <th>Disponibilidad</th>
+                    <th>Estado</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                <tr th:each="ap : ${asistentes}">
+
+                    <td th:text="${ap.idAsistente}"></td>
+
+                    <td class="fw-semibold"
+                        th:text="${ap.nombre}">
+                    </td>
+
+                    <td th:text="${ap.email}"></td>
+
+                    <td th:text="${ap.zona}"></td>
+
+                    <td th:text="${ap.disponibilidad}"></td>
+
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            Pendiente
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <div class="d-flex justify-content-center gap-2">
+
+                            <form method="post"
+                                  th:action="@{/AsistentePersonal/approve/{id}(id=${ap.idAsistente})}">
+
+                                <button type="submit"
+                                        class="btn btn-success btn-sm fw-bold">
+
+                                    Aprobar
+                                </button>
+
+                            </form>
+
+                            <form method="post"
+                                  th:action="@{/AsistentePersonal/reject/{id}(id=${ap.idAsistente})}">
+
+                                <button type="submit"
+                                        class="btn btn-outline-danger btn-sm fw-bold">
+
+                                    Rechazar
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div th:if="${#lists.isEmpty(asistentes)}"
+         class="card border-0 shadow-sm rounded-4 mt-4">
+
+        <div class="card-body text-center py-5">
+
+            <div class="display-5 mb-3">✅</div>
+
+            <h4 class="fw-bold mb-3">
+                No hay solicitudes pendientes
+            </h4>
+
+            <p class="text-muted mb-0">
+                Todos los asistentes personales ya han sido revisados.
+            </p>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

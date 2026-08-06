@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SgOVI - Gestión de Petición</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/usuarioOVI.css}" />
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-5">
+        <div class="container">
+            <a class="navbar-brand text-teal fw-bold" th:href="@{/TecnicoOVI/dashboard}">
+                SgOVI - Gestión Técnica
+            </a>
+            <div class="d-flex align-items-center">
+                <a th:href="@{/TecnicoOVI/logout}" class="btn btn-outline-danger btn-sm fw-bold">Cerrar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-teal fw-bold mb-0">Detalles de la Petición</span></h2>
+            <a th:href="@{/APRequest/list}" class="btn btn-outline-secondary fw-bold px-4">Volver al listado</a>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body p-4 p-md-5">
+                        
+                        <h3 class="fw-bold text-dark mb-4" th:text="${request.titulo}">Título de la petición</h3>
+                        
+                        <div class="row mb-3 align-items-center">
+                            <div class="col-sm-4 fw-bold text-secondary">Usuario Solicitante:</div>
+                            <div class="col-sm-8 fs-5" th:text="${nombreUsuario}">Nombre del Usuario</div>
+                        </div>
+                        
+                        <div class="row mb-3 align-items-center">
+                            <div class="col-sm-4 fw-bold text-secondary">Fecha de Solicitud:</div>
+                            <div class="col-sm-8" th:text="${#temporals.format(request.fechaSolicitud, 'dd/MM/yyyy')}">01/01/2026</div>
+                        </div>
+                        
+                        <div class="row mb-4 align-items-center">
+                            <div class="col-sm-4 fw-bold text-secondary">Estado Actual:</div>
+                            <div class="col-sm-8">
+                                <span class="badge bg-secondary fs-6 px-3 py-2" th:text="${request.estado}">Pendiente</span>
+                            </div>
+                        </div>
+                        
+                        <hr class="text-muted mb-4">
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold text-secondary">Zona:</div>
+                            <div class="col-sm-8" th:text="${request.zona ?: 'No especificada'}">Castellón</div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold text-secondary">Horario/Disponibilidad:</div>
+                            <div class="col-sm-8" th:text="${request.horario ?: 'No especificado'}">Mañanas</div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-sm-4 fw-bold text-secondary">Preferencias:</div>
+                            <div class="col-sm-8" th:text="${request.preferencias ?: 'Ninguna'}">Coche propio</div>
+                        </div>
+                        
+                        <hr class="text-muted mb-4">
+                        
+                        <div>
+                            <div class="fw-bold text-secondary mb-3">Descripción detallada:</div>
+                            <div class="p-4 bg-light rounded-3 border" 
+                                 th:text="${request.descripcion}" 
+                                 style="white-space: pre-wrap; font-size: 0.95rem;">
+                                Texto descriptivo...
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 2rem;">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-teal mb-4 border-bottom pb-3">Centro de Acciones</h5>
+                        
+                        <div class="d-grid gap-3">
+                            
+                            <a th:href="@{/APRequest/update/{id}(id=${request.idRequest})}" class="btn btn-outline-secondary btn-lg text-start py-3 fs-6 fw-bold">
+                                <i class="bi bi-pencil-square me-2 fs-5 align-middle"></i> Cambiar Estado
+                            </a>
+                            
+                            <a th:href="@{/APRequest/assign/{id}(id=${request.idRequest})}" class="btn btn-outline-primary btn-lg text-start py-3 fs-6 fw-bold">
+                                <i class="bi bi-people-fill me-2 fs-5 align-middle"></i> Gestionar Candidatos
+                            </a>
+                            
+                            <a th:href="@{/contrato/ContratoRellenable.pdf}" class="btn btn-teal btn-lg text-start py-3 fs-6 fw-bold" target="_blank">
+                                <i class="bi bi-file-earmark-pdf-fill me-2 fs-5 align-middle"></i> Generar Contrato
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+</body>
+</html>

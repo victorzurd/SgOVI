@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SgOVI - Gestión de Usuarios</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/usuarioOVI.css}" />
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand text-teal fw-bold" th:href="@{/TecnicoOVI/dashboard}">SgOVI - Gestión Técnica</a>
+            <div class="d-flex align-items-center">
+                <a th:href="@{/TecnicoOVI/logout}" class="btn btn-outline-danger btn-sm fw-bold">Cerrar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-teal fw-bold">Gestión de Usuarios OVI</h2>
+            <a th:href="@{/TecnicoOVI/dashboard}" class="btn btn-teal">Volver</a>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body p-0">
+                
+                <div th:if="${#lists.isEmpty(usuarios)}" class="text-center py-5 text-muted">
+                    No hay usuarios en la base de datos.
+                </div>
+
+                <th:block
+                th:replace="~{fragments/buscador :: buscador(action='/UsuarioOVI/list')}"/>
+
+                <div class="table-responsive" th:unless="${#lists.isEmpty(usuarios)}">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">ID</th>
+                                <th>Nombre</th>
+                                <th>Apellidos</th>
+                                <th>Email</th>
+                                <th>Dirección</th>
+                                <th>Teléfono</th>
+                                <th>Estado</th>
+                                <th class="text-center pe-4">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="usuario : ${usuarios}">
+                                <td class="ps-4 fw-bold text-secondary" th:text="${usuario.idUsuario}"></td>
+                                <td th:text="${usuario.nombre}"></td>
+                                <td th:text="${usuario.apellidos}"></td>
+                                <td th:text="${usuario.email}"></td>
+                                <td th:text="${usuario.direccion}"></td>
+                                <td th:text="${usuario.telefono}"></td>
+                                
+                                <td>
+                                    <span th:if="${usuario.estadoAceptado}" class="badge bg-success">Aceptado</span>
+                                    <span th:unless="${usuario.estadoAceptado}" class="badge bg-warning text-dark">Pendiente</span>
+                                </td>
+                                
+                                <td class="text-center pe-4">
+                                    <a th:if="${!usuario.estadoAceptado}" 
+                                       th:href="@{/UsuarioOVI/aceptar/{id}(id=${usuario.idUsuario})}"
+                                       class="btn btn-sm btn-success fw-bold"
+                                       onclick="return confirm('¿Estás seguro de que deseas aceptar a este usuario en el sistema?')">
+                                        Aceptar Usuario
+                                    </a>
+                                    <a th:if="${!usuario.estadoAceptado}" 
+                                        th:href="@{/UsuarioOVI/rechazar/{id}(id=${usuario.idUsuario})}"
+                                        class="btn btn-sm btn-danger fw-bold"
+                                        onclick="return confirm('¿Estás seguro de que deseas rechazar a este usuario del sistema?')">
+                                            Denegar
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <th:block
+    th:replace="~{fragments/paginacion :: paginacion('/UsuarioOVI/list')}"/>
+    </main>
+</body>
+</html>

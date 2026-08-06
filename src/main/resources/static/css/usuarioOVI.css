@@ -1,0 +1,89 @@
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    background-color: white;
+}
+
+h1 {
+    font-size: 2rem;
+    color: #000000 !important;
+    font-weight: 700;
+}
+
+.error {
+    color: #dc3545;
+    font-size: 90%;
+}
+
+.needcorrection {
+    color: red;
+    background-color: yellow;
+}
+
+.btn-teal {
+    background-color: #0d9488;
+    color: white;
+    font-weight: 500;
+}
+
+.btn-teal:hover {
+    background-color: #0f766e;
+    color: white;
+}
+
+.text-teal {
+    color: #000000 !important;
+}
+
+.hero-section {
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    padding: 4rem 2rem;
+}
+
+.navbar-brand.text-teal {
+    cursor: default;
+}
+
+.navbar-brand.text-teal:hover, 
+.navbar-brand.text-teal:focus {
+    color: #0d9488 !important;
+    text-decoration: none;
+}
+
+.navbar-brand {
+    cursor: pointer !important;
+    transition: opacity 0.2s;
+}
+
+.navbar-brand:hover {
+    opacity: 0.8;
+}
+
+.btn-teal {
+    background-color: #000000 !important;
+    color: white;
+    font-weight: 500;
+}
+
+.btn-teal:hover {
+    background-color: #0f766e;
+    color: white;
+}
+
+.text-teal {
+    color: #0d9488;
+}
+
+.hero-section {
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    padding: 4rem 2rem;
+}
+
+.values-section {
+    background-color: #0d9488; 
+}
+
+.values-section .card.bg-white {
+    background-color: white !important;
+}

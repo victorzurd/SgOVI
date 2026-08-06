@@ -1,0 +1,42 @@
+.text-teal { 
+    color: #0d9488 !important; 
+}
+        
+.btn-teal { 
+    background-color: #0d9488 !important; 
+    color: white !important; 
+    border: none; 
+}
+        
+.btn-teal:hover { 
+    background-color: #0f766e !important; 
+}
+        
+.chat-sidebar { 
+    height: calc(100vh - 160px); 
+    overflow-y: auto; 
+}
+        
+.chat-container { 
+    height: calc(100vh - 230px); 
+    overflow-y: auto; 
+}
+        
+/* El remitente es ASISTENTE: se renderiza en la derecha con tu color verde azulado */
+.bubble-me { 
+    background-color: #0d9488; 
+    color: white; 
+    border-radius: 15px 15px 0px 15px; 
+}
+        
+/* El remitente es USUARIO (U otro): se renderiza en la izquierda en gris */
+.bubble-other { 
+    background-color: #f1f3f5; 
+    color: #212529; 
+    border-radius: 15px 15px 15px 0px; 
+}
+        
+.chat-item-active { 
+    background-color: rgba(13, 148, 136, 0.1) !important; 
+    border-left: 4px solid #0d9488; 
+}

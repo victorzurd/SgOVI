@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SgOVI - Propuesta enviada</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet"
+          type="text/css"
+          th:href="@{/css/usuarioOVI.css}" />
+</head>
+
+<body class="bg-light d-flex align-items-center"
+      style="min-height: 100vh;">
+
+<div class="container">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm rounded-4 text-center">
+
+                <div class="card-body p-5">
+
+                    <div class="display-1 mb-4">✅</div>
+
+                    <h1 class="fw-bold text-teal mb-3">
+                        Propuesta enviada correctamente
+                    </h1>
+
+                    <p class="text-muted mb-4">
+                        La propuesta de asistentes personales
+                        ya está disponible para la persona usuaria.
+                    </p>
+
+                    <div class="d-flex justify-content-center gap-3">
+
+                        <a th:href="@{/APRequest/list}"
+                           class="btn btn-outline-secondary px-4">
+                            Ver solicitudes
+                        </a>
+
+                        <a th:href="@{/TecnicoOVI/dashboard}"
+                           class="btn btn-teal px-4 fw-bold">
+                            Ir al panel
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

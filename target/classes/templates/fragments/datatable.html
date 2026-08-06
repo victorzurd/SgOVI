@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<th:block th:fragment="scripts">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <script>
+    $(document).ready(function () {
+        $('.datatable').DataTable({
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            ordering: true,
+            searching: true,
+
+            language: {
+                search: "🔍 Buscar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ a _END_ de _TOTAL_",
+                paginate: {
+                    first: "⏮ Primero",
+                    last: "Último ⏭",
+                    next: "▶",
+                    previous: "◀"
+                },
+                zeroRecords: "No se encontraron resultados"
+            }
+        });
+    });
+    </script>
+
+</th:block>
+
+</body>
+</html>
