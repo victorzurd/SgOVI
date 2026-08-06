@@ -124,3 +124,7 @@ CREATE TABLE IF NOT EXISTS mensajechat (
     CONSTRAINT fk_mensaje_chat FOREIGN KEY (id_chat) 
         REFERENCES chat_session(id_chat) ON DELETE CASCADE
 );
+
+INSERT INTO tecnicoovi (correo, password, nombre)
+VALUES ('admin@sgovi.es', 'admin123', 'Admin')
+ON CONFLICT (correo) DO NOTHING;
