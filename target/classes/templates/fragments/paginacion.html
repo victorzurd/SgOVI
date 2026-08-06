@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="paginacion(action)" class="mt-4">
+
+    <ul class="pagination justify-content-center">
+
+        <li class="page-item"
+            th:classappend="${page==1} ? 'disabled'">
+
+            <a class="page-link"
+               th:href="@{${action}(page=${page-1},buscar=${buscar})}">
+                Anterior
+            </a>
+
+        </li>
+
+        <li class="page-item disabled">
+            <span class="page-link">
+                Página <span th:text="${page}"></span>
+                de
+                <span th:text="${totalPages}"></span>
+            </span>
+        </li>
+
+        <li class="page-item"
+            th:classappend="${page==totalPages} ? 'disabled'">
+
+            <a class="page-link"
+               th:href="@{${action}(page=${page+1},buscar=${buscar})}">
+                Siguiente
+            </a>
+
+        </li>
+
+    </ul>
+
+</nav>
+
+</body>
+</html>

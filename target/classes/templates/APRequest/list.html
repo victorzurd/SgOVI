@@ -31,6 +31,9 @@
                     <a th:href="${rol == 'TECNICO' ? '/TecnicoOVI/dashboard' : '/UsuarioOVI/dashboard'}" class="btn btn-teal">Volver</a>
                 </div>
 
+                <th:block
+    th:replace="~{fragments/buscador(action='/APRequest/list')}"/>
+
                 <table class="table table-striped table-hover align-middle">
                     <thead class="table-light">
                         <tr>
@@ -92,6 +95,9 @@
                 </table>
             </div>
         </div>
+
+        <th:block
+    th:replace="~{fragments/paginacion :: paginacion('/APRequest/list')}"/>
     </main>
 </body>
 </html>

@@ -32,6 +32,9 @@
                     No hay usuarios en la base de datos.
                 </div>
 
+                <th:block
+                th:replace="~{fragments/buscador :: buscador(action='/UsuarioOVI/list')}"/>
+
                 <div class="table-responsive" th:unless="${#lists.isEmpty(usuarios)}">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
@@ -80,6 +83,8 @@
                 </div>
             </div>
         </div>
+        <th:block
+    th:replace="~{fragments/paginacion :: paginacion('/UsuarioOVI/list')}"/>
     </main>
 </body>
 </html>

@@ -90,18 +90,50 @@
                         <h5 class="fw-bold text-teal mb-4 border-bottom pb-3">Centro de Acciones</h5>
                         
                         <div class="d-grid gap-3">
-                            
-                            <a th:href="@{/APRequest/update/{id}(id=${request.idRequest})}" class="btn btn-outline-secondary btn-lg text-start py-3 fs-6 fw-bold">
-                                <i class="bi bi-pencil-square me-2 fs-5 align-middle"></i> Cambiar Estado
+
+                            <a th:href="@{/APRequest/update/{id}(id=${request.idRequest})}"
+                            class="btn btn-outline-secondary btn-lg text-start py-3 fs-6 fw-bold">
+                                <i class="bi bi-pencil-square me-2 fs-5 align-middle"></i>
+                                Cambiar Estado
                             </a>
-                            
-                            <a th:href="@{/APRequest/assign/{id}(id=${request.idRequest})}" class="btn btn-outline-primary btn-lg text-start py-3 fs-6 fw-bold">
-                                <i class="bi bi-people-fill me-2 fs-5 align-middle"></i> Gestionar Candidatos
+
+                            <a th:href="@{/APRequest/assign/{id}(id=${request.idRequest})}"
+                            class="btn btn-outline-primary btn-lg text-start py-3 fs-6 fw-bold">
+                                <i class="bi bi-people-fill me-2 fs-5 align-middle"></i>
+                                Gestionar Candidatos
                             </a>
-                            
-                            <a th:href="@{/contrato/ContratoRellenable.pdf}" class="btn btn-teal btn-lg text-start py-3 fs-6 fw-bold" target="_blank">
-                                <i class="bi bi-file-earmark-pdf-fill me-2 fs-5 align-middle"></i> Generar Contrato
-                            </a>
+
+                            <!-- SI NO EXISTE CONTRATO -->
+                            <div th:if="${!existeContrato}">
+
+                                <form th:action="@{/contrato/generar/{idRequest}(idRequest=${request.idRequest})}"
+                                    method="post">
+
+                                    <button type="submit"
+                                            class="btn btn-teal btn-lg text-start py-3 fs-6 fw-bold w-100">
+
+                                        <i class="bi bi-file-earmark-pdf-fill me-2"></i>
+                                        Generar Contrato
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                            <!-- SI YA EXISTE -->
+                            <div th:if="${existeContrato}">
+
+                                <a th:href="@{/contratos/{pdf}(pdf=${'contrato_' + request.idRequest + '.pdf'})}"
+                                target="_blank"
+                                class="btn btn-success btn-lg text-start py-3 fs-6 fw-bold w-100">
+
+                                    <i class="bi bi-file-earmark-pdf-fill me-2"></i>
+                                    Abrir Contrato
+
+                                </a>
+
+                            </div>
 
                         </div>
                     </div>

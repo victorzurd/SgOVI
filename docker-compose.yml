@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: sgovi_db
+    restart: always
+    environment:
+      POSTGRES_DB: sgovi_db
+      POSTGRES_USER: sgovi_user
+      POSTGRES_PASSWORD: sgovi_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql

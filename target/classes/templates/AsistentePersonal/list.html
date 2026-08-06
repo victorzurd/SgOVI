@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <title>SgOVI - Asistentes Aceptados</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" th:href="@{/static/css/asistentePersonal.css}">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/database.css}">
 
 
     
@@ -46,6 +44,8 @@
         <a th:href="@{/TecnicoOVI/dashboard}" class="btn btn-teal">Volver</a>
 
     </div>
+
+    <th:block th:replace="~{fragments/buscador(action='/AsistentePersonal/list')}"/>
 
     <!-- TABLA -->
     <div class="card border-0 shadow-sm">
@@ -102,8 +102,9 @@
 
         </div>
     </div>
+    <th:block
+    th:replace="~{fragments/paginacion :: paginacion('/AsistentePersonal/list')}"/>
 
 </main>
-    <th:block th:replace="fragments/datatable :: scripts"></th:block>
 </body>
 </html>

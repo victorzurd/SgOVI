@@ -4,74 +4,144 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SgOVI - Mis Contratos Activos</title>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
-    
+
     <link rel="stylesheet" type="text/css" th:href="@{/css/asistentePersonal.css}" />
-    <link rel="stylesheet" type="text/css" th:href="@{/css/database.css}">
-    
 </head>
+
 <body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
-        <div class="container">
-            <a class="navbar-brand text-teal fw-bold" th:href="@{/AsistentePersonal/main}">
-                SgOVI - Área Profesional
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand text-teal fw-bold"
+           th:href="@{/AsistentePersonal/main}">
+            SgOVI - Área Profesional
+        </a>
+
+        <div class="d-flex align-items-center">
+            <a th:href="@{/AsistentePersonal/main}"
+               class="btn btn-outline-secondary btn-sm fw-bold me-2">
+                ← Volver al Panel
             </a>
-            <div class="d-flex align-items-center">
-                <a th:href="@{/AsistentePersonal/main}" class="btn btn-outline-secondary btn-sm fw-bold me-2">
-                    ← Volver al Panel
-                </a>
-                <a href="/AsistentePersonal/logout" class="btn btn-outline-danger btn-sm fw-bold">Cerrar Sesión</a>
-            </div>
+
+            <a th:href="@{/AsistentePersonal/logout}"
+               class="btn btn-outline-danger btn-sm fw-bold">
+                Cerrar Sesión
+            </a>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <main class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-teal fw-bold mb-0">Contratos de Asistencia en Vigor</h2>
+<main class="container">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-teal fw-bold mb-0">
+            Contratos de Asistencia en Vigor
+        </h2>
+    </div>
+
+    <th:block
+        th:replace="~{fragments/buscador(action='/AsistentePersonal/contratos')}"/>
+
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0 database">
+
+                <thead class="table-light">
+                <tr>
+                    <th class="ps-4">ID Contrato</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Estado</th>
+                    <th class="text-center">Documento</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr th:each="contrato : ${contratosAsistente}">
+
+                    <td class="ps-4 fw-bold text-teal"
+                        th:text="'#' + ${contrato.idContrato}">
+                    </td>
+
+                    <td th:text="${contrato.fechaInicio}">
+                    </td>
+
+                    <td th:text="${contrato.fechaFin != null ? contrato.fechaFin : 'Indefinido'}">
+                    </td>
+
+                    <td>
+
+                        <div th:switch="${contrato.estado}">
+
+                            <span th:case="'con_contrato'"
+                                  class="badge rounded-pill bg-success">
+                                Vigente
+                            </span>
+
+                            <span th:case="'finalizada'"
+                                  class="badge rounded-pill bg-secondary">
+                                Finalizado
+                            </span>
+
+                            <span th:case="*"
+                                  class="badge rounded-pill bg-dark"
+                                  th:text="${contrato.estado}">
+                            </span>
+
+                        </div>
+
+                    </td>
+
+                    <td class="text-center">
+
+                        <a th:if="${contrato.documentoPdf != null && !contrato.documentoPdf.isEmpty()}"
+                           th:href="@{/contratos/{pdf}(pdf=${contrato.documentoPdf})}"
+                           target="_blank"
+                           class="btn btn-outline-primary btn-sm fw-bold">
+
+                            📄 Abrir contrato
+
+                        </a>
+
+                        <span th:if="${contrato.documentoPdf == null || contrato.documentoPdf.isEmpty()}"
+                              class="text-muted">
+
+                            No disponible
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(contratosAsistente)}">
+
+                    <td colspan="5"
+                        class="text-center py-5 text-muted">
+
+                        No tienes contratos asignados.
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
         </div>
 
-        <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
-            <div class="table-responsive">
-                <table class="table table-align-middle mb-0 database">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-4 py-3">Detalles del Contrato</th>
-                            <th class="py-3">Usuario OVI</th>
-                            <th class="py-3">Horas/Semana</th>
-                            <th class="text-center py-3">Estado</th>
-                            <th class="text-center pe-4 py-3">Documento</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="contrato : ${contratos}">
-                            <td class="ps-4 py-3">
-                                <span class="d-block fw-bold text-dark" th:text="${'Nº Contrato: ' + contrato.idContrato}"></span>
-                                <small class="text-muted d-block" th:text="${'Inicio: ' + #dates.format(contrato.fechaInicio, 'dd/MM/yyyy')}"></small>
-                                <small class="text-muted d-block" th:text="${contrato.fechaFin != null ? 'Fin: ' + #dates.format(contrato.fechaFin, 'dd/MM/yyyy') : 'Fin: Indefinido'}"></small>
-                            </td>
-                            <td>
-                                <span class="fw-semibold text-dark d-block" th:text="${contrato.nombreUsuario}"></span>
-                                <span class="badge bg-secondary text-white fw-bold btn-sm" style="font-size: 0.75rem;" th:text="${contrato.tipoAsistencia}"></span>
-                            </td>
-                            <td>
-                                <span class="fw-bold text-teal fs-5" th:text="${contrato.horasSemanales}"></span>
-                                <small class="text-muted"> hs</small>
-                            </td>
-                            <td class="text-center">
-                                <div th:switch="${contrato.estado}">
-                                    <span th:case="'Activo'" class="badge rounded-pill bg-success px-3 py-2">Activo</span>
-                                    <span th:case="'Finalizado'" class="badge rounded-pill bg-danger px-3 py-2">Finalizado</span>
-                                    <span th:case="'Pendiente'" class="badge rounded-pill bg-warning text-dark px-3 py-2">Pendiente</span>
-                                    <span th:case="*" class="badge rounded-pill bg-dark px-3 py-2" th:text="${contrato.estado}">-</span>
-                                    </div>
-                                    </td>
-                                    </tr></tbody>
+    </div>
 
-                </table>
-                </div>
-                </div>
-                </main>
+</main>
 
-                <th:block th:replace="fragments/datatable :: scripts"></th:block>
-                </body>
+<th:block
+        th:replace="~{fragments/paginacion :: paginacion('/AsistentePersonal/contratos')}"/>
+
+</body>
+</html>
