@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jakarta.servlet.http.HttpSession;
-
 import es.uji.ei1027.clubesportiu.dao.APRequestDao;
 import es.uji.ei1027.clubesportiu.dao.AsistentePersonalDao;
 import es.uji.ei1027.clubesportiu.dao.CandidatoDao;
@@ -30,6 +28,7 @@ import es.uji.ei1027.clubesportiu.model.MensajeChat;
 import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
 import es.uji.ei1027.clubesportiu.model.UsuarioOVI;
 import es.uji.ei1027.clubesportiu.util.Paginacion;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/APRequest")

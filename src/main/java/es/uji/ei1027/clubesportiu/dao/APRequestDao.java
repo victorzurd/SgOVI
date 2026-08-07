@@ -1,6 +1,5 @@
 package es.uji.ei1027.clubesportiu.dao;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -11,8 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import es.uji.ei1027.clubesportiu.model.APRequest;
-import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
-import es.uji.ei1027.clubesportiu.model.Estado;
 
 @Repository
 public class APRequestDao {
@@ -28,7 +25,7 @@ public class APRequestDao {
     public void addAPRequest(APRequest request) {
 
     jdbcTemplate.update(
-    "INSERT INTO aprequest (idusuario, descripcion, estado, titulo, zona, preferencias, horario) VALUES (?, ?, CAST(? AS estado), ?, ?, ?, ?)",
+    "INSERT INTO aprequest (idusuario, descripcion, estado, titulo, zona, preferencias, horario, fechasolicitud) VALUES (?, ?, CAST(? AS estado), ?, ?, ?, ?, CURRENT_DATE)",
         request.getIdUsuario(),
         request.getDescripcion(),
         request.getEstado().name(),

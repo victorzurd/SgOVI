@@ -2,7 +2,7 @@
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'estado') THEN
-        CREATE TYPE estado AS ENUM ('PENDIENTE', 'ACEPTADA', 'RECHAZADA', 'EN_PROCESO', 'CANCELADA');
+        CREATE TYPE estado AS ENUM ('PENDIENTE', 'pendiente', 'ACEPTADA', 'aceptada', 'RECHAZADA', 'rechazada');
     END IF;
 END $$;
 
@@ -116,6 +116,11 @@ CREATE TABLE IF NOT EXISTS chatsession (
     CONSTRAINT fk_chat_request FOREIGN KEY (idrequest) 
         REFERENCES aprequest(idrequest) ON DELETE CASCADE
 );
+CREATE TABLE candidato (
+    idasistente INT,
+    idrequest INT,
+    PRIMARY KEY (idasistente, idrequest)
+);
 
 -- 9. Tabla: mensajechat
 CREATE TABLE IF NOT EXISTS mensajechat (
@@ -145,7 +150,7 @@ VALUES (
     'Calle Mayor 12, Castellón', 
     true, 
     true, 
-    'admin123'
+    'rkZFXza8U4vE2gdfMWq9adlhPkwzaY+C'
 )
 ON CONFLICT (email) DO NOTHING;
 
@@ -157,7 +162,7 @@ VALUES (
     'María', 
     'López Fernández', 
     'asistente@sgovi.es', 
-    'admin123', 
+    'rkZFXza8U4vE2gdfMWq9adlhPkwzaY+C', 
     '655443322', 
     'Mañanas y Tardes', 
     true, 
