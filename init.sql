@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS chatsession (
     idasistente INT NOT NULL,
     idrequest INT NOT NULL,
     fechacreacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    estado estado NOT NULL,
+    estado estado NOT NULL DEFAULT 'ACEPTADA',
     CONSTRAINT fk_chat_usuario FOREIGN KEY (idusuario) 
         REFERENCES usuarioovi(idusuario) ON DELETE CASCADE,
     CONSTRAINT fk_chat_asistente FOREIGN KEY (idasistente) 
@@ -116,6 +116,7 @@ CREATE TABLE IF NOT EXISTS chatsession (
     CONSTRAINT fk_chat_request FOREIGN KEY (idrequest) 
         REFERENCES aprequest(idrequest) ON DELETE CASCADE
 );
+
 CREATE TABLE candidato (
     idasistente INT,
     idrequest INT,
@@ -173,3 +174,4 @@ VALUES (
     true
 )
 ON CONFLICT (email) DO NOTHING;
+

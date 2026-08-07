@@ -3,7 +3,7 @@ package es.uji.ei1027.clubesportiu.model;
 public enum Estado {
     pendiente,
     en_revision,
-    aprobada,
+    aprobado,
     rechazada,
     con_contrato,
     finalizada

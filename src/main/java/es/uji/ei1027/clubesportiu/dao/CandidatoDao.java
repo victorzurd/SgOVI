@@ -1,11 +1,14 @@
 package es.uji.ei1027.clubesportiu.dao;
 
-import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import javax.sql.DataSource;
-import java.util.List;
+
+import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
 
 @Repository
 public class CandidatoDao {
@@ -20,7 +23,7 @@ public class CandidatoDao {
     
     public void addCandidato(int idRequest, int idAsistente) {
         jdbcTemplate.update(
-            "INSERT INTO candidatos (idrequest, idasistente) VALUES (?, ?) ON CONFLICT DO NOTHING",
+            "INSERT INTO candidato (idrequest, idasistente) VALUES (?, ?) ON CONFLICT DO NOTHING",
             idRequest, idAsistente
         );
     }
@@ -28,7 +31,7 @@ public class CandidatoDao {
     
     public List<Integer> getIdsCandidatosPorSolicitud(int idRequest) {
         return jdbcTemplate.queryForList(
-            "SELECT idasistente FROM candidatos WHERE idrequest = ?", 
+            "SELECT idasistente FROM candidato WHERE idrequest = ?", 
             Integer.class, 
             idRequest
         );
@@ -37,7 +40,7 @@ public class CandidatoDao {
     
     public List<AsistentePersonal> getAsistentesCandidatos(int idRequest) {
         String sql = "SELECT a.* FROM asistentepersonal a " +
-                     "JOIN candidatos c ON a.idasistente = c.idasistente " +
+                     "JOIN candidato c ON a.idasistente = c.idasistente " +
                      "WHERE c.idrequest = ?";
         
         return jdbcTemplate.query(sql, new AsistentePersonalRowMapper(), idRequest); 
@@ -45,7 +48,7 @@ public class CandidatoDao {
 
     public void deleteCandidato(int idRequest, int idAsistente) {
         this.jdbcTemplate.update(
-            "DELETE FROM candidatos WHERE idrequest = ? AND idasistente = ?",
+            "DELETE FROM candidato WHERE idrequest = ? AND idasistente = ?",
             idRequest, idAsistente
         );
     }
