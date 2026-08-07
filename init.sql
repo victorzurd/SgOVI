@@ -1,130 +1,170 @@
--- =============================================================================
--- SCRIPT DE CREACIÓN DE TABLAS - PROYECTO SgOVI (PostgreSQL)
--- =============================================================================
+-- Crear tipo ENUM para estado si no existe
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'estado') THEN
+        CREATE TYPE estado AS ENUM ('PENDIENTE', 'ACEPTADA', 'RECHAZADA', 'EN_PROCESO', 'CANCELADA');
+    END IF;
+END $$;
 
--- 1. Tabla: UsuarioOVI
 CREATE TABLE IF NOT EXISTS usuarioovi (
-    id_usuario SERIAL PRIMARY KEY,
+    idusuario SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     apellidos VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     telefono VARCHAR(20),
     direccion VARCHAR(255),
-    consentimiento_rgbd BOOLEAN NOT NULL DEFAULT FALSE,
-    estado_aceptado BOOLEAN NOT NULL DEFAULT FALSE,
+    consentimientorgbd BOOLEAN NOT NULL DEFAULT FALSE,
+    estadoaceptado BOOLEAN NOT NULL DEFAULT FALSE,
     password VARCHAR(255) NOT NULL
 );
 
--- 2. Tabla: AsistentePersonal
+-- 2. Tabla: asistentepersonal
 CREATE TABLE IF NOT EXISTS asistentepersonal (
-    id_asistente SERIAL PRIMARY KEY,
+    idasistente SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     apellidos VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     contraseña VARCHAR(255) NOT NULL,
     telefono VARCHAR(20),
     disponibilidad VARCHAR(255),
-    estado_aceptado BOOLEAN NOT NULL DEFAULT FALSE,
+    estadoaceptado BOOLEAN NOT NULL DEFAULT FALSE,
     activo BOOLEAN NOT NULL DEFAULT TRUE,
     zona VARCHAR(100),
     preferencias TEXT,
     puntuacion INT DEFAULT 0,
-    consentimiento_rgbd BOOLEAN NOT NULL DEFAULT FALSE
+    consentimientorgbd BOOLEAN NOT NULL DEFAULT FALSE
 );
 
--- 3. Tabla: TecnicoOVI
+-- 3. Tabla: tecnicoovi
 CREATE TABLE IF NOT EXISTS tecnicoovi (
-    id_tecnico SERIAL PRIMARY KEY,
+    idtecnico SERIAL PRIMARY KEY,
     correo VARCHAR(150) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     nombre VARCHAR(100) NOT NULL
 );
 
--- 4. Tabla: Seleccion
+-- 4. Tabla: seleccion (CORREGIDA: idusuario en lugar de id_usuario)
 CREATE TABLE IF NOT EXISTS seleccion (
-    id_seleccion SERIAL PRIMARY KEY,
-    fecha_seleccion DATE NOT NULL,
-    estado VARCHAR(50) NOT NULL,
-    id_usuario INT NOT NULL,
-    id_asistente INT NOT NULL,
-    CONSTRAINT fk_seleccion_usuario FOREIGN KEY (id_usuario) 
-        REFERENCES usuario_ovi(id_usuario) ON DELETE CASCADE,
-    CONSTRAINT fk_seleccion_asistente FOREIGN KEY (id_asistente) 
-        REFERENCES asistente_personal(id_asistente) ON DELETE CASCADE
+    idseleccion SERIAL PRIMARY KEY,
+    fechaseleccion DATE NOT NULL,
+    estado estado NOT NULL,
+    idusuario INT NOT NULL,
+    idasistente INT NOT NULL,
+    CONSTRAINT fk_seleccion_usuario FOREIGN KEY (idusuario) 
+        REFERENCES usuarioovi(idusuario) ON DELETE CASCADE,
+    CONSTRAINT fk_seleccion_asistente FOREIGN KEY (idasistente) 
+        REFERENCES asistentepersonal(idasistente) ON DELETE CASCADE
 );
 
--- 5. Tabla: APRequest
+-- 5. Tabla: aprequest
 CREATE TABLE IF NOT EXISTS aprequest (
-    id_request SERIAL PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    fecha_solicitud DATE NOT NULL,
+    idrequest SERIAL PRIMARY KEY,
+    idusuario INT NOT NULL,
+    fechasolicitud DATE NOT NULL,
     descripcion TEXT,
-    estado VARCHAR(50) NOT NULL,
-    id_seleccion INT,
+    estado estado NOT NULL,
+    idseleccion INT,
     titulo VARCHAR(150),
     zona VARCHAR(100),
     preferencias TEXT,
     horario VARCHAR(100),
-    CONSTRAINT fk_ap_request_usuario FOREIGN KEY (id_usuario) 
-        REFERENCES usuario_ovi(id_usuario) ON DELETE CASCADE,
-    CONSTRAINT fk_ap_request_seleccion FOREIGN KEY (id_seleccion) 
-        REFERENCES seleccion(id_seleccion) ON DELETE SET NULL
+    CONSTRAINT fk_aprequest_usuario FOREIGN KEY (idusuario) 
+        REFERENCES usuarioovi(idusuario) ON DELETE CASCADE,
+    CONSTRAINT fk_aprequest_seleccion FOREIGN KEY (idseleccion) 
+        REFERENCES seleccion(idseleccion) ON DELETE SET NULL
 );
 
--- 6. Tabla: ComunicacionUsuarioOVIPAP
+-- 6. Tabla: comunicacionusuarioovipap
 CREATE TABLE IF NOT EXISTS comunicacionusuarioovipap (
-    id_comunicacion SERIAL PRIMARY KEY,
-    id_seleccion INT NOT NULL,
+    idcomunicacion SERIAL PRIMARY KEY,
+    idseleccion INT NOT NULL,
     fecha TIMESTAMP NOT NULL,
     mensaje TEXT NOT NULL,
     emisor VARCHAR(100) NOT NULL,
     receptor VARCHAR(100) NOT NULL,
-    CONSTRAINT fk_comunicacion_seleccion FOREIGN KEY (id_seleccion) 
-        REFERENCES seleccion(id_seleccion) ON DELETE CASCADE
+    CONSTRAINT fk_comunicacion_seleccion FOREIGN KEY (idseleccion) 
+        REFERENCES seleccion(idseleccion) ON DELETE CASCADE
 );
 
--- 7. Tabla: RegistroContrato
+-- 7. Tabla: registrocontrato
 CREATE TABLE IF NOT EXISTS registrocontrato (
-    id_contrato SERIAL PRIMARY KEY,
-    fecha_inicio DATE NOT NULL,
-    fecha_fin DATE NOT NULL,
-    documento_pdf VARCHAR(255),
-    estado VARCHAR(50) NOT NULL,
-    id_request INT NOT NULL,
-    id_seleccion INT NOT NULL,
-    CONSTRAINT fk_contrato_request FOREIGN KEY (id_request) 
-        REFERENCES ap_request(id_request) ON DELETE CASCADE,
-    CONSTRAINT fk_contrato_seleccion FOREIGN KEY (id_seleccion) 
-        REFERENCES seleccion(id_seleccion) ON DELETE CASCADE
+    idcontrato SERIAL PRIMARY KEY,
+    fechainicio DATE NOT NULL,
+    fechafin DATE NOT NULL,
+    documentopdf VARCHAR(255),
+    estado estado NOT NULL,
+    idrequest INT NOT NULL,
+    idseleccion INT NOT NULL,
+    CONSTRAINT fk_contrato_request FOREIGN KEY (idrequest) 
+        REFERENCES aprequest(idrequest) ON DELETE CASCADE,
+    CONSTRAINT fk_contrato_seleccion FOREIGN KEY (idseleccion) 
+        REFERENCES seleccion(idseleccion) ON DELETE CASCADE
 );
 
--- 8. Tabla: ChatSession
+-- 8. Tabla: chatsession
 CREATE TABLE IF NOT EXISTS chatsession (
-    id_chat SERIAL PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    id_asistente INT NOT NULL,
-    id_request INT NOT NULL,
-    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    estado VARCHAR(50) NOT NULL,
-    CONSTRAINT fk_chat_usuario FOREIGN KEY (id_usuario) 
-        REFERENCES usuario_ovi(id_usuario) ON DELETE CASCADE,
-    CONSTRAINT fk_chat_asistente FOREIGN KEY (id_asistente) 
-        REFERENCES asistente_personal(id_asistente) ON DELETE CASCADE,
-    CONSTRAINT fk_chat_request FOREIGN KEY (id_request) 
-        REFERENCES ap_request(id_request) ON DELETE CASCADE
+    idchat SERIAL PRIMARY KEY,
+    idusuario INT NOT NULL,
+    idasistente INT NOT NULL,
+    idrequest INT NOT NULL,
+    fechacreacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado estado NOT NULL,
+    CONSTRAINT fk_chat_usuario FOREIGN KEY (idusuario) 
+        REFERENCES usuarioovi(idusuario) ON DELETE CASCADE,
+    CONSTRAINT fk_chat_asistente FOREIGN KEY (idasistente) 
+        REFERENCES asistentepersonal(idasistente) ON DELETE CASCADE,
+    CONSTRAINT fk_chat_request FOREIGN KEY (idrequest) 
+        REFERENCES aprequest(idrequest) ON DELETE CASCADE
 );
 
--- 9. Tabla: MensajeChat
+-- 9. Tabla: mensajechat
 CREATE TABLE IF NOT EXISTS mensajechat (
-    id_mensaje SERIAL PRIMARY KEY,
-    id_chat INT NOT NULL,
+    idmensaje SERIAL PRIMARY KEY,
+    idchat INT NOT NULL,
     remitente VARCHAR(100) NOT NULL,
     contenido TEXT NOT NULL,
-    fecha_envio TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_mensaje_chat FOREIGN KEY (id_chat) 
-        REFERENCES chat_session(id_chat) ON DELETE CASCADE
+    fechaenvio TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_mensaje_chat FOREIGN KEY (idchat) 
+        REFERENCES chatsession(idchat) ON DELETE CASCADE
 );
 
+
 INSERT INTO tecnicoovi (correo, password, nombre)
-VALUES ('admin@sgovi.es', 'admin123', 'Admin')
+VALUES ('admin@sgovi.es', 'admin123', 'Administrador Principal')
 ON CONFLICT (correo) DO NOTHING;
+
+-- =============================================================================
+-- USUARIO OVI DE PRUEBA
+-- =============================================================================
+INSERT INTO usuarioovi (nombre, apellidos, email, telefono, direccion, consentimientorgbd, estadoaceptado, password)
+VALUES (
+    'Juan', 
+    'Pérez García', 
+    'usuario@sgovi.es', 
+    '611223344', 
+    'Calle Mayor 12, Castellón', 
+    true, 
+    true, 
+    'admin123'
+)
+ON CONFLICT (email) DO NOTHING;
+
+-- =============================================================================
+-- ASISTENTE PERSONAL (PAP) DE PRUEBA
+-- =============================================================================
+INSERT INTO asistentepersonal (nombre, apellidos, email, contraseña, telefono, disponibilidad, estadoaceptado, activo, zona, preferencias, puntuacion, consentimientorgbd)
+VALUES (
+    'María', 
+    'López Fernández', 
+    'asistente@sgovi.es', 
+    'admin123', 
+    '655443322', 
+    'Mañanas y Tardes', 
+    true, 
+    true, 
+    'Castellón Centro', 
+    'Acompañamiento y soporte en movilidad', 
+    5, 
+    true
+)
+ON CONFLICT (email) DO NOTHING;
