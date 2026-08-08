@@ -2,7 +2,20 @@
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'estado') THEN
-        CREATE TYPE estado AS ENUM ('PENDIENTE', 'pendiente', 'ACEPTADA', 'aceptada', 'RECHAZADA', 'rechazada');
+        CREATE TYPE estado AS ENUM (
+            'pendiente',
+            'PENDIENTE',
+            'en_revision',
+            'EN_REVISION',
+            'aprobado',
+            'APROBADO',
+            'rechazada',
+            'RECHAZADA',
+            'con_contrato',
+            'CON_CONTRATO',
+            'finalizada',
+            'FINALIZADA'
+        );
     END IF;
 END $$;
 
@@ -108,7 +121,7 @@ CREATE TABLE IF NOT EXISTS chatsession (
     idasistente INT NOT NULL,
     idrequest INT NOT NULL,
     fechacreacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    estado estado NOT NULL DEFAULT 'ACEPTADA',
+    estado estado NOT NULL DEFAULT 'aprobado',
     CONSTRAINT fk_chat_usuario FOREIGN KEY (idusuario) 
         REFERENCES usuarioovi(idusuario) ON DELETE CASCADE,
     CONSTRAINT fk_chat_asistente FOREIGN KEY (idasistente) 
