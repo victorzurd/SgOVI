@@ -60,7 +60,7 @@ public class TecnicoOVIController {
 
         TecnicoOVI tecnico = tecnicoOVIDao.loadUserByUsername(userDetails.getUsuario());
 
-        if (tecnico == null || !"admin123".equals(tecnico.getPassword())) {
+        if (tecnico == null || !userDetails.getPassword().equals(tecnico.getPassword())) {
             model.addAttribute("error", "Credenciales incorrectas");
             return "TecnicoOVI/login";
         }
