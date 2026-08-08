@@ -1,5 +1,8 @@
 package es.uji.ei1027.clubesportiu.controller;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import es.uji.ei1027.clubesportiu.dao.RegistroContratoDao;
 import es.uji.ei1027.clubesportiu.dao.UsuarioOVIDao;
 import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
+import es.uji.ei1027.clubesportiu.model.Provincia;
 import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
 import es.uji.ei1027.clubesportiu.model.UserDetails;
 import es.uji.ei1027.clubesportiu.model.UsuarioOVI;
@@ -85,6 +89,18 @@ public class UsuarioOVIController {
         String passEncriptada = passwordEncryptor.encryptPassword(usuario.getPassword());
     
         usuario.setPassword(passEncriptada);
+
+        usuario.addAttribute("provincias", Provincia.values());
+
+        // Pasa las franjas horarias semanales
+        List<String> opcionesHorario = Arrays.asList(
+            "Mañanas (08:00 - 14:00)",
+            "Tardes (14:00 - 20:00)",
+            "Noches (20:00 - 08:00)",
+            "Jornada Completa / Indiferente",
+            "Fines de Semana"
+        );
+        usuario.addAttribute("opcionesHorario", opcionesHorario);
 
         usuario.setEstadoAceptado(false);
         usuarioOVIDao.addUsuarioOVI(usuario);

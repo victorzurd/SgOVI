@@ -1,5 +1,7 @@
 package es.uji.ei1027.clubesportiu.model;
 
+import java.util.List;
+
 public class UsuarioOVI {
 
     private int idUsuario;
@@ -11,6 +13,8 @@ public class UsuarioOVI {
     private boolean consentimientoRGBD;
     private boolean estadoAceptado;
     private String password;
+    private String provincia; // <-- Nueva localización (Provincia)
+    private String horarioDisponibilidad; // <-- Nuevo Horario de disponibilidad
 
     public UsuarioOVI() {
     }
@@ -87,6 +91,22 @@ public class UsuarioOVI {
         this.password = password; 
     }
 
+    public String getProvincia() {
+        return provincia;
+    }
+
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+
+    public String getHorarioDisponibilidad() {
+        return horarioDisponibilidad;
+    }
+
+    public void setHorarioDisponibilidad(String horarioDisponibilidad) {
+        this.horarioDisponibilidad = horarioDisponibilidad;
+    }
+
     @Override
     public String toString() {
         return "UsuarioOVI{" +
@@ -99,5 +119,10 @@ public class UsuarioOVI {
                 ", consentimientoRGPD=" + consentimientoRGBD +
                 ", estadoAceptado=" + estadoAceptado +
                 '}';
+    }
+
+    public void addAttribute(String string, List<String> opcionesHorario) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'addAttribute'");
     }
 }
