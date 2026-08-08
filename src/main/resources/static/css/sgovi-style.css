@@ -1,0 +1,184 @@
+/* ==========================================================================
+   SgOVI - Sistema de Diseño Base y Accesibilidad
+   ========================================================================== */
+
+:root {
+    --sg-primary: #0D9488;
+    --sg-primary-dark: #0F766E;
+    --sg-primary-light: #E6FFFA;
+    --sg-dark: #0F172A;
+    --sg-slate: #334155;
+    --sg-muted: #64748B;
+    --sg-bg: #F8FAFC;
+    --sg-card-bg: #FFFFFF;
+    --sg-accent: #F43F5E;
+    --sg-border: #E2E8F0;
+    --sg-radius: 16px;
+    --sg-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--sg-bg);
+    color: var(--sg-slate);
+    line-height: 1.6;
+}
+
+/* --- Barra de Accesibilidad --- */
+.accessibility-bar {
+    background-color: var(--sg-dark);
+    color: white;
+    font-size: 0.85rem;
+    padding: 6px 0;
+}
+
+.accessibility-bar button {
+    background: none;
+    border: none;
+    color: #E2E8F0;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.accessibility-bar button:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* --- Navbar --- */
+.navbar-custom {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.navbar-brand {
+    font-size: 1.6rem;
+    color: var(--sg-primary) !important;
+    letter-spacing: -0.5px;
+}
+
+.text-teal {
+    color: var(--sg-primary) !important;
+}
+
+/* --- Botones --- */
+.btn-sg-primary {
+    background-color: var(--sg-primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
+}
+
+.btn-sg-primary:hover {
+    background-color: var(--sg-primary-dark);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(13, 148, 136, 0.35);
+}
+
+.btn-sg-outline {
+    border: 2px solid #CBD5E1;
+    color: var(--sg-dark);
+    border-radius: 12px;
+    font-weight: 600;
+    background-color: white;
+    transition: all 0.25s ease;
+}
+
+.btn-sg-outline:hover {
+    border-color: var(--sg-primary);
+    color: var(--sg-primary);
+    background-color: var(--sg-primary-light);
+    transform: translateY(-2px);
+}
+
+/* --- Hero Section --- */
+.hero-section {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F0FDFA 100%);
+    border: 1px solid var(--sg-border);
+    border-radius: var(--sg-radius);
+    box-shadow: var(--sg-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-badge {
+    background-color: var(--sg-primary-light);
+    color: var(--sg-primary-dark);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 6px 16px;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* --- Tarjetas y Contenedores --- */
+.pillar-card {
+    background-color: var(--sg-card-bg);
+    border: 1px solid var(--sg-border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+}
+
+.pillar-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--sg-primary);
+    box-shadow: var(--sg-shadow);
+}
+
+.pillar-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: var(--sg-primary-light);
+    color: var(--sg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+/* --- Modo Alto Contraste --- */
+body.high-contrast {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+}
+
+body.high-contrast .navbar-custom,
+body.high-contrast .pillar-card,
+body.high-contrast .hero-section,
+body.high-contrast footer {
+    background-color: #121212 !important;
+    border-color: #444444 !important;
+    color: #FFFFFF !important;
+}
+
+body.high-contrast h1, 
+body.high-contrast h2, 
+body.high-contrast h5, 
+body.high-contrast p,
+body.high-contrast span {
+    color: #FFFFFF !important;
+}
+
+body.high-contrast .btn-sg-primary {
+    background-color: #FFFF00 !important;
+    color: #000000 !important;
+    font-weight: bold;
+}
+
+body.high-contrast .btn-sg-outline {
+    background-color: #000000 !important;
+    color: #FFFF00 !important;
+    border-color: #FFFF00 !important;
+}
