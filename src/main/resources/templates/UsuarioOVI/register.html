@@ -40,7 +40,7 @@
             min-height: 100vh;
         }
 
-        /* --- Barra de Accesibilidad (Estilo texto sin caja) --- */
+        /* --- Barra de Accesibilidad --- */
         .accessibility-bar {
             background-color: var(--sg-dark);
             color: white;
@@ -164,9 +164,7 @@
             gap: 0.5rem;
         }
 
-        /* ==========================================================================
-           Estilos Específicos para Validación de Formulario
-           ========================================================================== */
+        /* Estilos de Validación */
         .needcorrection, 
         .input-group:has(.needcorrection) .input-group-text {
             border-color: var(--sg-accent) !important;
@@ -200,7 +198,7 @@
             border-radius: 8px;
         }
 
-        /* --- Modo Alto Contraste --- */
+        /* Modo Alto Contraste */
         body.high-contrast {
             background-color: #000000 !important;
             color: #FFFFFF !important;
@@ -208,7 +206,6 @@
 
         body.high-contrast .navbar-custom,
         body.high-contrast .pillar-card,
-        body.high-contrast .hero-section,
         body.high-contrast footer {
             background-color: #121212 !important;
             border-color: #444444 !important;
@@ -217,7 +214,6 @@
 
         body.high-contrast h1, 
         body.high-contrast h2, 
-        body.high-contrast h5, 
         body.high-contrast p,
         body.high-contrast span,
         body.high-contrast .form-label {
@@ -362,11 +358,10 @@
                             </div>
 
                             <!-- Teléfono -->
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label for="telefono" class="form-label fw-semibold text-dark small">Teléfono (Opcional)</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                                    <!-- Añadida validación estricta de 9 dígitos desde el frontend -->
                                     <input id="telefono" type="tel" th:field="*{telefono}" class="form-control"
                                            th:errorclass="needcorrection" placeholder="Ej. 600123456" pattern="[0-9]{9}" maxlength="9" />
                                 </div>
@@ -375,29 +370,28 @@
                                     <span th:errors="*{telefono}">Error en teléfono</span>
                                 </div>
                             </div>
-                            
+                        </div>
+
+                        <!-- SECCIÓN 2: Ubicación -->
+                        <h2 class="form-section-title">
+                            <i class="bi bi-geo-alt-fill"></i> Ubicación
+                        </h2>
+
+                        <div class="row g-3 mb-4">
                             <!-- Dirección -->
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label for="direccion" class="form-label fw-semibold text-dark small">Dirección (Opcional)</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
                                     <input id="direccion" type="text" th:field="*{direccion}" class="form-control" placeholder="Calle, número, piso" />
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- SECCIÓN 2: Ubicación y Preferencias -->
-                        <h2 class="form-section-title">
-                            <i class="bi bi-sliders"></i> Ubicación y Disponibilidad
-                        </h2>
-
-                        <div class="row g-3 mb-4">
                             <!-- Provincia -->
-                            <div class="col-md-6">
-                                <label for="provincia" class="form-label fw-semibold text-dark small">Provincia (Localización) *</label>
+                            <div class="col-md-12">
+                                <label for="provincia" class="form-label fw-semibold text-dark small">Provincia *</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-map"></i></span>
-                                    <!-- Iterando correctamente sobre el modelo 'provincias' del enum -->
                                     <select id="provincia" th:field="*{provincia}" class="form-select" th:errorclass="needcorrection" required>
                                         <option value="" disabled selected>-- Selecciona tu provincia --</option>
                                         <option th:each="p : ${provincias}" 
@@ -408,25 +402,6 @@
                                 <div th:if="${#fields.hasErrors('provincia')}" class="field-error">
                                     <i class="bi bi-exclamation-circle-fill mt-1"></i>
                                     <span th:errors="*{provincia}">Error en provincia</span>
-                                </div>
-                            </div>
-
-                            <!-- Horario de Disponibilidad -->
-                            <div class="col-md-6">
-                                <label for="horarioDisponibilidad" class="form-label fw-semibold text-dark small">Disponibilidad Horaria *</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-clock"></i></span>
-                                    <!-- Iterando correctamente sobre 'opcionesHorario' -->
-                                    <select id="horarioDisponibilidad" th:field="*{horarioDisponibilidad}" class="form-select" th:errorclass="needcorrection" required>
-                                        <option value="" disabled selected>-- Selecciona franja horaria --</option>
-                                        <option th:each="horario : ${opcionesHorario}" 
-                                                th:value="${horario}" 
-                                                th:text="${horario}">Horario</option>
-                                    </select>
-                                </div>
-                                <div th:if="${#fields.hasErrors('horarioDisponibilidad')}" class="field-error">
-                                    <i class="bi bi-exclamation-circle-fill mt-1"></i>
-                                    <span th:errors="*{horarioDisponibilidad}">Error en disponibilidad</span>
                                 </div>
                             </div>
                         </div>
@@ -495,7 +470,7 @@
             if (!toastElement || !form) return;
             const bsToast = new bootstrap.Toast(toastElement, { delay: 4000 });
 
-            // Mostrar Toast si Thymeleaf detectó errores tras enviar (Validación Backend)
+            // Mostrar Toast si Thymeleaf detectó errores tras enviar
             if (document.getElementById('serverHasErrors')) {
                 toastMessage.textContent = "Existen errores. Por favor, corrige los campos señalados en rojo.";
                 bsToast.show();
@@ -537,7 +512,6 @@
 
         // Mostrar/Ocultar Contraseña
         function togglePasswordVisibility() {
-            // El ID del campo de contraseña en UsuarioOVI es "password"
             const passwordInput = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');
             if (passwordInput && passwordInput.type === 'password') {

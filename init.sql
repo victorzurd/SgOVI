@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS usuarioovi (
     email VARCHAR(150) UNIQUE NOT NULL,
     telefono VARCHAR(20),
     direccion VARCHAR(255),
+    provincia VARCHAR(100),
     consentimientorgbd BOOLEAN NOT NULL DEFAULT FALSE,
     estadoaceptado BOOLEAN NOT NULL DEFAULT FALSE,
     password VARCHAR(255) NOT NULL
@@ -156,13 +157,14 @@ ON CONFLICT (correo) DO NOTHING;
 -- =============================================================================
 -- USUARIO OVI DE PRUEBA
 -- =============================================================================
-INSERT INTO usuarioovi (nombre, apellidos, email, telefono, direccion, consentimientorgbd, estadoaceptado, password)
+INSERT INTO usuarioovi (nombre, apellidos, email, telefono, direccion, provincia, consentimientorgbd, estadoaceptado, password)
 VALUES (
     'Juan', 
     'Pérez García', 
     'usuario@sgovi.es', 
     '611223344', 
     'Calle Mayor 12, Castellón', 
+    'Castellón', 
     true, 
     true, 
     'rkZFXza8U4vE2gdfMWq9adlhPkwzaY+C'
@@ -172,17 +174,18 @@ ON CONFLICT (email) DO NOTHING;
 -- =============================================================================
 -- ASISTENTE PERSONAL (PAP) DE PRUEBA
 -- =============================================================================
-INSERT INTO asistentepersonal (nombre, apellidos, email, contraseña, telefono, disponibilidad, estadoaceptado, activo, zona, preferencias, puntuacion, consentimientorgbd)
+INSERT INTO asistentepersonal (nombre, apellidos, email, contraseña, telefono, disponibilidad, estadoaceptado, activo, zona, provincia, preferencias, puntuacion, consentimientorgbd)
 VALUES (
     'María', 
     'López Fernández', 
     'asistente@sgovi.es', 
     'rkZFXza8U4vE2gdfMWq9adlhPkwzaY+C', 
     '655443322', 
-    'Mañanas y Tardes', 
+    'Lunes a Viernes de 9:00 a 18:00', 
     true, 
     true, 
     'Castellón Centro', 
+    'Castellón', 
     'Acompañamiento y soporte en movilidad', 
     5, 
     true
