@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import es.uji.ei1027.clubesportiu.dao.RegistroContratoDao;
 import es.uji.ei1027.clubesportiu.dao.UsuarioOVIDao;
-import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
 import es.uji.ei1027.clubesportiu.model.Provincia;
 import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
 import es.uji.ei1027.clubesportiu.model.UserDetails;
@@ -43,6 +42,22 @@ public class UsuarioOVIController {
     @Autowired
     public void setRegistroContratoDao(RegistroContratoDao registroContratoDao) {
         this.registroContratoDao = registroContratoDao;
+    }
+
+    @ModelAttribute("provincias")
+    public Provincia[] getProvincias() {
+        return Provincia.values();
+    }
+
+    @ModelAttribute("opcionesHorario")
+    public List<String> getOpcionesHorario() {
+        return Arrays.asList(
+            "Mañanas (08:00 - 14:00)",
+            "Tardes (14:00 - 20:00)",
+            "Noches (20:00 - 08:00)",
+            "Jornada Completa / Indiferente",
+            "Fines de Semana"
+        );
     }
 
     @RequestMapping("/list")
@@ -80,6 +95,7 @@ public class UsuarioOVIController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String addSubmit(@ModelAttribute("usuario") UsuarioOVI usuario, BindingResult bindingResult) {
         UsuarioOVIValidator validator = new UsuarioOVIValidator(usuarioOVIDao);
+        
         validator.validate(usuario, bindingResult);
         if (bindingResult.hasErrors()) {
             return "UsuarioOVI/register";
@@ -89,18 +105,6 @@ public class UsuarioOVIController {
         String passEncriptada = passwordEncryptor.encryptPassword(usuario.getPassword());
     
         usuario.setPassword(passEncriptada);
-
-        usuario.addAttribute("provincias", Provincia.values());
-
-        // Pasa las franjas horarias semanales
-        List<String> opcionesHorario = Arrays.asList(
-            "Mañanas (08:00 - 14:00)",
-            "Tardes (14:00 - 20:00)",
-            "Noches (20:00 - 08:00)",
-            "Jornada Completa / Indiferente",
-            "Fines de Semana"
-        );
-        usuario.addAttribute("opcionesHorario", opcionesHorario);
 
         usuario.setEstadoAceptado(false);
         usuarioOVIDao.addUsuarioOVI(usuario);

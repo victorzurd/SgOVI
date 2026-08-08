@@ -120,9 +120,4 @@ public class UsuarioOVI {
                 ", estadoAceptado=" + estadoAceptado +
                 '}';
     }
-
-    public void addAttribute(String string, List<String> opcionesHorario) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addAttribute'");
-    }
 }
