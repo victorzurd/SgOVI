@@ -12,6 +12,7 @@ public class APRequest {
     private Integer idSeleccion;
     private String titulo;
     private String zona;
+    private String provincia;
     private String preferencias;
     private String horario;
 
@@ -98,6 +99,14 @@ public class APRequest {
         this.horario = horario;
     }
 
+    public String getProvincia() {
+        return provincia;
+    }
+
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+
     @Override
     public String toString() {
         return "APRequest{" +
@@ -108,6 +117,7 @@ public class APRequest {
                 ", estado=" + estado +
                 ", titulo='" + titulo + '\'' +
                 ", zona='" + zona + '\'' +
+                ", provincia='" + provincia + '\'' +
                 ", preferencias='" + preferencias + '\'' +
                 ", horario='" + horario + '\'' +
                 '}';

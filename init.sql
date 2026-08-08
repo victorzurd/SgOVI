@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS aprequest (
     idseleccion INT,
     titulo VARCHAR(150),
     zona VARCHAR(100),
+    provincia VARCHAR(100),
     preferencias TEXT,
     horario VARCHAR(100),
     CONSTRAINT fk_aprequest_usuario FOREIGN KEY (idusuario) 

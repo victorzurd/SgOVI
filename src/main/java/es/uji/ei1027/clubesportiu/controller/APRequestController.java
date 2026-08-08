@@ -1,6 +1,7 @@
 package es.uji.ei1027.clubesportiu.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import es.uji.ei1027.clubesportiu.model.APRequest;
 import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
 import es.uji.ei1027.clubesportiu.model.Estado;
 import es.uji.ei1027.clubesportiu.model.MensajeChat;
+import es.uji.ei1027.clubesportiu.model.Provincia;
 import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
 import es.uji.ei1027.clubesportiu.model.UsuarioOVI;
 import es.uji.ei1027.clubesportiu.util.Paginacion;
@@ -57,6 +59,22 @@ public class APRequestController {
     @Autowired
     public void setCandidatoDao(CandidatoDao candidatoDao) {
         this.candidatoDao = candidatoDao;
+    }
+
+    @ModelAttribute("provincias")
+    public Provincia[] getProvincias() {
+        return Provincia.values();
+    }
+
+    @ModelAttribute("opcionesHorario")
+    public List<String> getOpcionesHorario() {
+        return Arrays.asList(
+            "Mañanas (08:00 - 14:00)",
+            "Tardes (14:00 - 20:00)",
+            "Noches (20:00 - 08:00)",
+            "Jornada Completa / Indiferente",
+            "Fines de Semana"
+        );
     }
 
     @RequestMapping("/list")
