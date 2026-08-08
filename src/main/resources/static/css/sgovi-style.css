@@ -182,3 +182,45 @@ body.high-contrast .btn-sg-outline {
     color: #FFFF00 !important;
     border-color: #FFFF00 !important;
 }
+
+/* ==========================================================================
+   Estilos de Notificaciones y Badges
+   ========================================================================== */
+
+/* Badge con pulso de atención */
+.badge-notification {
+    background-color: var(--sg-accent);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.35em 0.65em;
+    border-radius: 50rem;
+    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7);
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 8px rgba(244, 63, 94, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(244, 63, 94, 0);
+    }
+}
+
+/* Posicionamiento en esquina de tarjetas */
+.pillar-card {
+    position: relative; /* Necesario para ubicar el badge adecuadamente */
+}
+
+.card-badge-top {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}

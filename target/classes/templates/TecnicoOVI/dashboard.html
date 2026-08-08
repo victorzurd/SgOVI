@@ -65,6 +65,13 @@
             <!-- Tarjeta 1: Gestionar Asistentes -->
             <div class="col">
                 <div class="pillar-card text-center d-flex flex-column align-items-center">
+                    
+                    <!-- BADGE NOTIFICACIÓN ASISTENTES NUEVOS -->
+                    <span th:if="${notifAsistentes != null and notifAsistentes > 0}" 
+                          class="badge-notification card-badge-top">
+                        <i class="bi bi-bell-fill"></i> <span th:text="${notifAsistentes}">1</span> pendiente(s)
+                    </span>
+
                     <div class="pillar-icon mb-3">
                         <i class="bi bi-person-vcard-fill"></i>
                     </div>
@@ -81,6 +88,13 @@
             <!-- Tarjeta 2: Gestionar Usuarios -->
             <div class="col">
                 <div class="pillar-card text-center d-flex flex-column align-items-center">
+                    
+                    <!-- BADGE NOTIFICACIÓN USUARIOS NUEVOS -->
+                    <span th:if="${notifUsuarios != null and notifUsuarios > 0}" 
+                          class="badge-notification card-badge-top">
+                        <i class="bi bi-person-plus-fill"></i> <span th:text="${notifUsuarios}">2</span> nuevo(s)
+                    </span>
+
                     <div class="pillar-icon mb-3">
                         <i class="bi bi-people-fill"></i>
                     </div>
@@ -97,6 +111,13 @@
             <!-- Tarjeta 3: Gestionar Solicitudes -->
             <div class="col">
                 <div class="pillar-card text-center d-flex flex-column align-items-center">
+                    
+                    <!-- BADGE NOTIFICACIÓN PETICIONES ACTUALIZADAS O NUEVAS -->
+                    <span th:if="${notifPeticiones != null and notifPeticiones > 0}" 
+                          class="badge-notification card-badge-top">
+                        <i class="bi bi-exclamation-circle-fill"></i> <span th:text="${notifPeticiones}">3</span> por revisar
+                    </span>
+
                     <div class="pillar-icon mb-3">
                         <i class="bi bi-clipboard-check-fill"></i>
                     </div>

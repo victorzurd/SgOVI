@@ -213,4 +213,10 @@ public class APRequestDao {
                 limit,
                 offset);
     }
+
+        // Contar solicitudes en revisión o pendientes
+    public int countPeticionesPendientesOEnRevision() {
+        String sql = "SELECT COUNT(*) FROM aprequest WHERE estado::text IN ('pendiente', 'en_revision')";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
 }

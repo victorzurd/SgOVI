@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import es.uji.ei1027.clubesportiu.dao.APRequestDao;
 import es.uji.ei1027.clubesportiu.dao.AsistentePersonalDao;
 import es.uji.ei1027.clubesportiu.dao.TecnicoOVIDao;
+import es.uji.ei1027.clubesportiu.dao.UsuarioOVIDao;
 import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
 import es.uji.ei1027.clubesportiu.model.UserDetails;
 import jakarta.servlet.http.HttpSession;
@@ -19,8 +20,13 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/TecnicoOVI")
 public class TecnicoOVIController {
 
+    @Autowired
+    private UsuarioOVIDao usuarioOVIDao;
+    @Autowired
     private TecnicoOVIDao tecnicoOVIDao;
+    @Autowired
     private AsistentePersonalDao asistentePersonalDao;
+    @Autowired
     private APRequestDao apRequestDao;
 
     @Autowired
@@ -71,8 +77,14 @@ public class TecnicoOVIController {
             return "redirect:/TecnicoOVI/login";
         }
 
-        int numSolicitudes = asistentePersonalDao.countAsistentesPendientes();
-        model.addAttribute("numSolicitudes", numSolicitudes);
+        int nuevosUsuarios = usuarioOVIDao.countUsuariosPendientes();
+        int nuevosAsistentes = asistentePersonalDao.countAsistentesPendientes();
+        int peticionesPendientes = apRequestDao.countPeticionesPendientesOEnRevision();
+
+        // Enviar variables al modelo de Thymeleaf
+        model.addAttribute("notifUsuarios", nuevosUsuarios);
+        model.addAttribute("notifAsistentes", nuevosAsistentes);
+        model.addAttribute("notifPeticiones", peticionesPendientes);
 
         model.addAttribute("tecnico", tecnico);
 

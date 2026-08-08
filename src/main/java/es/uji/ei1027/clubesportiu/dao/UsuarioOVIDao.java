@@ -129,4 +129,10 @@ public class UsuarioOVIDao {
 
         return total == null ? 0 : total;
     }
+
+    // Contar usuarios registrados pendientes de validación
+    public int countUsuariosPendientes() {
+        String sql = "SELECT COUNT(*) FROM usuarioovi WHERE estadoaceptado = FALSE";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
 }
