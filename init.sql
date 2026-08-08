@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS asistentepersonal (
     estadoaceptado BOOLEAN NOT NULL DEFAULT FALSE,
     activo BOOLEAN NOT NULL DEFAULT TRUE,
     zona VARCHAR(100),
+    provincia VARCHAR(100),
     preferencias TEXT,
     puntuacion INT DEFAULT 0,
     consentimientorgbd BOOLEAN NOT NULL DEFAULT FALSE

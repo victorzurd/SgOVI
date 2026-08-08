@@ -1,5 +1,6 @@
 package es.uji.ei1027.clubesportiu.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.jasypt.util.password.BasicPasswordEncryptor;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import es.uji.ei1027.clubesportiu.dao.AsistentePersonalDao;
 import es.uji.ei1027.clubesportiu.model.APRequest;
 import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
+import es.uji.ei1027.clubesportiu.model.Provincia;
 import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
 import es.uji.ei1027.clubesportiu.util.Paginacion;
 import es.uji.ei1027.clubesportiu.validator.AsistentePersonalValidator;
@@ -44,6 +46,23 @@ public class AsistentePersonalController {
         this.registroContratoDao = dao;
     }
 
+
+     @ModelAttribute("provincias")
+    public Provincia[] getProvincias() {
+        return Provincia.values();
+    }
+
+    @ModelAttribute("opcionesHorario")
+    public List<String> getOpcionesHorario() {
+        return Arrays.asList(
+            "Mañanas (08:00 - 14:00)",
+            "Tardes (14:00 - 20:00)",
+            "Noches (20:00 - 08:00)",
+            "Jornada Completa / Indiferente",
+            "Fines de Semana"
+        );
+    }
+
     
     @RequestMapping("/list")
     public String list(
@@ -68,7 +87,7 @@ public class AsistentePersonalController {
 
         model.addAttribute("page", page);
         model.addAttribute("buscar", buscar);
-        model.addAttribute("zona", zona);
+        model.addAttribute("provincia", zona);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("mostrarZona", true);
 

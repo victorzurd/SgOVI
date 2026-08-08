@@ -25,7 +25,7 @@ public class AsistentePersonalDao {
     
     public void addAsistentePersonal(AsistentePersonal asistente) {
         jdbcTemplate.update(
-            "INSERT INTO AsistentePersonal (nombre, apellidos, email, contraseña, telefono, disponibilidad, estadoAceptado, activo, zona, preferencias, puntuacion, consentimientoRGBD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO AsistentePersonal (nombre, apellidos, email, contraseña, telefono, disponibilidad, estadoAceptado, activo, zona, provincia, preferencias, puntuacion, consentimientoRGBD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             asistente.getNombre(),
             asistente.getApellidos(),
             asistente.getEmail(),
@@ -35,6 +35,7 @@ public class AsistentePersonalDao {
             asistente.isEstadoAceptado(),
             asistente.isActivo(),
             asistente.getZona(),
+            asistente.getProvincia(),
             asistente.getPreferencias(),
             asistente.getPuntuacion(),
             asistente.isConsentimientoRGBD()
@@ -44,7 +45,7 @@ public class AsistentePersonalDao {
     
     public void updateAsistentePersonal(AsistentePersonal asistente) {
         jdbcTemplate.update(
-            "UPDATE AsistentePersonal SET nombre=?, apellidos=?, email=?, contraseña=?, telefono=?, disponibilidad=?, estadoAceptado=?, activo=?, zona=?, preferencias=?, puntuacion=?, consentimientoRGBD=? WHERE idAsistente=?",
+            "UPDATE AsistentePersonal SET nombre=?, apellidos=?, email=?, contraseña=?, telefono=?, disponibilidad=?, estadoAceptado=?, activo=?, zona=?, provincia=?, preferencias=?, puntuacion=?, consentimientoRGBD=? WHERE idAsistente=?",
             asistente.getNombre(),
             asistente.getApellidos(),
             asistente.getEmail(),
@@ -54,6 +55,7 @@ public class AsistentePersonalDao {
             asistente.isEstadoAceptado(),
             asistente.isActivo(),
             asistente.getZona(),
+            asistente.getProvincia(),       
             asistente.getPreferencias(),
             asistente.getPuntuacion(),
             asistente.isConsentimientoRGBD(),

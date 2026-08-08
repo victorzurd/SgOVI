@@ -47,6 +47,8 @@ public class AsistentePersonalValidator implements Validator {
             
             if (asistente.getContraseña() == null || asistente.getContraseña().trim().isEmpty()) {
                 errors.rejectValue("contraseña", "obligatorio", "La contraseña es obligatoria");
+            } else if (asistente.getContraseña().length() < 6) {
+                errors.rejectValue("contraseña", "longitud", "La contraseña debe tener al menos 6 caracteres");
             }
             
             if (!asistente.isConsentimientoRGBD()) {

@@ -11,7 +11,8 @@ public class AsistentePersonal {
     private String disponibilidad;
     private boolean estadoAceptado;
     private boolean activo;
-    private String zona; 
+    private String zona;
+    private String provincia; 
     private String preferencias; 
     private int puntuacion;
     private boolean consentimientoRGBD; 
@@ -91,12 +92,12 @@ public class AsistentePersonal {
         this.activo = activo;
     }
 
-    public String getZona() {
-        return zona;
+    public String getProvincia() {
+        return provincia;
     }
 
-    public void setZona(String zona) {
-        this.zona = zona;
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
     }
 
     public String getPreferencias() {
@@ -123,6 +124,14 @@ public class AsistentePersonal {
         this.consentimientoRGBD = consentimientoRGBD;
     }
 
+    public String getZona() {
+        return zona;
+    }
+
+    public void setZona(String zona) {
+        this.zona = zona;
+    }
+
     @Override
     public String toString() {
         return "AsistentePersonal{" +
@@ -135,6 +144,7 @@ public class AsistentePersonal {
                 ", disponibilidad='" + disponibilidad + '\'' +
                 ", estadoAceptado=" + estadoAceptado +
                 ", activo=" + activo +
+                ", provincia='" + provincia + '\'' +
                 ", zona='" + zona + '\'' +
                 ", preferencias='" + preferencias + '\'' +
                 ", puntuacion=" + puntuacion +
