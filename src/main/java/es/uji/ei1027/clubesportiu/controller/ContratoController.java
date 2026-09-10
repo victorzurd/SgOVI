@@ -11,6 +11,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +26,9 @@ import es.uji.ei1027.clubesportiu.model.APRequest;
 import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
 import es.uji.ei1027.clubesportiu.model.RegistroContrato;
 import es.uji.ei1027.clubesportiu.model.Seleccion;
+import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
 import es.uji.ei1027.clubesportiu.model.UsuarioOVI;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/contrato")
@@ -142,5 +146,82 @@ public class ContratoController {
         }
 
         return "redirect:/APRequest/gestion/" + idRequest;
+        }
+
+        @GetMapping ("/editar/{idContrato}")
+    public String editarContrato(@PathVariable int idContrato,
+                              HttpSession session,
+                              Model model) {
+        TecnicoOVI tecnico = (TecnicoOVI) session.getAttribute("tecnicoLogueado");
+        if (tecnico == null) {
+                return "redirect:/TecnicoOVI/login";
+        }
+
+        RegistroContrato contrato = registroContratoDao.getContratoPorId(idContrato);
+        if (contrato == null) {
+                return "redirect:/APRequest/list";
+        }
+
+        APRequest request = apRequestDao.getAPRequest(contrato.getIdRequest());
+        model.addAttribute("contrato", contrato);
+        model.addAttribute("request", request);
+
+        return "Contrato/editar";
+        }
+        @PostMapping("/editar/{idContrato}")
+public String guardarEdicion(@PathVariable int idContrato,
+                              @ModelAttribute("contrato") RegistroContrato contrato,
+                              HttpSession session) {
+
+    TecnicoOVI tecnico = (TecnicoOVI) session.getAttribute("tecnicoLogueado");
+    if (tecnico == null) {
+        return "redirect:/TecnicoOVI/login";
     }
+
+    RegistroContrato existente = registroContratoDao.getContratoPorId(idContrato);
+    if (existente == null) {
+        return "redirect:/APRequest/list";
+    }
+
+    existente.setFechaInicio(contrato.getFechaInicio());
+    existente.setFechaFin(contrato.getFechaFin());
+    existente.setEstado(contrato.getEstado());
+
+    registroContratoDao.updateContrato(existente);
+
+    return "redirect:/contrato/detalle/" + idContrato;
+}
+
+@GetMapping("/detalle/{idContrato}")
+public String verDetalle(@PathVariable int idContrato,
+                          HttpSession session,
+                          Model model) {
+
+    TecnicoOVI tecnico = (TecnicoOVI) session.getAttribute("tecnicoLogueado");
+    if (tecnico == null) {
+        return "redirect:/TecnicoOVI/login";
+    }
+
+    RegistroContrato contrato = registroContratoDao.getContratoPorId(idContrato);
+    if (contrato == null) {
+        return "redirect:/APRequest/list";
+    }
+
+    APRequest request = apRequestDao.getAPRequest(contrato.getIdRequest());
+    Seleccion seleccion = seleccionDao.getSeleccion(contrato.getIdSeleccion());
+    UsuarioOVI usuario = usuarioDao.getUsuarioOVI(request.getIdUsuario());
+    AsistentePersonal asistente = asistentePersonalDao.getAsistentePersonal(seleccion.getIdAsistente());
+
+    model.addAttribute("contrato", contrato);
+    model.addAttribute("request", request);
+    model.addAttribute("usuario", usuario);
+    model.addAttribute("asistente", asistente);
+
+    return "Contrato/detalle";
+}
+
+
+        
+
+
 }

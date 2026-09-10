@@ -166,6 +166,23 @@ public class RegistroContratoDao {
                 contrato.getIdSeleccion());
     }
 
+    public void updateContrato(RegistroContrato contrato) {
+
+    String sql = """
+        UPDATE registrocontrato
+        SET fechainicio = ?,
+            fechafin = ?,
+            estado = CAST(? AS estado)
+        WHERE idcontrato = ?
+        """;
+
+    jdbcTemplate.update(sql,
+            contrato.getFechaInicio(),
+            contrato.getFechaFin(),
+            contrato.getEstado(),
+            contrato.getIdContrato());
+}
+
     public boolean existeContrato(int idRequest) {
 
         String sql = """
@@ -178,4 +195,14 @@ public class RegistroContratoDao {
 
         return total != null && total > 0;
     }
+
+public RegistroContrato getContratoPorId(int idContrato) {
+
+    String sql = "SELECT * FROM registrocontrato WHERE idcontrato = ?";
+
+    List<RegistroContrato> resultados = jdbcTemplate.query(
+            sql, new RegistroContratoRowMapper(), idContrato);
+
+    return resultados.isEmpty() ? null : resultados.get(0);
+}
 }
