@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS comunicacionusuarioovipap (
 CREATE TABLE IF NOT EXISTS registrocontrato (
     idcontrato SERIAL PRIMARY KEY,
     fechainicio DATE NOT NULL,
-    fechafin DATE NOT NULL,
+    fechafin DATE,
     documentopdf VARCHAR(255),
     estado estado NOT NULL,
     idrequest INT NOT NULL,
