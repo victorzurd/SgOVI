@@ -750,3 +750,42 @@ body.high-contrast .chat-status-dot {
     background-color: var(--sg-primary);
     color: #FFFFFF;
 }
+
+/* ==========================================================================
+   AJUSTES Y NORMAS ADICIONALES PARA FORMULARIOS Y ACCESIBILIDAD
+   ========================================================================== */
+
+/* Bloque contenedor para consentimientos legales */
+.consent-box {
+    background-color: var(--sg-bg);
+    border-radius: var(--sg-radius);
+    border: 1px solid var(--sg-border);
+}
+
+/* Tamaño extendido para iconos de cabecera en registros */
+.pillar-icon-lg {
+    width: 64px;
+    height: 64px;
+    font-size: 2rem;
+}
+
+/* Elevación para notificaciones Toast */
+.toast-container-custom {
+    z-index: 1100;
+}
+
+/* Enlace invisible para navegación por teclado (Skip Link) */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--sg-dark);
+    color: #FFFFFF;
+    padding: 8px 16px;
+    z-index: 2000;
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+    top: 0;
+}

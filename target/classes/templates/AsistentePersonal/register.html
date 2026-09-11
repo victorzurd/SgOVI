@@ -10,283 +10,72 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Estilos fusionados: Sistema Base SgOVI + Validaciones de Formulario -->
-    <style>
-        /* ==========================================================================
-           SgOVI - Sistema de Diseño Base y Accesibilidad
-           ========================================================================== */
-        :root {
-            --sg-primary: #0D9488;
-            --sg-primary-dark: #0F766E;
-            --sg-primary-light: #E6FFFA;
-            --sg-dark: #0F172A;
-            --sg-slate: #334155;
-            --sg-muted: #64748B;
-            --sg-bg: #F8FAFC;
-            --sg-card-bg: #FFFFFF;
-            --sg-accent: #F43F5E;
-            --sg-border: #E2E8F0;
-            --sg-radius: 16px;
-            --sg-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-        }
-
-        body {
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--sg-bg);
-            color: var(--sg-slate);
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* --- Barra de Accesibilidad --- */
-        .accessibility-bar {
-            background-color: var(--sg-dark);
-            color: white;
-            font-size: 0.85rem;
-            padding: 6px 0;
-        }
-
-        .accessibility-bar button {
-            background: none;
-            border: none;
-            color: #E2E8F0;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: color 0.2s ease;
-        }
-
-        .accessibility-bar button:hover {
-            color: white;
-            text-decoration: underline;
-        }
-
-        /* --- Navbar --- */
-        .navbar-custom {
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-        }
-
-        .navbar-brand {
-            font-size: 1.6rem;
-            color: var(--sg-primary) !important;
-            letter-spacing: -0.5px;
-        }
-
-        .text-teal {
-            color: var(--sg-primary) !important;
-        }
-
-        /* --- Botones --- */
-        .btn-sg-primary {
-            background-color: var(--sg-primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
-        }
-
-        .btn-sg-primary:hover {
-            background-color: var(--sg-primary-dark);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(13, 148, 136, 0.35);
-        }
-
-        .btn-sg-outline {
-            border: 2px solid #CBD5E1;
-            color: var(--sg-dark);
-            border-radius: 12px;
-            font-weight: 600;
-            background-color: white;
-            transition: all 0.25s ease;
-        }
-
-        .btn-sg-outline:hover {
-            border-color: var(--sg-primary);
-            color: var(--sg-primary);
-            background-color: var(--sg-primary-light);
-            transform: translateY(-2px);
-        }
-
-        /* --- Hero Section & Badges --- */
-        .hero-badge {
-            background-color: var(--sg-primary-light);
-            color: var(--sg-primary-dark);
-            font-weight: 700;
-            font-size: 0.85rem;
-            padding: 6px 16px;
-            border-radius: 50px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* --- Tarjetas y Contenedores del Formulario --- */
-        .pillar-card {
-            background-color: var(--sg-card-bg);
-            border: 1px solid var(--sg-border);
-            border-radius: var(--sg-radius);
-            padding: 1.5rem;
-            box-shadow: var(--sg-shadow);
-        }
-
-        .pillar-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            background-color: var(--sg-primary-light);
-            color: var(--sg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-        }
-
-        .form-section-title {
-            color: var(--sg-primary-dark);
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-bottom: 2px solid var(--sg-border);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
-            margin-top: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* ==========================================================================
-           Estilos Específicos para Validación de Formulario
-           ========================================================================== */
-        .needcorrection, 
-        .input-group:has(.needcorrection) .input-group-text {
-            border-color: var(--sg-accent) !important;
-            background-color: #FFF0F2 !important;
-        }
-
-        .input-group:has(.needcorrection) .input-group-text {
-            color: var(--sg-accent) !important;
-        }
-
-        .field-error {
-            color: var(--sg-accent);
-            font-size: 0.85rem;
-            margin-top: 0.35rem;
-            font-weight: 600;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.35rem;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .alert-sg-danger {
-            background-color: #FFF0F2;
-            border-left: 4px solid var(--sg-accent);
-            color: #9F1239;
-            border-radius: 8px;
-        }
-
-        /* --- Modo Alto Contraste --- */
-        body.high-contrast {
-            background-color: #000000 !important;
-            color: #FFFFFF !important;
-        }
-
-        body.high-contrast .navbar-custom,
-        body.high-contrast .pillar-card,
-        body.high-contrast .hero-section,
-        body.high-contrast footer {
-            background-color: #121212 !important;
-            border-color: #444444 !important;
-            color: #FFFFFF !important;
-        }
-
-        body.high-contrast h1, 
-        body.high-contrast h2, 
-        body.high-contrast h5, 
-        body.high-contrast p,
-        body.high-contrast span,
-        body.high-contrast .form-label {
-            color: #FFFFFF !important;
-        }
-
-        body.high-contrast .btn-sg-primary {
-            background-color: #FFFF00 !important;
-            color: #000000 !important;
-            font-weight: bold;
-            box-shadow: none;
-        }
-
-        body.high-contrast .btn-sg-outline {
-            background-color: #000000 !important;
-            color: #FFFF00 !important;
-            border-color: #FFFF00 !important;
-        }
-    </style>
+    <!-- Estilos Unificados de SgOVI -->
+    <link rel="stylesheet" th:href="@{/css/sgovi-style.css}" href="sgovi-style.css">
 </head>
 
 <body>
 
+    <!-- Enlace de salto rápido para lectores de pantalla y navegación por teclado -->
+    <a href="#main-content" class="skip-link btn btn-sm btn-dark text-white rounded-0">
+        Saltar al contenido principal
+    </a>
+
     <!-- Barra Superior de Accesibilidad -->
-    <div class="accessibility-bar">
+    <div class="accessibility-bar" role="region" aria-label="Controles de accesibilidad">
         <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <span><i class="bi bi-universal-access me-1"></i> Accesibilidad y Usabilidad</span>
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
             <div class="d-flex gap-3">
-                <button type="button" onclick="toggleFontSize('increase')"><i class="bi bi-zoom-in"></i> Texto +</button>
-                <button type="button" onclick="toggleFontSize('decrease')"><i class="bi bi-zoom-out"></i> Texto -</button>
-                <button type="button" onclick="toggleContrast()"><i class="bi bi-circle-half"></i> Alto Contraste</button>
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto">
+                    <i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +
+                </button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Disminuir tamaño de texto">
+                    <i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -
+                </button>
+                <button type="button" onclick="toggleContrast()" aria-label="Alternar modo de alto contraste">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Navegación Principal -->
-    <nav class="navbar navbar-custom sticky-top">
+    <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
         <div class="container justify-content-between">
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/}">
-                <i class="bi bi-heart-pulse-fill text-teal"></i> SgOVI
+                <i class="bi bi-heart-pulse-fill text-teal" aria-hidden="true"></i> SgOVI
             </a>
             <a th:href="@{/AsistentePersonal/login}" class="btn btn-sg-outline btn-sm px-3 py-2 fw-semibold">
-                <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
+                <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i> Iniciar Sesión
             </a>
         </div>
     </nav>
 
     <!-- Contenedor Principal del Formulario -->
-    <main class="container py-5 flex-grow-1">
+    <main id="main-content" tabindex="-1" class="container py-5 flex-grow-1">
         <div class="row justify-content-center">
             <div class="col-lg-10 col-xl-9">
                 
                 <div class="pillar-card p-4 p-md-5">
                     
                     <!-- Encabezado de Registro -->
-                    <div class="text-center mb-5">
-                        <div class="pillar-icon mx-auto" style="width: 64px; height: 64px; font-size: 2rem;">
+                    <header class="text-center mb-5">
+                        <div class="pillar-icon pillar-icon-lg mx-auto" aria-hidden="true">
                             <i class="bi bi-person-plus-fill"></i>
                         </div>
                         <span class="hero-badge mb-3">
-                            <i class="bi bi-shield-check"></i> Únete a la red
+                            <i class="bi bi-shield-check" aria-hidden="true"></i> Únete a la red
                         </span>
                         <h1 class="h3 fw-bold mt-2 text-dark">Registro de Asistente Personal</h1>
                         <p class="text-muted small">Crea tu cuenta para comenzar a ofrecer servicios de asistencia en SgOVI</p>
-                    </div>
+                    </header>
 
                     <!-- FORMULARIO PRINCIPAL -->
                     <form th:action="@{/AsistentePersonal/register}" th:object="${asistente}" method="post" class="needs-validation" novalidate>
 
                         <!-- Banner General de Errores del Servidor -->
-                        <div th:if="${#fields.hasErrors('*')}" class="alert alert-sg-danger p-3 mb-4 d-flex align-items-center shadow-sm" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+                        <div th:if="${#fields.hasErrors('*')}" class="alert alert-sg-danger p-3 mb-4 d-flex align-items-center shadow-sm" role="alert" aria-live="assertive">
+                            <i class="bi bi-exclamation-triangle-fill fs-3 me-3" aria-hidden="true"></i>
                             <div>
                                 <strong class="d-block">Existen errores en la solicitud</strong>
                                 <span class="small">Por favor, revisa los campos marcados en rojo a continuación.</span>
@@ -295,7 +84,7 @@
 
                         <!-- SECCIÓN 1: Datos Personales -->
                         <h2 class="form-section-title mt-0">
-                            <i class="bi bi-person-vcard"></i> Datos Personales
+                            <i class="bi bi-person-vcard" aria-hidden="true"></i> Datos Personales
                         </h2>
 
                         <div class="row g-3 mb-4">
@@ -303,12 +92,15 @@
                             <div class="col-md-6">
                                 <label for="nombre" class="form-label fw-semibold text-dark small">Nombre *</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <span class="input-group-text"><i class="bi bi-person" aria-hidden="true"></i></span>
                                     <input id="nombre" type="text" th:field="*{nombre}" class="form-control"
-                                           th:errorclass="needcorrection" placeholder="Ej. Ana" required />
+                                           th:errorclass="needcorrection" 
+                                           th:aria-invalid="${#fields.hasErrors('nombre')}"
+                                           aria-describedby="nombre-error"
+                                           placeholder="Ej. Ana" required />
                                 </div>
-                                <div th:if="${#fields.hasErrors('nombre')}" class="field-error">
-                                    <i class="bi bi-exclamation-circle-fill"></i>
+                                <div id="nombre-error" th:if="${#fields.hasErrors('nombre')}" class="field-error" role="alert">
+                                    <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
                                     <span th:errors="*{nombre}">Error en nombre</span>
                                 </div>
                             </div>
@@ -317,12 +109,15 @@
                             <div class="col-md-6">
                                 <label for="apellidos" class="form-label fw-semibold text-dark small">Apellidos *</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <span class="input-group-text"><i class="bi bi-person" aria-hidden="true"></i></span>
                                     <input id="apellidos" type="text" th:field="*{apellidos}" class="form-control"
-                                           th:errorclass="needcorrection" placeholder="Ej. García López" required />
+                                           th:errorclass="needcorrection" 
+                                           th:aria-invalid="${#fields.hasErrors('apellidos')}"
+                                           aria-describedby="apellidos-error"
+                                           placeholder="Ej. García López" required />
                                 </div>
-                                <div th:if="${#fields.hasErrors('apellidos')}" class="field-error">
-                                    <i class="bi bi-exclamation-circle-fill"></i>
+                                <div id="apellidos-error" th:if="${#fields.hasErrors('apellidos')}" class="field-error" role="alert">
+                                    <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
                                     <span th:errors="*{apellidos}">Error en apellidos</span>
                                 </div>
                             </div>
@@ -331,12 +126,15 @@
                             <div class="col-md-6">
                                 <label for="email" class="form-label fw-semibold text-dark small">Correo Electrónico *</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <span class="input-group-text"><i class="bi bi-envelope" aria-hidden="true"></i></span>
                                     <input id="email" type="email" th:field="*{email}" class="form-control"
-                                           th:errorclass="needcorrection" placeholder="correo@ejemplo.com" required />
+                                           th:errorclass="needcorrection" 
+                                           th:aria-invalid="${#fields.hasErrors('email')}"
+                                           aria-describedby="email-error"
+                                           placeholder="correo@ejemplo.com" required />
                                 </div>
-                                <div th:if="${#fields.hasErrors('email')}" class="field-error">
-                                    <i class="bi bi-exclamation-circle-fill mt-1"></i>
+                                <div id="email-error" th:if="${#fields.hasErrors('email')}" class="field-error" role="alert">
+                                    <i class="bi bi-exclamation-circle-fill mt-1" aria-hidden="true"></i>
                                     <span th:errors="*{email}">Error en email</span>
                                 </div>
                             </div>
@@ -345,15 +143,18 @@
                             <div class="col-md-6">
                                 <label for="contraseña" class="form-label fw-semibold text-dark small">Contraseña *</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                    <span class="input-group-text"><i class="bi bi-key" aria-hidden="true"></i></span>
                                     <input id="contraseña" type="password" th:field="*{contraseña}" class="form-control"
-                                           th:errorclass="needcorrection" placeholder="Mínimo 8 caracteres" required />
-                                    <button class="btn btn-outline-secondary px-3" type="button" onclick="togglePasswordVisibility()" title="Mostrar/Ocultar">
-                                        <i class="bi bi-eye-fill" id="eyeIcon"></i>
+                                           th:errorclass="needcorrection" 
+                                           th:aria-invalid="${#fields.hasErrors('contraseña')}"
+                                           aria-describedby="password-error"
+                                           placeholder="Mínimo 8 caracteres" required />
+                                    <button class="btn btn-outline-secondary px-3" type="button" id="togglePasswordBtn" onclick="togglePasswordVisibility()" title="Mostrar u ocultar contraseña" aria-label="Mostrar contraseña" aria-pressed="false">
+                                        <i class="bi bi-eye-fill" id="eyeIcon" aria-hidden="true"></i>
                                     </button>
                                 </div>
-                                <div th:if="${#fields.hasErrors('contraseña')}" class="field-error">
-                                    <i class="bi bi-exclamation-circle-fill mt-1"></i>
+                                <div id="password-error" th:if="${#fields.hasErrors('contraseña')}" class="field-error" role="alert">
+                                    <i class="bi bi-exclamation-circle-fill mt-1" aria-hidden="true"></i>
                                     <span th:errors="*{contraseña}">Error en contraseña</span>
                                 </div>
                             </div>
@@ -362,12 +163,15 @@
                             <div class="col-md-6">
                                 <label for="telefono" class="form-label fw-semibold text-dark small">Teléfono de contacto</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                    <span class="input-group-text"><i class="bi bi-telephone" aria-hidden="true"></i></span>
                                     <input id="telefono" type="tel" th:field="*{telefono}" class="form-control"
-                                           th:errorclass="needcorrection" placeholder="Ej. 600123456" pattern="[0-9]{9}" maxlength="9" />
+                                           th:errorclass="needcorrection" 
+                                           th:aria-invalid="${#fields.hasErrors('telefono')}"
+                                           aria-describedby="telefono-error"
+                                           placeholder="Ej. 600123456" pattern="[0-9]{9}" maxlength="9" />
                                 </div>
-                                <div th:if="${#fields.hasErrors('telefono')}" class="field-error">
-                                    <i class="bi bi-exclamation-circle-fill"></i>
+                                <div id="telefono-error" th:if="${#fields.hasErrors('telefono')}" class="field-error" role="alert">
+                                    <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
                                     <span th:errors="*{telefono}">Error en teléfono</span>
                                 </div>
                             </div>
@@ -375,7 +179,7 @@
 
                         <!-- SECCIÓN 2: Ubicación y Preferencias -->
                         <h2 class="form-section-title">
-                            <i class="bi bi-geo-alt"></i> Ubicación y Preferencias
+                            <i class="bi bi-geo-alt" aria-hidden="true"></i> Ubicación y Preferencias
                         </h2>
 
                         <div class="row g-3 mb-4">
@@ -383,7 +187,7 @@
                             <div class="col-md-6">
                                 <label for="provincia" class="form-label fw-semibold text-dark small">Provincia *</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-map"></i></span>
+                                    <span class="input-group-text"><i class="bi bi-map" aria-hidden="true"></i></span>
                                     <select id="provincia" th:field="*{provincia}" class="form-select" th:errorclass="needcorrection" required>
                                         <option value="" disabled selected>-- Selecciona tu provincia --</option>
                                         <option th:each="p : ${provincias != null ? provincias : {}}" 
@@ -397,7 +201,7 @@
                             <div class="col-md-6">
                                 <label for="zona" class="form-label fw-semibold text-dark small">Zona / Localidad</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-signpost"></i></span>
+                                    <span class="input-group-text"><i class="bi bi-signpost" aria-hidden="true"></i></span>
                                     <input id="zona" type="text" th:field="*{zona}" class="form-control" placeholder="Ej. Castellón de la Plana" />
                                 </div>
                             </div>
@@ -406,16 +210,16 @@
                             <div class="col-md-6">
                                 <label for="disponibilidad" class="form-label fw-semibold text-dark small">Disponibilidad Horaria *</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-clock"></i></span>
-                                    <select id="disponibilidad" th:field="*{disponibilidad}" class="form-select" th:errorclass="needcorrection" required>
+                                    <span class="input-group-text"><i class="bi bi-clock" aria-hidden="true"></i></span>
+                                    <select id="disponibilidad" th:field="*{disponibilidad}" class="form-select" th:errorclass="needcorrection" aria-describedby="disponibilidad-error" required>
                                         <option value="" disabled selected>-- Selecciona tu disponibilidad --</option>
                                         <option th:each="horario : ${opcionesHorario != null ? opcionesHorario : {}}" 
                                                 th:value="${horario}" 
                                                 th:text="${horario}">Horario</option>
                                     </select>
                                 </div>
-                                <div th:if="${#fields.hasErrors('disponibilidad')}" class="field-error">
-                                    <i class="bi bi-exclamation-circle-fill mt-1"></i>
+                                <div id="disponibilidad-error" th:if="${#fields.hasErrors('disponibilidad')}" class="field-error" role="alert">
+                                    <i class="bi bi-exclamation-circle-fill mt-1" aria-hidden="true"></i>
                                     <span th:errors="*{disponibilidad}">Error en disponibilidad</span>
                                 </div>
                             </div>
@@ -424,33 +228,33 @@
                             <div class="col-md-6">
                                 <label for="preferencias" class="form-label fw-semibold text-dark small">Preferencias o notas adicionales</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-list-stars"></i></span>
+                                    <span class="input-group-text"><i class="bi bi-list-stars" aria-hidden="true"></i></span>
                                     <input id="preferencias" type="text" th:field="*{preferencias}" class="form-control" placeholder="Ej. Carnet de conducir B" />
                                 </div>
                             </div>
                         </div>
 
                         <!-- SECCIÓN 3: Consentimiento Legal -->
-                        <div class="p-4 mt-2 mb-4" style="background-color: var(--sg-bg); border-radius: var(--sg-radius); border: 1px solid var(--sg-border);">
+                        <div class="consent-box p-4 mt-2 mb-4">
                             <div class="form-check d-flex align-items-center gap-2">
-                                <input class="form-check-input mt-0 fs-5" type="checkbox" id="consentimientoRGBD" th:field="*{consentimientoRGBD}" th:errorclass="is-invalid" required />
+                                <input class="form-check-input mt-0 fs-5" type="checkbox" id="consentimientoRGBD" th:field="*{consentimientoRGBD}" th:errorclass="is-invalid" aria-describedby="consentimiento-error" required />
                                 <label class="form-check-label text-dark small" for="consentimientoRGBD">
                                     He leído y acepto el <strong>Tratamiento de Datos y Política de Privacidad</strong>.
                                 </label>
                             </div>
-                            <div th:if="${#fields.hasErrors('consentimientoRGBD')}" class="field-error mt-2">
-                                <i class="bi bi-exclamation-circle-fill"></i>
+                            <div id="consentimiento-error" th:if="${#fields.hasErrors('consentimientoRGBD')}" class="field-error mt-2" role="alert">
+                                <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
                                 <span th:errors="*{consentimientoRGBD}">Debe aceptar los términos</span>
                             </div>
                         </div>
 
                         <!-- Centinela para detectar errores desde JS -->
-                        <div id="serverHasErrors" th:if="${#fields.hasErrors('*')}" style="display: none;"></div>
+                        <div id="serverHasErrors" th:if="${#fields.hasErrors('*')}" class="d-none"></div>
 
                         <!-- Botones de Acción -->
                         <div class="d-flex flex-column flex-sm-row gap-3 pt-4 border-top">
                             <button type="submit" class="btn btn-sg-primary py-3 px-4 fs-6 flex-grow-1 d-inline-flex align-items-center justify-content-center gap-2">
-                                <i class="bi bi-send-check-fill"></i> Enviar Solicitud de Registro
+                                <i class="bi bi-send-check-fill" aria-hidden="true"></i> Enviar Solicitud de Registro
                             </button>
                             <a th:href="@{/}" class="btn btn-sg-outline py-3 px-4 text-center">
                                 Cancelar
@@ -464,20 +268,20 @@
     </main>
 
     <!-- Notificación Flotante (Toast) para Validación Cliente -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <div class="toast-container toast-container-custom position-fixed bottom-0 end-0 p-3">
         <div id="validationToast" class="toast align-items-center text-bg-danger border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body d-flex align-items-center gap-2 fw-medium">
-                    <i class="bi bi-shield-x fs-5"></i>
+                    <i class="bi bi-shield-x fs-5" aria-hidden="true"></i>
                     <span id="toastMessage">Revisa los datos introducidos.</span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar notificación"></button>
             </div>
         </div>
     </div>
 
     <!-- Pie de Página -->
-    <footer class="bg-white border-top py-4 text-center text-muted small mt-auto">
+    <footer class="bg-white border-top py-4 text-center text-muted small mt-auto" role="contentinfo">
         <div class="container">
             <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
         </div>
@@ -523,16 +327,26 @@
             document.body.classList.toggle('high-contrast');
         }
 
-        // Mostrar/Ocultar Contraseña
+        // Mostrar/Ocultar Contraseña con Accesibilidad ARIA
         function togglePasswordVisibility() {
             const passwordInput = document.getElementById('contraseña');
             const eyeIcon = document.getElementById('eyeIcon');
+            const toggleBtn = document.getElementById('togglePasswordBtn');
+            
             if (passwordInput && passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 eyeIcon.classList.replace('bi-eye-fill', 'bi-eye-slash-fill');
+                if (toggleBtn) {
+                    toggleBtn.setAttribute('aria-label', 'Ocultar contraseña');
+                    toggleBtn.setAttribute('aria-pressed', 'true');
+                }
             } else if (passwordInput) {
                 passwordInput.type = 'password';
                 eyeIcon.classList.replace('bi-eye-slash-fill', 'bi-eye-fill');
+                if (toggleBtn) {
+                    toggleBtn.setAttribute('aria-label', 'Mostrar contraseña');
+                    toggleBtn.setAttribute('aria-pressed', 'false');
+                }
             }
         }
     </script>
