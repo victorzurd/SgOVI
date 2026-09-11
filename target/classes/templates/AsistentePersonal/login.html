@@ -99,7 +99,7 @@
                     <label for="email" class="form-label fw-bold text-dark small mb-1">Correo Electrónico</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
-                        <input type="email" class="form-control py-2" id="email" th:field="*{email}" placeholder="nombre@ejemplo.com" required autofocus>
+                        <input type="email" class="form-control py-2" id="usuario" th:field="*{usuario}" placeholder="nombre@ejemplo.com" required autofocus>
                     </div>
                 </div>
 
@@ -108,7 +108,7 @@
                     <label for="contraseña" class="form-label fw-bold text-dark small mb-1">Contraseña</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
-                        <input type="password" class="form-control py-2" id="contraseña" th:field="*{contraseña}" placeholder="••••••••" required>
+                        <input type="password" class="form-control py-2" id="password" th:field="*{password}" placeholder="••••••••" required>
                         <button class="btn btn-outline-secondary px-3" type="button" id="btnTogglePassword" onclick="togglePasswordVisibility()" aria-label="Mostrar u ocultar contraseña">
                             <i class="bi bi-eye-fill" id="eyeIcon"></i>
                         </button>

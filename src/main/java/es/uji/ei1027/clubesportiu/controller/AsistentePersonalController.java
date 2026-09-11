@@ -179,14 +179,14 @@ public class AsistentePersonalController {
 
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String loginSubmit(@ModelAttribute("asistente") AsistentePersonal usuario,
+    public String loginSubmit(@ModelAttribute("asistente") UserDetails usuario,
                               BindingResult result, HttpSession session, Model model) {
 
         if (result.hasErrors()) {
             return "AsistentePersonal/login";
         }
 
-        AsistentePersonal asistenteBD = asistentePersonalDao.getAsistentePersonalByEmail(usuario.getEmail());
+        AsistentePersonal asistenteBD = asistentePersonalDao.getAsistentePersonalByEmail(usuario.getUsuario());
 
         if (asistenteBD == null) {
             result.rejectValue("email", "bad-credentials", "El correo electrónico o la contraseña son incorrectos.");
@@ -195,7 +195,7 @@ public class AsistentePersonalController {
         }
 
         BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
-        if (!passwordEncryptor.checkPassword(usuario.getContraseña(), asistenteBD.getContraseña())) {
+        if (!passwordEncryptor.checkPassword(usuario.getPassword(), asistenteBD.getContraseña())) {
             model.addAttribute("error", "Credenciales incorrectas");
             return "AsistentePersonal/login";
         }
