@@ -1,9 +1,7 @@
 package es.uji.ei1027.clubesportiu.controller;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.io.File;
-import java.io.IOException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import org.apache.pdfbox.Loader;
@@ -11,6 +9,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.uji.ei1027.clubesportiu.dao.APRequestDao;
 import es.uji.ei1027.clubesportiu.dao.AsistentePersonalDao;
-import es.uji.ei1027.clubesportiu.dao.UsuarioOVIDao;
-import es.uji.ei1027.clubesportiu.dao.SeleccionDao;
 import es.uji.ei1027.clubesportiu.dao.RegistroContratoDao;
+import es.uji.ei1027.clubesportiu.dao.SeleccionDao;
+import es.uji.ei1027.clubesportiu.dao.UsuarioOVIDao;
 import es.uji.ei1027.clubesportiu.model.APRequest;
 import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
 import es.uji.ei1027.clubesportiu.model.RegistroContrato;

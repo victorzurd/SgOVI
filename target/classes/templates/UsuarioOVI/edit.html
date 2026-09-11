@@ -10,265 +10,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Estilos fusionados: Sistema Base SgOVI + Accesibilidad & Usabilidad -->
-    <style>
-        /* ==========================================================================
-           SgOVI - Sistema de Diseño Base y Accesibilidad
-           ========================================================================== */
-        :root {
-            --sg-primary: #0D9488;
-            --sg-primary-dark: #0F766E;
-            --sg-primary-light: #E6FFFA;
-            --sg-dark: #0F172A;
-            --sg-slate: #334155;
-            --sg-muted: #64748B;
-            --sg-bg: #F8FAFC;
-            --sg-card-bg: #FFFFFF;
-            --sg-accent: #F43F5E;
-            --sg-border: #E2E8F0;
-            --sg-radius: 16px;
-            --sg-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-        }
-
-        body {
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--sg-bg);
-            color: var(--sg-slate);
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* --- Barra de Accesibilidad --- */
-        .accessibility-bar {
-            background-color: var(--sg-dark);
-            color: white;
-            font-size: 0.85rem;
-            padding: 6px 0;
-        }
-
-        .accessibility-bar button {
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            padding: 0;
-            color: #E2E8F0;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: color 0.2s ease;
-            font-family: inherit;
-        }
-
-        .accessibility-bar button:hover {
-            color: white;
-            text-decoration: underline;
-        }
-
-        /* --- Navbar --- */
-        .navbar-custom {
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-        }
-
-        .navbar-brand {
-            font-size: 1.6rem;
-            color: var(--sg-primary) !important;
-            letter-spacing: -0.5px;
-        }
-
-        .text-teal {
-            color: var(--sg-primary) !important;
-        }
-
-        /* --- Botones --- */
-        .btn-sg-primary {
-            background-color: var(--sg-primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
-        }
-
-        .btn-sg-primary:hover {
-            background-color: var(--sg-primary-dark);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(13, 148, 136, 0.35);
-        }
-
-        .btn-sg-outline {
-            border: 2px solid #CBD5E1;
-            color: var(--sg-dark);
-            border-radius: 12px;
-            font-weight: 600;
-            background-color: white;
-            transition: all 0.25s ease;
-        }
-
-        .btn-sg-outline:hover {
-            border-color: var(--sg-primary);
-            color: var(--sg-primary);
-            background-color: var(--sg-primary-light);
-            transform: translateY(-2px);
-        }
-
-        /* --- Tarjetas y Contenedores --- */
-        .pillar-card {
-            background-color: var(--sg-card-bg);
-            border: 1px solid var(--sg-border);
-            border-radius: var(--sg-radius);
-            padding: 1.5rem;
-            box-shadow: var(--sg-shadow);
-        }
-
-        .pillar-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background-color: var(--sg-primary-light);
-            color: var(--sg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-
-        .hero-badge {
-            background-color: var(--sg-primary-light);
-            color: var(--sg-primary-dark);
-            font-weight: 700;
-            font-size: 0.85rem;
-            padding: 6px 16px;
-            border-radius: 50px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .form-section-title {
-            color: var(--sg-primary-dark);
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-bottom: 2px solid var(--sg-border);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
-            margin-top: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* --- Validaciones y Feedback --- */
-        .needcorrection, 
-        .input-group:has(.needcorrection) .input-group-text {
-            border-color: var(--sg-accent) !important;
-            background-color: #FFF0F2 !important;
-        }
-
-        .input-group:has(.needcorrection) .input-group-text {
-            color: var(--sg-accent) !important;
-        }
-
-        .field-error {
-            color: var(--sg-accent);
-            font-size: 0.85rem;
-            margin-top: 0.35rem;
-            font-weight: 600;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.35rem;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .alert-sg-danger {
-            background-color: #FFF0F2;
-            border-left: 4px solid var(--sg-accent);
-            color: #9F1239;
-            border-radius: 8px;
-        }
-
-        /* Indicador de Estado de Cambios */
-        .status-badge {
-            font-size: 0.8rem;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .status-badge.clean {
-            background-color: #F1F5F9;
-            color: var(--sg-muted);
-        }
-
-        .status-badge.dirty {
-            background-color: #FEF3C7;
-            color: #92400E;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
-
-        /* Modo Alto Contraste */
-        body.high-contrast {
-            background-color: #000000 !important;
-            color: #FFFFFF !important;
-        }
-
-        body.high-contrast .navbar-custom,
-        body.high-contrast .pillar-card,
-        body.high-contrast footer {
-            background-color: #121212 !important;
-            border-color: #444444 !important;
-            color: #FFFFFF !important;
-        }
-
-        body.high-contrast h1, 
-        body.high-contrast h2, 
-        body.high-contrast p,
-        body.high-contrast span,
-        body.high-contrast .form-label {
-            color: #FFFFFF !important;
-        }
-
-        body.high-contrast .btn-sg-primary {
-            background-color: #FFFF00 !important;
-            color: #000000 !important;
-            font-weight: bold;
-            box-shadow: none;
-        }
-
-        body.high-contrast .btn-sg-outline {
-            background-color: #000000 !important;
-            color: #FFFF00 !important;
-            border-color: #FFFF00 !important;
-        }
-    </style>
+    <!-- Estilos Reutilizables Centralizados del Sistema SgOVI -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/sgovi-style.css}" />
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
     <!-- Barra Superior de Accesibilidad -->
     <div class="accessibility-bar">
         <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <span><i class="bi bi-universal-access me-1"></i> Accesibilidad y Usabilidad</span>
-            <div class="d-flex gap-4">
-                <button type="button" onclick="toggleFontSize('increase')"><i class="bi bi-zoom-in"></i> Texto +</button>
-                <button type="button" onclick="toggleFontSize('decrease')"><i class="bi bi-zoom-out"></i> Texto -</button>
-                <button type="button" onclick="toggleContrast()"><i class="bi bi-circle-half"></i> Alto Contraste</button>
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
+            <div class="d-flex gap-3">
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto"><i class="bi bi-zoom-in"></i> Texto +</button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Reducir tamaño de texto"><i class="bi bi-zoom-out"></i> Texto -</button>
+                <button type="button" onclick="toggleContrast()" aria-label="Activar o desactivar alto contraste"><i class="bi bi-circle-half"></i> Alto Contraste</button>
             </div>
         </div>
     </div>
@@ -297,7 +52,7 @@
                 
                 <div class="pillar-card p-4 p-md-5">
 
-                    <!-- Encabezado idéntico a Ver Perfil -->
+                    <!-- Encabezado de Edición -->
                     <div class="text-center mb-5">
                         <div class="pillar-icon mx-auto mb-3">
                             <i class="bi bi-person-fill"></i>
@@ -374,7 +129,7 @@
                                            th:errorclass="needcorrection" placeholder="correo@ejemplo.com" required />
                                 </div>
                                 <div th:if="${#fields.hasErrors('email')}" class="field-error">
-                                    <i class="bi bi-exclamation-circle-fill mt-1"></i>
+                                    <i class="bi bi-exclamation-circle-fill"></i>
                                     <span th:errors="*{email}">Error en email</span>
                                 </div>
                             </div>
@@ -456,7 +211,9 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 border-0 shadow">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold text-dark" id="unsavedModalLabel"><i class="bi bi-exclamation-triangle text-warning me-2"></i> Cambios no guardados</h5>
+                    <h5 class="modal-title fw-bold text-dark" id="unsavedModalLabel">
+                        <i class="bi bi-exclamation-triangle text-warning me-2"></i> Cambios no guardados
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body p-4">
@@ -484,9 +241,9 @@
     </div>
 
     <!-- Pie de Página -->
-    <footer class="bg-white border-top py-4 text-center text-muted small mt-auto">
+    <footer class="bg-white border-top py-3 text-center text-muted small mt-auto">
         <div class="container">
-            <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
+            <p class="m-0"><strong>SgOVI</strong> &copy; 2026 - Plataforma para la Vida Independiente</p>
         </div>
     </footer>
 
@@ -507,13 +264,13 @@
             if (!form) return;
             const bsToast = new bootstrap.Toast(toastElement, { delay: 4000 });
 
-            // Detectar errores devueltos por Thymeleaf
+            // Detectar errores devueltos por el servidor
             if (document.getElementById('serverHasErrors')) {
                 toastMessage.textContent = "Se detectaron errores. Revisa los campos marcados.";
                 bsToast.show();
             }
 
-            // Detección de Cambios en el Formulario (Dirty State)
+            // Detección de Cambios en el Formulario
             form.addEventListener('input', function() {
                 if (!isFormDirty) {
                     isFormDirty = true;
@@ -522,7 +279,7 @@
                 }
             });
 
-            // Prevenir pérdida accidental de datos en los botones "Volver" o "Cancelar"
+            // Prevenir pérdida accidental de datos
             const handleNavigation = function (e, targetUrl) {
                 if (isFormDirty) {
                     e.preventDefault();
@@ -540,7 +297,7 @@
                 handleNavigation(e, this.getAttribute('href'));
             });
 
-            // Validación al enviar el formulario
+            // Validación al enviar
             form.addEventListener('submit', function (event) {
                 if (!form.checkValidity()) {
                     event.preventDefault();
@@ -549,20 +306,18 @@
                     toastMessage.textContent = "Verifica los datos obligatorios marcados con (*).";
                     bsToast.show();
                 } else {
-                    isFormDirty = false; // Permitir envío
+                    isFormDirty = false;
                 }
                 form.classList.add('was-validated');
             }, false);
         });
 
-        // Accesibilidad: Ajuste de Texto
         function toggleFontSize(action) {
             const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
             if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
             if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
         }
 
-        // Accesibilidad: Alto Contraste
         function toggleContrast() {
             document.body.classList.toggle('high-contrast');
         }

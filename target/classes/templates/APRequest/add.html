@@ -10,253 +10,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Estilos fusionados: Sistema Base SgOVI + Accesibilidad & Usabilidad -->
-    <style>
-        /* ==========================================================================
-           SgOVI - Sistema de Diseño Base y Accesibilidad
-           ========================================================================== */
-        :root {
-            --sg-primary: #0D9488;
-            --sg-primary-dark: #0F766E;
-            --sg-primary-light: #E6FFFA;
-            --sg-dark: #0F172A;
-            --sg-slate: #334155;
-            --sg-muted: #64748B;
-            --sg-bg: #F8FAFC;
-            --sg-card-bg: #FFFFFF;
-            --sg-accent: #F43F5E;
-            --sg-border: #E2E8F0;
-            --sg-radius: 16px;
-            --sg-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-        }
-
-        body {
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--sg-bg);
-            color: var(--sg-slate);
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* --- Barra de Accesibilidad --- */
-        .accessibility-bar {
-            background-color: var(--sg-dark);
-            color: white;
-            font-size: 0.85rem;
-            padding: 6px 0;
-        }
-
-        .accessibility-bar button {
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            padding: 0;
-            color: #E2E8F0;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: color 0.2s ease;
-            font-family: inherit;
-        }
-
-        .accessibility-bar button:hover {
-            color: white;
-            text-decoration: underline;
-        }
-
-        /* --- Navbar --- */
-        .navbar-custom {
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-        }
-
-        .navbar-brand {
-            font-size: 1.6rem;
-            color: var(--sg-primary) !important;
-            letter-spacing: -0.5px;
-        }
-
-        .text-teal {
-            color: var(--sg-primary) !important;
-        }
-
-        /* --- Botones --- */
-        .btn-sg-primary {
-            background-color: var(--sg-primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
-        }
-
-        .btn-sg-primary:hover {
-            background-color: var(--sg-primary-dark);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(13, 148, 136, 0.35);
-        }
-
-        .btn-sg-outline {
-            border: 2px solid #CBD5E1;
-            color: var(--sg-dark);
-            border-radius: 12px;
-            font-weight: 600;
-            background-color: white;
-            transition: all 0.25s ease;
-        }
-
-        .btn-sg-outline:hover {
-            border-color: var(--sg-primary);
-            color: var(--sg-primary);
-            background-color: var(--sg-primary-light);
-            transform: translateY(-2px);
-        }
-
-        /* --- Tarjetas y Contenedores --- */
-        .pillar-card {
-            background-color: var(--sg-card-bg);
-            border: 1px solid var(--sg-border);
-            border-radius: var(--sg-radius);
-            padding: 1.5rem;
-            box-shadow: var(--sg-shadow);
-        }
-
-        .pillar-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background-color: var(--sg-primary-light);
-            color: var(--sg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-
-        .hero-badge {
-            background-color: var(--sg-primary-light);
-            color: var(--sg-primary-dark);
-            font-weight: 700;
-            font-size: 0.85rem;
-            padding: 6px 16px;
-            border-radius: 50px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .form-section-title {
-            color: var(--sg-primary-dark);
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-bottom: 2px solid var(--sg-border);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
-            margin-top: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* --- Validaciones y Feedback --- */
-        .needcorrection, 
-        .input-group:has(.needcorrection) .input-group-text {
-            border-color: var(--sg-accent) !important;
-            background-color: #FFF0F2 !important;
-        }
-
-        .input-group:has(.needcorrection) .input-group-text {
-            color: var(--sg-accent) !important;
-        }
-
-        .field-error {
-            color: var(--sg-accent);
-            font-size: 0.85rem;
-            margin-top: 0.35rem;
-            font-weight: 600;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.35rem;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .alert-sg-danger {
-            background-color: #FFF0F2;
-            border-left: 4px solid var(--sg-accent);
-            color: #9F1239;
-            border-radius: 8px;
-        }
-
-        /* Indicador de Estado de Cambios */
-        .status-badge {
-            font-size: 0.8rem;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .status-badge.clean {
-            background-color: #F1F5F9;
-            color: var(--sg-muted);
-        }
-
-        .status-badge.dirty {
-            background-color: #FEF3C7;
-            color: #92400E;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
-
-        /* Modo Alto Contraste */
-        body.high-contrast {
-            background-color: #000000 !important;
-            color: #FFFFFF !important;
-        }
-
-        body.high-contrast .navbar-custom,
-        body.high-contrast .pillar-card,
-        body.high-contrast footer {
-            background-color: #121212 !important;
-            border-color: #444444 !important;
-            color: #FFFFFF !important;
-        }
-
-        body.high-contrast h1, 
-        body.high-contrast h2, 
-        body.high-contrast p,
-        body.high-contrast span,
-        body.high-contrast .form-label {
-            color: #FFFFFF !important;
-        }
-
-        body.high-contrast .btn-sg-primary {
-            background-color: #FFFF00 !important;
-            color: #000000 !important;
-            font-weight: bold;
-            box-shadow: none;
-        }
-
-        body.high-contrast .btn-sg-outline {
-            background-color: #000000 !important;
-            color: #FFFF00 !important;
-            border-color: #FFFF00 !important;
-        }
-    </style>
+    <!-- Hoja de estilos principal SgOVI -->
+    <link rel="stylesheet" th:href="@{/css/sgovi-style.css}" href="css/sgovi-style.css">
 </head>
 
 <body>
@@ -332,13 +87,12 @@
                             </div>
                         </div>
 
-                        <!-- SECCIÓN 1: Datos Generales de la Solicitud -->
+                        <!-- SECCIÓN 1: Datos Generales -->
                         <h2 class="form-section-title mt-0">
                             <i class="bi bi-card-heading"></i> Detalles Principales
                         </h2>
 
                         <div class="row g-3 mb-4">
-                            <!-- Título o Asunto -->
                             <div class="col-12">
                                 <label for="titulo" class="form-label fw-semibold text-dark small">Título o Asunto breve *</label>
                                 <div class="input-group">
@@ -353,13 +107,13 @@
                             </div>
                         </div>
 
-                        <!-- SECCIÓN 2: Ubicación y Disponibilidad Horaria -->
+                        <!-- SECCIÓN 2: Ubicación y Horarios -->
                         <h2 class="form-section-title">
                             <i class="bi bi-geo-alt-fill"></i> Ubicación y Horarios
                         </h2>
 
                         <div class="row g-3 mb-4">
-                            <!-- Provincia (Desplegable) -->
+                            <!-- Provincia -->
                             <div class="col-md-6">
                                 <label for="provincia" class="form-label fw-semibold text-dark small">Provincia *</label>
                                 <div class="input-group">
@@ -367,7 +121,6 @@
                                     <select id="provincia" th:field="*{provincia}" class="form-select" th:errorclass="needcorrection" required>
                                         <option value="" disabled selected>-- Selecciona provincia --</option>
                                         <option th:each="p : ${provincias}" th:value="${p}" th:text="${p}">Provincia</option>
-                                        <!-- Opciones de respaldo en caso de no cargar variable model -->
                                         <option th:if="${provincias == null}" value="Castellón">Castellón</option>
                                         <option th:if="${provincias == null}" value="Valencia">Valencia</option>
                                         <option th:if="${provincias == null}" value="Alicante">Alicante</option>
@@ -393,7 +146,7 @@
                                 </div>
                             </div>
 
-                            <!-- Horario / Disponibilidad (Desplegable) -->
+                            <!-- Horario -->
                             <div class="col-12">
                                 <label for="horario" class="form-label fw-semibold text-dark small">Horario / Disponibilidad *</label>
                                 <div class="input-group">
@@ -417,7 +170,7 @@
                             </div>
                         </div>
 
-                        <!-- SECCIÓN 3: Requisitos Adicionales -->
+                        <!-- SECCIÓN 3: Preferencias y Descripción -->
                         <h2 class="form-section-title">
                             <i class="bi bi-sliders"></i> Preferencias y Descripción
                         </h2>
@@ -509,7 +262,7 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- Scripts de Funcionalidad -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let isFormDirty = false;
@@ -526,13 +279,11 @@
             if (!form) return;
             const bsToast = new bootstrap.Toast(toastElement, { delay: 4000 });
 
-            // Detectar errores devueltos por el servidor (Thymeleaf)
             if (document.getElementById('serverHasErrors')) {
                 toastMessage.textContent = "Se detectaron errores en el formulario. Revisa los datos.";
                 bsToast.show();
             }
 
-            // Detección de Cambios en el Formulario (Dirty State)
             form.addEventListener('input', function() {
                 if (!isFormDirty) {
                     isFormDirty = true;
@@ -549,7 +300,6 @@
                 }
             });
 
-            // Prevenir pérdida accidental de datos en los botones "Volver" o "Cancelar"
             const handleNavigation = function (e, targetUrl) {
                 if (isFormDirty) {
                     e.preventDefault();
@@ -567,7 +317,6 @@
                 handleNavigation(e, this.getAttribute('href'));
             });
 
-            // Validación al enviar el formulario
             form.addEventListener('submit', function (event) {
                 if (!form.checkValidity()) {
                     event.preventDefault();
@@ -576,20 +325,18 @@
                     toastMessage.textContent = "Verifica los datos obligatorios marcados con (*).";
                     bsToast.show();
                 } else {
-                    isFormDirty = false; // Permitir el envío del formulario
+                    isFormDirty = false;
                 }
                 form.classList.add('was-validated');
             }, false);
         });
 
-        // Accesibilidad: Ajuste dinámico de Texto
         function toggleFontSize(action) {
             const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
             if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
             if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
         }
 
-        // Accesibilidad: Conmutador de Alto Contraste
         function toggleContrast() {
             document.body.classList.toggle('high-contrast');
         }

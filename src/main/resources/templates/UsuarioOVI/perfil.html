@@ -10,164 +10,35 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- CSS Base Reutilizable del Sistema de Diseño -->
-    <link rel="stylesheet" type="text/css" th:href="@{/css/usuarioOVI.css}" />
-
-    <style>
-        /* Variables y Estilos Base del Sistema de Diseño SgOVI */
-        :root {
-            --sg-teal: #0d9488;
-            --sg-teal-dark: #0f766e;
-            --sg-teal-light: rgba(13, 148, 136, 0.1);
-            --sg-bg: #f8fafc;
-            --sg-card-bg: #ffffff;
-            --sg-text: #1e293b;
-            --sg-border: #e2e8f0;
-            --sg-radius: 1rem;
-            --sg-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            --sg-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            background-color: var(--sg-bg);
-            color: var(--sg-text);
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-        }
-
-        .text-teal {
-            color: var(--sg-teal) !important;
-        }
-
-        /* Barra de Accesibilidad */
-        .accessibility-bar {
-            background-color: #0f172a;
-            color: #f8fafc;
-            font-size: 0.85rem;
-            padding: 0.4rem 0;
-        }
-
-        .accessibility-bar button {
-            background: none;
-            border: none;
-            color: #f8fafc;
-            font-weight: 500;
-            cursor: pointer;
-            padding: 0.1rem 0.4rem;
-            border-radius: 0.25rem;
-        }
-
-        .accessibility-bar button:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        /* Navegación */
-        .navbar-custom {
-            background-color: var(--sg-card-bg);
-            border-bottom: 1px solid var(--sg-border);
-            box-shadow: var(--sg-shadow);
-        }
-
-        /* Tarjeta de Perfil */
-        .profile-card {
-            background-color: var(--sg-card-bg);
-            border: 1px solid var(--sg-border);
-            border-radius: var(--sg-radius);
-            box-shadow: var(--sg-shadow);
-            overflow: hidden;
-        }
-
-        .profile-header-banner {
-            background-color: var(--sg-teal-light);
-            border-bottom: 1px solid var(--sg-border);
-            padding: 2rem 1.5rem;
-        }
-
-        .avatar-circle {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background-color: var(--sg-teal);
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
-        }
-
-        .info-block {
-            background-color: #f8fafc;
-            border: 1px solid var(--sg-border);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-        }
-
-        /* Botones SgOVI */
-        .btn-sg-primary {
-            background-color: var(--sg-teal);
-            color: #ffffff;
-            border: 1px solid var(--sg-teal);
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-            font-weight: 600;
-        }
-
-        .btn-sg-primary:hover {
-            background-color: var(--sg-teal-dark);
-            border-color: var(--sg-teal-dark);
-            color: #ffffff;
-        }
-
-        /* Modo Alto Contraste */
-        body.high-contrast {
-            --sg-bg: #000000;
-            --sg-card-bg: #000000;
-            --sg-text: #ffffff;
-            --sg-border: #ffffff;
-            --sg-teal: #ffff00;
-            --sg-teal-dark: #ffff00;
-            --sg-teal-light: #333300;
-        }
-
-        body.high-contrast .profile-card,
-        body.high-contrast .info-block {
-            border: 2px solid #ffffff !important;
-        }
-
-        body.high-contrast .btn-sg-primary {
-            background-color: #ffff00 !important;
-            color: #000000 !important;
-            font-weight: bold;
-        }
-    </style>
+    <!-- Estilos Reutilizables Centralizados del Sistema SgOVI -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/sgovi-style.css}" />
 </head>
 
 <body class="d-flex flex-column min-vh-100">
 
     <!-- Barra Superior de Accesibilidad -->
     <div class="accessibility-bar">
-        <div class="container d-flex justify-content-between align-items-center">
-            <span><i class="bi bi-universal-access me-1"></i> Accesibilidad y Usabilidad</span>
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
             <div class="d-flex gap-3">
                 <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto"><i class="bi bi-zoom-in"></i> Texto +</button>
                 <button type="button" onclick="toggleFontSize('decrease')" aria-label="Reducir tamaño de texto"><i class="bi bi-zoom-out"></i> Texto -</button>
-                <button type="button" onclick="toggleContrast()" aria-label="Activar alto contraste"><i class="bi bi-circle-half"></i> Alto Contraste</button>
+                <button type="button" onclick="toggleContrast()" aria-label="Activar o desactivar alto contraste"><i class="bi bi-circle-half"></i> Alto Contraste</button>
             </div>
         </div>
     </div>
 
     <!-- Navegación Principal -->
-    <nav class="navbar navbar-custom py-3">
+    <nav class="navbar navbar-custom sticky-top">
         <div class="container justify-content-between">
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/UsuarioOVI/dashboard}">
-                <i class="bi bi-heart-pulse-fill text-teal fs-4"></i>
-                <span class="fs-5">SgOVI - Área Personal</span>
+                <i class="bi bi-heart-pulse-fill text-teal"></i> SgOVI - Área Personal
             </a>
             <div class="d-flex align-items-center gap-2">
-                <a th:href="@{/UsuarioOVI/dashboard}" class="btn btn-outline-secondary btn-sm fw-bold px-3 d-flex align-items-center gap-1">
+                <a th:href="@{/UsuarioOVI/dashboard}" class="btn btn-sg-outline btn-sm fw-bold px-3 py-2 d-flex align-items-center gap-1">
                     <i class="bi bi-arrow-left"></i> Volver al Panel
                 </a>
-                <a th:href="@{/UsuarioOVI/logout}" class="btn btn-outline-danger btn-sm fw-bold px-3 d-flex align-items-center gap-1">
+                <a th:href="@{/UsuarioOVI/logout}" class="btn btn-outline-danger btn-sm fw-bold px-3 py-2 d-flex align-items-center gap-1">
                     <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
                 </a>
             </div>
@@ -185,7 +56,7 @@
         </div>
 
         <!-- Tarjeta Principal del Perfil -->
-        <div class="profile-card mb-4">
+        <div class="profile-card mb-4 p-0">
 
             <!-- Banner Superior de Identificación -->
             <div class="profile-header-banner d-flex align-items-center gap-3">
@@ -203,7 +74,7 @@
             </div>
 
             <!-- Cuerpo de la Tarjeta de Perfil -->
-            <div class="p-4">
+            <div class="p-4 p-md-5">
 
                 <!-- Fila 1: Nombre y Apellidos Desglosados -->
                 <div class="row g-3 mb-4">
@@ -261,7 +132,7 @@
                     </div>
                 </div>
 
-                <!-- Fila 3: Dirección y Provincia (Añadida la Provincia) -->
+                <!-- Fila 3: Dirección y Provincia -->
                 <div class="row g-3 mb-4">
                     <!-- Dirección -->
                     <div class="col-md-6">
@@ -308,7 +179,7 @@
                         <i class="bi bi-pencil-square"></i> Editar Perfil
                     </a>
 
-                    <!-- Botón para abrir Modal de Confirmación de Borrado -->
+                    <!-- Botón para abrir Modal de Confirmación -->
                     <button type="button" class="btn btn-outline-danger fw-bold px-4 py-2-5 d-inline-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
                         <i class="bi bi-trash3-fill"></i> Eliminar Perfil
                     </button>
@@ -319,7 +190,7 @@
 
     </main>
 
-    <!-- Modal de Seguridad de Confirmación para Eliminar Cuenta -->
+    <!-- Modal de Confirmación para Eliminar Cuenta -->
     <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
@@ -339,7 +210,6 @@
                 </div>
                 <div class="modal-footer bg-light border-top-0 d-flex justify-content-center gap-2">
                     <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
-                    <!-- Ruta Thymeleaf del botón original -->
                     <a th:href="@{/UsuarioOVI/delete}" class="btn btn-danger px-4 fw-bold">
                         Sí, Eliminar Perfil
                     </a>
@@ -360,7 +230,7 @@
     <script>
         function toggleFontSize(action) {
             const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
-            if (action === 'increase' && currentSize < 22) {
+            if (action === 'increase' && currentSize < 24) {
                 document.body.style.fontSize = (currentSize + 1.5) + 'px';
             } else if (action === 'decrease' && currentSize > 13) {
                 document.body.style.fontSize = (currentSize - 1.5) + 'px';

@@ -1,103 +1,182 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${rol == 'TECNICO' ? 'SgOVI - Gestión de Peticiones' : 'SgOVI - Mis Peticiones'}">SgOVI - Peticiones</title>
+
+    <!-- Frameworks externos (CDN) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/usuarioOVI.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Hoja de estilos principal SgOVI -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/sgovi-style.css}" href="css/sgovi-style.css" />
 </head>
 
-<body class="bg-light">
+<body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-5">
-        <div class="container">
-            <a class="navbar-brand text-teal fw-bold" th:href="${rol == 'TECNICO' ? '/TecnicoOVI/dashboard' : '/UsuarioOVI/dashboard'}">
-                SgOVI - <span th:text="${rol == 'TECNICO' ? 'Gestión Técnica' : 'Área Personal'}">Área Personal</span>
+    <!-- Barra Superior de Accesibilidad -->
+    <div class="accessibility-bar" role="region" aria-label="Herramientas de accesibilidad">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
+            <div class="d-flex gap-4">
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto">
+                    <i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +
+                </button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Disminuir tamaño de texto">
+                    <i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -
+                </button>
+                <button type="button" onclick="toggleContrast()" aria-label="Cambiar a modo alto contraste">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación Principal -->
+    <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
+        <div class="container justify-content-between">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" 
+               th:href="${rol == 'TECNICO' ? '/TecnicoOVI/dashboard' : '/UsuarioOVI/dashboard'}">
+                <i class="bi bi-heart-pulse-fill text-teal" aria-hidden="true"></i>
+                <span>SgOVI - <span th:text="${rol == 'TECNICO' ? 'Gestión Técnica' : 'Área Personal'}">Área Personal</span></span>
             </a>
-            <div class="d-flex align-items-center">
-                <a th:href="${rol == 'TECNICO' ? '/TecnicoOVI/logout' : '/UsuarioOVI/logout'}" class="btn btn-outline-danger btn-sm fw-bold">
-                    Cerrar Sesión
+            <div class="d-flex align-items-center gap-2">
+                <a th:href="${rol == 'TECNICO' ? '/TecnicoOVI/dashboard' : '/UsuarioOVI/dashboard'}" 
+                   class="btn btn-sg-outline btn-sm px-3 py-2">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Panel Principal
+                </a>
+                <a th:href="${rol == 'TECNICO' ? '/TecnicoOVI/logout' : '/UsuarioOVI/logout'}" 
+                   class="btn btn-outline-danger btn-sm px-3 py-2 fw-semibold">
+                    <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar Sesión
                 </a>
             </div>
         </div>
     </nav>
 
-    <main class="container py-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="text-teal fw-bold mb-0" th:text="${rol == 'TECNICO' ? 'Gestión de Peticiones de Asistencia' : 'Mis Peticiones de Asistencia'}">Peticiones</h2>
-                    <a th:href="${rol == 'TECNICO' ? '/TecnicoOVI/dashboard' : '/UsuarioOVI/dashboard'}" class="btn btn-teal">Volver</a>
+    <!-- Contenedor Principal -->
+    <main class="container py-4 flex-grow-1">
+        <div class="pillar-card p-4 p-md-5">
+
+            <!-- Encabezado de la Sección -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 border-bottom pb-3">
+                <div>
+                    <span class="hero-badge mb-2">
+                        <i class="bi bi-list-check" aria-hidden="true"></i> Registro
+                    </span>
+                    <h1 class="h3 fw-bold text-dark m-0" 
+                        th:text="${rol == 'TECNICO' ? 'Gestión de Peticiones de Asistencia' : 'Mis Peticiones de Asistencia'}">
+                        Peticiones
+                    </h1>
                 </div>
+            </div>
 
-                <th:block
-    th:replace="~{fragments/buscador(action='/APRequest/list')}"/>
+            <!-- ÚNICO BUSCADOR: Consulta directa a Base de Datos con Paginación -->
+            <div class="mb-4">
+                <th:block th:replace="~{fragments/buscador(action='/APRequest/list')}"/>
+            </div>
 
-                <table class="table table-striped table-hover align-middle">
-                    <thead class="table-light">
+            <!-- Tabla Accesible de Solicitudes -->
+            <div class="table-responsive" aria-live="polite">
+                <table class="table table-sg align-middle">
+                    <thead>
                         <tr>
-                            <th>Fecha Solicitud</th>
-                            <th>Título</th>
-                            <th>Estado</th>
-                            <th th:if="${rol == 'TECNICO'}">Usuario</th>
-                            <th th:if="${rol != 'TECNICO'}">Asistente</th>
-                            <th class="text-center">Acciones</th>
+                            <th scope="col"><i class="bi bi-calendar3 me-1" aria-hidden="true"></i> Fecha Solicitud</th>
+                            <th scope="col"><i class="bi bi-card-heading me-1" aria-hidden="true"></i> Título</th>
+                            <th scope="col"><i class="bi bi-info-circle me-1" aria-hidden="true"></i> Estado</th>
+                            <th scope="col" th:if="${rol == 'TECNICO'}"><i class="bi bi-person me-1" aria-hidden="true"></i> Usuario</th>
+                            <th scope="col" th:if="${rol != 'TECNICO'}"><i class="bi bi-person-badge me-1" aria-hidden="true"></i> Asistente</th>
+                            <th scope="col" class="text-center"><i class="bi bi-gear me-1" aria-hidden="true"></i> Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="request : ${requests}">
+                        <tr th:each="request : ${requests}" class="request-row">
                             <td th:text="${#temporals.format(request.fechaSolicitud, 'dd/MM/yyyy')}">01/01/2026</td>
-                            <td th:text="${request.titulo}">Título</td>
+                            <td th:text="${request.titulo}" class="fw-bold text-dark">Título de la solicitud</td>
                             <td>
-                                <span th:text="${request.estado}" class="badge bg-secondary">Estado</span>
+                                <span th:text="${request.estado}" 
+                                      th:classappend="${request.estado == 'PENDIENTE' ? 'status-pill-warning' : (request.estado == 'COMPLETADO' || request.estado == 'ASIGNADO' ? 'status-pill-success' : 'status-pill-info')}" 
+                                      class="status-pill">
+                                    Estado
+                                </span>
                             </td>
                             
+                            <!-- Columna solo para Perfil TÉCNICO -->
                             <td th:if="${rol == 'TECNICO'}" th:text="${nombresUsuarios[request.idUsuario]}">Nombre del Usuario</td>
 
+                            <!-- Columna solo para Perfil USUARIO OVI -->
                             <td th:if="${rol != 'TECNICO'}">
-                                <span th:if="${request.idSeleccion != null}" class="fw-bold text-success">
-                                    Asistente Asignado
+                                <span th:if="${request.idSeleccion != null}" class="status-pill status-pill-success">
+                                    <i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i> Asistente Asignado
                                 </span>
-                                <span th:unless="${request.idSeleccion != null}" class="text-muted small">
-                                    Buscando asistente...
+                                <span th:unless="${request.idSeleccion != null}" class="text-muted small italic">
+                                    <i class="bi bi-clock-history me-1" aria-hidden="true"></i> Buscando asistente...
                                 </span>
                             </td>
 
+                            <!-- Acciones según Rol -->
                             <td class="text-center">
-                                <div class="btn-action-group">
+                                <div class="btn-action-group d-flex justify-content-center gap-2">
                                     <th:block th:if="${rol == 'TECNICO'}">
-                                        <a th:href="@{/APRequest/gestion/{id}(id=${request.idRequest})}" class="btn btn-teal btn-sm fw-bold px-3">
-                                            Gestionar petición
+                                        <a th:href="@{/APRequest/gestion/{id}(id=${request.idRequest})}" 
+                                           class="btn btn-sg-primary btn-sm px-3">
+                                            <i class="bi bi-sliders me-1" aria-hidden="true"></i> Gestionar
                                         </a>
                                     </th:block>
                                     
                                     <th:block th:if="${rol != 'TECNICO'}">
                                         <a th:if="${request.idSeleccion == null}" 
                                            th:href="@{/APRequest/candidatos/{id}(id=${request.idRequest})}" 
-                                           class="btn btn-info btn-sm">
-                                            Ver asistentes
+                                           class="btn btn-sg-outline btn-sm px-3">
+                                            <i class="bi bi-people-fill me-1" aria-hidden="true"></i> Ver asistentes
                                         </a>
-                                        <span th:if="${request.idSeleccion != null}" class="badge bg-success py-2 px-3">
-                                            Completado
+                                        <span th:if="${request.idSeleccion != null}" class="status-pill status-pill-success py-2 px-3">
+                                            <i class="bi bi-check2-all me-1" aria-hidden="true"></i> Completado
                                         </span>
                                     </th:block>
                                 </div>
                             </td>
                         </tr>
                         
+                        <!-- Mensaje en caso de no encontrar solicitudes -->
                         <tr th:if="${#lists.isEmpty(requests)}">
                             <td colspan="5" class="text-center py-5 text-muted">
-                                No hay solicitudes registradas.
+                                <i class="bi bi-inbox fs-2 d-block mb-2 text-teal" aria-hidden="true"></i>
+                                No hay solicitudes registradas o que coincidan con la búsqueda.
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
 
-        <th:block
-    th:replace="~{fragments/paginacion :: paginacion('/APRequest/list')}"/>
+            <!-- Paginación Thymeleaf (Fragmento) -->
+            <th:block th:replace="~{fragments/paginacion :: paginacion('/APRequest/list')}"/>
+
+        </div>
     </main>
+
+    <!-- Pie de Página -->
+    <footer class="bg-white border-top py-4 text-center text-muted small mt-auto">
+        <div class="container">
+            <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
+        </div>
+    </footer>
+
+    <!-- Scripts de Accesibilidad -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Control del Tamaño de Texto
+        function toggleFontSize(action) {
+            const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+            if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
+            if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
+        }
+
+        // Control del Modo Alto Contraste
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+    </script>
 </body>
 </html>
