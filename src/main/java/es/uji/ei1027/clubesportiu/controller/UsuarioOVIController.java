@@ -188,7 +188,7 @@ public class UsuarioOVIController {
         if (usuario == null) {
             return "redirect:/UsuarioOVI/login";
         }
-        model.addAttribute("nombreUsuario", usuario.getNombre());
+        model.addAttribute("nombreUsuario", usuario.getNombre() + " " + usuario.getApellidos());
         return "UsuarioOVI/dashboard";
     }
 

@@ -19,6 +19,7 @@ import es.uji.ei1027.clubesportiu.model.APRequest;
 import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
 import es.uji.ei1027.clubesportiu.model.Provincia;
 import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
+import es.uji.ei1027.clubesportiu.model.UserDetails;
 import es.uji.ei1027.clubesportiu.util.Paginacion;
 import es.uji.ei1027.clubesportiu.validator.AsistentePersonalValidator;
 import jakarta.servlet.http.HttpSession;
@@ -120,6 +121,7 @@ public class AsistentePersonalController {
             return "redirect:/";
         }
         model.addAttribute("asistente", asistente);
+        model.addAttribute("nombreUsuario", asistente.getNombre() + " " + asistente.getApellidos());
         return "AsistentePersonal/main";
     }
 
@@ -167,7 +169,7 @@ public class AsistentePersonalController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model Model) {
-        Model.addAttribute("asistente", new AsistentePersonal());
+        Model.addAttribute("asistente", new UserDetails());
         return "AsistentePersonal/login";
     }
 

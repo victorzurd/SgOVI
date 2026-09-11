@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <!-- Navegación Principal -->
+    <!-- Navegación Principal con Nombre de Usuario -->
     <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
         <div class="container justify-content-between">
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/AsistentePersonal/main}">
@@ -42,6 +42,10 @@
                 <span class="fs-5">SgOVI - Área Profesional</span>
             </a>
             <div class="d-flex align-items-center gap-3">
+                <!-- Nombre del Asistente Personal (Identico al panel de usuario) -->
+                <span class="text-muted small d-none d-md-inline">
+                    <i class="bi bi-person-fill text-teal me-1" aria-hidden="true"></i> <span th:text="${nombreUsuario}">Asistente</span>
+                </span>
                 <a th:href="@{/AsistentePersonal/logout}" class="btn btn-outline-danger btn-sm fw-bold px-3 py-2 d-flex align-items-center gap-1" aria-label="Cerrar sesión de usuario">
                     <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Cerrar Sesión
                 </a>
