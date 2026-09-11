@@ -611,3 +611,125 @@ body {
 body.high-contrast .table-sg tbody tr.request-row:hover {
     background-color: #1a1a1a !important;
 }
+
+/* Estructura Principal del Chat */
+.chat-wrapper {
+    height: calc(100vh - 180px);
+    min-height: 520px;
+}
+
+.chat-sidebar {
+    height: calc(100% - 55px);
+    overflow-y: auto;
+}
+
+.chat-container {
+    height: calc(100% - 135px);
+    overflow-y: auto;
+}
+
+/* Ítem Seleccionado en la Lista de Chats */
+.chat-item {
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.chat-item-active {
+    background-color: var(--sg-primary-light) !important;
+    border-left: 4px solid var(--sg-primary) !important;
+}
+
+/* Indicador de Estado En Línea */
+.chat-status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #22C55E;
+    border-radius: 50%;
+}
+
+/* Estado Vacío de Chat */
+.chat-empty-card {
+    max-width: 480px;
+    border-radius: var(--sg-radius);
+    border: 1px solid var(--sg-border);
+    box-shadow: var(--sg-shadow);
+}
+
+.chat-empty-icon {
+    font-size: 3.5rem;
+    line-height: 1;
+}
+
+/* Burbujas de Mensaje */
+.chat-bubble {
+    max-width: 70%;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.bubble-me {
+    background-color: var(--sg-primary);
+    color: #FFFFFF;
+    border-radius: 16px 16px 2px 16px;
+}
+
+.bubble-other {
+    background-color: #FFFFFF;
+    color: var(--sg-dark);
+    border: 1px solid var(--sg-border);
+    border-radius: 16px 16px 16px 2px;
+}
+
+.message-text {
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.message-time {
+    display: block;
+    text-align: right;
+    font-size: 0.7rem;
+    margin-top: 2px;
+}
+
+.bubble-me .message-time {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.bubble-other .message-time {
+    color: var(--sg-muted);
+}
+
+/* --- Mapeo de Alto Contraste para el Chat (WCAG AAA) --- */
+body.high-contrast .chat-wrapper,
+body.high-contrast .chat-sidebar,
+body.high-contrast .chat-container,
+body.high-contrast .chat-header,
+body.high-contrast .chat-footer,
+body.high-contrast .chat-empty-card {
+    background-color: #000000 !important;
+    border-color: #FFFFFF !important;
+    color: #FFFFFF !important;
+    box-shadow: none !important;
+}
+
+body.high-contrast .chat-item-active {
+    background-color: #1A1A1A !important;
+    border-left: 4px solid #FFFF00 !important;
+}
+
+body.high-contrast .bubble-me {
+    background-color: #000000 !important;
+    color: #FFFF00 !important;
+    border: 2px solid #FFFF00 !important;
+}
+
+body.high-contrast .bubble-other {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+    border: 2px solid #FFFFFF !important;
+}
+
+body.high-contrast .chat-status-dot {
+    background-color: #FFFF00 !important;
+}
