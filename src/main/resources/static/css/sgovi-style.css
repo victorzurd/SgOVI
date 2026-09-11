@@ -733,3 +733,15 @@ body.high-contrast .bubble-other {
 body.high-contrast .chat-status-dot {
     background-color: #FFFF00 !important;
 }
+
+/* Icono destacado de mayor tamaño para encabezados de registro */
+.pillar-icon-lg {
+    width: 64px;
+    height: 64px;
+    font-size: 2rem;
+}
+
+/* Capa de elevación para notificaciones Toast sin estilos inline */
+.toast-container-custom {
+    z-index: 1100;
+}
