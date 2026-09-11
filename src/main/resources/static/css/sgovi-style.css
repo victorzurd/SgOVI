@@ -745,3 +745,8 @@ body.high-contrast .chat-status-dot {
 .toast-container-custom {
     z-index: 1100;
 }
+
+.dashboard-card:hover .icon-box {
+    background-color: var(--sg-primary);
+    color: #FFFFFF;
+}
