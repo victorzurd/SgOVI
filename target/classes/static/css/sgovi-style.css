@@ -789,3 +789,34 @@ body.high-contrast .chat-status-dot {
 .skip-link:focus {
     top: 0;
 }
+
+/* Ancho máximo en contenedor principal de lectura/perfil */
+.main-container-narrow {
+    max-width: 850px;
+}
+
+/* Preservación de saltos de línea en disponibilidad horaria */
+.text-pre-line {
+    white-space: pre-line;
+}
+
+/* Animaciones y efecto Hover sobre la tarjeta principal */
+.profile-card-interactive {
+    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.profile-card-interactive:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0, 128, 128, 0.15) !important;
+}
+
+/* Efecto Hover sobre los bloques internos de datos */
+.info-block-interactive {
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-block-interactive:hover {
+    transform: translateY(-2px);
+    border-color: #008080;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.06);
+}
