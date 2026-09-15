@@ -820,3 +820,45 @@ body.high-contrast .chat-status-dot {
     border-color: #008080;
     box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.06);
 }
+
+/* ==========================================================================
+   MÓDULO DE CHAT DE SALAS - ESTRUCTURA FIJA Y SCROLL INTERNO (SgOVI)
+   ========================================================================== */
+
+/* Tarjeta contenedora adaptable a la pantalla disponible */
+.chat-main-card {
+    height: 100%;
+    min-height: 450px;
+}
+
+/* Scroll lateral de la lista de usuarios */
+.chat-sidebar {
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* Área de mensajes: absorbe el espacio vertical sobrante y activa scroll interno */
+.chat-container {
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* Tarjeta para el estado inicial sin chat seleccionado */
+.chat-empty-state-card {
+    max-width: 500px;
+}
+
+/* Transiciones e interactividad de la lista lateral */
+.chat-item {
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.chat-item:hover {
+    background-color: var(--sg-primary-light) !important;
+}
+
+/* Asegura el correcto comportamiento en el modo de alto contraste */
+body.high-contrast .chat-main-card {
+    border: 2px solid #FFFFFF !important;
+    background-color: #000000 !important;
+}

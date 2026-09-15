@@ -1,107 +1,176 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SgOVI - Chat Asistente</title>
+
+    <!-- Frameworks externos (CDN) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/asistentePersonal.css}" />
-    <style>
-        .chat-sidebar { height: calc(100vh - 160px); overflow-y: auto; }
-        .chat-container { height: calc(100vh - 230px); overflow-y: auto; }
-        .bubble-me { background-color: #000000; color: white; border-radius: 15px 15px 0px 15px; }
-        .bubble-other { background-color: #f1f3f5; color: #212529; border-radius: 15px 15px 15px 0px; }
-        .chat-item-active { background-color: rgba(0, 128, 128, 0.1) !important; border-left: 4px solid #000000; }
-        .btn-teal { background-color: #000000; color: white; }
-        .btn-teal:hover { background-color: #000000; color: white; }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Hoja de estilos principal SgOVI -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/sgovi-style.css}" href="sgovi-style.css" />
 </head>
 
-<body class="bg-light">
+<body class="d-flex flex-column min-vh-100">
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
-        <div class="container">
-            <a class="navbar-brand text-teal fw-bold" th:href="@{/AsistentePersonal/main}">
-                SgOVI - Área Profesional
+    <!-- Barra Superior de Accesibilidad -->
+    <div class="accessibility-bar" role="region" aria-label="Herramientas de accesibilidad">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
+            <div class="d-flex gap-4">
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto">
+                    <i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +
+                </button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Disminuir tamaño de texto">
+                    <i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -
+                </button>
+                <button type="button" onclick="toggleContrast()" aria-label="Cambiar a modo alto contraste">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación Principal -->
+    <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
+        <div class="container justify-content-between">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/AsistentePersonal/main}">
+                <i class="bi bi-heart-pulse-fill text-teal" aria-hidden="true"></i>
+                <span>SgOVI - Área Profesional</span>
             </a>
-            <div class="d-flex align-items-center gap-3">
-                <a th:href="@{/AsistentePersonal/main}" class="btn btn-outline-secondary btn-sm fw-bold me-2">
-                    ← Volver al Panel
+            <div class="d-flex align-items-center gap-2">
+                <a th:href="@{/AsistentePersonal/main}" class="btn btn-sg-outline btn-sm px-3 py-2">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Panel Principal
                 </a>
-                <a href="/AsistentePersonal/logout" class="btn btn-outline-danger btn-sm fw-bold">Cerrar Sesión</a>
+                <a th:href="@{/AsistentePersonal/logout}" class="btn btn-outline-danger btn-sm px-3 py-2 fw-semibold">
+                    <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar Sesión
+                </a>
             </div>
         </div>
     </nav>
 
-    <main class="container">
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="height: calc(100vh - 120px);">
+    <!-- Contenedor Principal -->
+    <main class="container py-4 flex-grow-1">
+        <div class="pillar-card chat-wrapper p-0 overflow-hidden">
             <div class="row g-0 h-100">
-
-                <div class="col-md-4 col-lg-3 border-end bg-white d-flex flex-column h-100">
+                
+                <!-- Barra lateral: Lista de conversaciones de usuarios -->
+                <aside class="col-md-4 col-lg-3 border-end bg-white d-flex flex-column h-100" aria-label="Salas de usuarios">
                     <div class="p-3 border-bottom bg-light">
-                        <h5 class="mb-0 fw-bold text-secondary">Salas de Usuarios</h5>
+                        <h2 class="h6 mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+                            <i class="bi bi-chat-left-text text-teal" aria-hidden="true"></i> Salas de Usuarios
+                        </h2>
                     </div>
-
-                    <div class="list-group list-group-flush chat-sidebar flex-grow-1">
-                        <a th:each="chat : ${chats}"
+                    <div class="list-group list-group-flush chat-sidebar flex-grow-1" role="navigation" aria-label="Lista de salas de chat">
+                        <a th:each="chat : ${chats}" 
                            th:href="@{/chat/asistente/sala/{id}(id=${chat.idChat})}"
-                           class="list-group-item list-group-item-action p-3 border-bottom"
+                           class="list-group-item list-group-item-action p-3 border-bottom chat-item"
                            th:classappend="${chatActual != null and chat.idChat == chatActual.idChat} ? 'chat-item-active' : ''">
                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                <h6 class="mb-0 fw-bold text-dark" th:text="${chat.nombreUsuario}">Usuario</h6>
-                                <small class="text-muted" th:text="${#dates.format(chat.fechaCreacion, 'dd/MM')}">Fecha</small>
+                                <span class="fw-bold text-dark text-truncate" th:text="${chat.nombreUsuario}">Usuario</span>
+                                <small class="text-muted ms-2" th:text="${#dates.format(chat.fechaCreacion, 'dd/MM')}">Fecha</small>
                             </div>
                             <p class="mb-0 text-muted small text-truncate">Solicitud #<span th:text="${chat.idRequest}">0</span></p>
                         </a>
-
+                        
                         <div th:if="${#lists.isEmpty(chats)}" class="text-center p-4 text-muted small">
+                            <i class="bi bi-chat-square-dots d-block fs-3 mb-2 text-teal" aria-hidden="true"></i>
                             No tienes ninguna solicitud de chat asignada actualmente.
                         </div>
                     </div>
-                </div>
+                </aside>
 
-                <div class="col-md-8 col-lg-9 d-flex flex-column h-100 bg-light">
-
-                    <div th:if="${chatActual == null || chatActual.idChat == 0}"
-                         class="card border-0 rounded-4 shadow-sm my-auto mx-auto text-center p-5 bg-white"
-                         style="max-width: 500px;">
-                        <div class="display-1 text-muted mb-3">✉️</div>
-                        <h3 class="fw-bold text-secondary">Bandeja de Consultas</h3>
-                        <p class="text-muted">Por favor, selecciona a un usuario de tu lista lateral para revisar el historial de mensajería y coordinar vuestros servicios.</p>
+                <!-- Área de chat principal -->
+                <section class="col-md-8 col-lg-9 d-flex flex-column h-100 bg-light" aria-label="Sala de conversación activa">
+                    
+                    <!-- Estado inicial (sin chat seleccionado) -->
+                    <div th:if="${chatActual == null || chatActual.idChat == 0}" class="chat-empty-card my-auto mx-auto text-center p-5 bg-white">
+                        <div class="chat-empty-icon text-teal mb-3">
+                            <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+                        </div>
+                        <h2 class="h4 fw-bold text-dark mb-2">Bandeja de Consultas</h2>
+                        <p class="text-muted mb-0">Selecciona a un usuario de tu lista lateral para revisar el historial de mensajería y coordinar vuestros servicios.</p>
                     </div>
 
+                    <!-- Estado con chat activo -->
                     <div th:if="${chatActual != null and chatActual.idChat != 0}" class="d-flex flex-column h-100 bg-white">
-                        <div class="card-header bg-white border-0 py-3 border-bottom d-flex align-items-center">
+                        
+                        <!-- Cabecera del Chat Activo -->
+                        <header class="chat-header bg-white py-3 px-4 border-bottom d-flex align-items-center justify-content-between">
                             <div>
-                                <h5 class="mb-0 fw-bold text-dark" th:text="${chatActual.nombreUsuario}">Nombre del Usuario</h5>
-                                <small class="text-muted">Gestión asociada a la Solicitud ID: #<span th:text="${chatActual.idRequest}">0</span></small>
+                                <h2 class="h5 mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+                                    <i class="bi bi-person-circle text-teal" aria-hidden="true"></i>
+                                    <span th:text="${chatActual.nombreUsuario}">Nombre del Usuario</span>
+                                </h2>
+                                <small class="text-success d-flex align-items-center gap-1 mt-1 fw-semibold">
+                                    <span class="chat-status-dot" aria-hidden="true"></span> Solicitud ID: #<span th:text="${chatActual.idRequest}">0</span>
+                                </small>
                             </div>
-                        </div>
-
-                        <div class="card-body chat-container p-4 bg-light">
-                            <div th:each="msg : ${mensajes}" class="d-flex mb-3"
+                        </header>
+                        
+                        <!-- Caja de Mensajes -->
+                        <div class="chat-container p-4 bg-light" id="cajaMensajes" role="log" aria-live="polite" aria-label="Historial de mensajes">
+                            <div th:each="msg : ${mensajes}" class="d-flex mb-3" 
                                  th:classappend="${msg.remitente == 'ASISTENTE'} ? 'justify-content-end' : 'justify-content-start'">
-                                <div class="p-3 shadow-sm"
-                                     th:classappend="${msg.remitente == 'ASISTENTE'} ? 'bubble-me' : 'bubble-other'"
-                                     style="max-width: 70%;">
-                                    <p class="mb-1" th:text="${msg.contenido}"></p>
-                                    <small class="d-block text-end opacity-75" style="font-size: 0.7rem;" th:text="${#dates.format(msg.fechaEnvio, 'HH:mm')}"></small>
+                                <div class="chat-bubble shadow-sm" 
+                                     th:classappend="${msg.remitente == 'ASISTENTE'} ? 'bubble-me' : 'bubble-other'">
+                                    <p class="mb-1 message-text" th:text="${msg.contenido}"></p>
+                                    <small class="message-time" th:text="${#dates.format(msg.fechaEnvio, 'HH:mm')}"></small>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="card-footer bg-white p-3 border-top">
-                            <form th:action="@{/chat/asistente/enviar/{idChat}(idChat=${chatActual.idChat})}" method="post" class="d-flex gap-2">
+                        
+                        <!-- Formulario de envío de mensajes -->
+                        <footer class="chat-footer bg-white p-3 border-top">
+                            <form th:action="@{/chat/asistente/enviar/{idChat}(idChat=${chatActual.idChat})}" method="post" class="d-flex gap-2" aria-label="Enviar un mensaje">
                                 <input type="hidden" name="idRequest" th:value="${chatActual.idRequest}" />
-                                <input type="text" name="contenido" class="form-control rounded-3 py-2" placeholder="Responde al usuario..." required autocomplete="off" autofocus>
-                                <button type="submit" class="btn btn-teal fw-bold px-4 rounded-3">Enviar</button>
+                                <label for="inputMensaje" class="visually-hidden">Escribe tu mensaje aquí</label>
+                                <input type="text" id="inputMensaje" name="contenido" class="form-control rounded-3 py-2" placeholder="Responde al usuario..." required autocomplete="off" autofocus>
+                                <button type="submit" class="btn btn-sg-primary px-4 rounded-3 d-flex align-items-center gap-2">
+                                    <span>Enviar</span>
+                                    <i class="bi bi-send-fill" aria-hidden="true"></i>
+                                </button>
                             </form>
-                        </div>
+                        </footer>
                     </div>
 
-                </div>
+                </section>
             </div>
         </div>
     </main>
 
+    <!-- Pie de Página -->
+    <footer class="bg-white border-top py-3 text-center text-muted small mt-auto">
+        <div class="container">
+            <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
+        </div>
+    </footer>
+
+    <!-- Scripts JS de Accesibilidad y Desplazamiento -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-scroll al último mensaje al cargar la página
+        document.addEventListener("DOMContentLoaded", function () {
+            const cajaMensajes = document.getElementById('cajaMensajes');
+            if (cajaMensajes) {
+                cajaMensajes.scrollTop = cajaMensajes.scrollHeight;
+            }
+        });
+
+        // Control del Tamaño de Texto
+        function toggleFontSize(action) {
+            const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+            if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
+            if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
+        }
+
+        // Control del Modo Alto Contraste
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+    </script>
 </body>
 </html>
