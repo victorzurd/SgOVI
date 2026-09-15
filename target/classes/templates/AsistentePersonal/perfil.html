@@ -10,196 +10,67 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- CSS Base Reutilizable del Sistema de Diseño -->
+    <!-- CSS Base Reutilizable del Sistema de Diseño SgOVI -->
     <link rel="stylesheet" type="text/css" th:href="@{/css/sgovi-style.css}" />
-
-    <style>
-        /* Variables y Estilos Base del Sistema de Diseño SgOVI */
-        :root {
-            --sg-teal: #0d9488;
-            --sg-teal-dark: #0f766e;
-            --sg-teal-light: rgba(13, 148, 136, 0.1);
-            --sg-bg: #f8fafc;
-            --sg-card-bg: #ffffff;
-            --sg-text: #1e293b;
-            --sg-border: #e2e8f0;
-            --sg-radius: 1rem;
-            --sg-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            --sg-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            background-color: var(--sg-bg);
-            color: var(--sg-text);
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-        }
-
-        .text-teal {
-            color: var(--sg-teal) !important;
-        }
-
-        /* Barra de Accesibilidad */
-        .accessibility-bar {
-            background-color: #0f172a;
-            color: #f8fafc;
-            font-size: 0.85rem;
-            padding: 0.4rem 0;
-        }
-
-        .accessibility-bar button {
-            background: none;
-            border: none;
-            color: #f8fafc;
-            font-weight: 500;
-            cursor: pointer;
-            padding: 0.1rem 0.4rem;
-            border-radius: 0.25rem;
-        }
-
-        .accessibility-bar button:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        /* Navegación */
-        .navbar-custom {
-            background-color: var(--sg-card-bg);
-            border-bottom: 1px solid var(--sg-border);
-            box-shadow: var(--sg-shadow);
-        }
-
-        /* Tarjeta de Perfil */
-        .profile-card {
-            background-color: var(--sg-card-bg);
-            border: 1px solid var(--sg-border);
-            border-radius: var(--sg-radius);
-            box-shadow: var(--sg-shadow);
-            overflow: hidden;
-        }
-
-        .profile-header-banner {
-            background-color: var(--sg-teal-light);
-            border-bottom: 1px solid var(--sg-border);
-            padding: 2rem 1.5rem;
-        }
-
-        .avatar-circle {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background-color: var(--sg-teal);
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
-        }
-
-        .info-block {
-            background-color: #f8fafc;
-            border: 1px solid var(--sg-border);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-        }
-
-        /* Botones SgOVI */
-        .btn-sg-primary {
-            background-color: var(--sg-teal);
-            color: #ffffff;
-            border: 1px solid var(--sg-teal);
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-            font-weight: 600;
-        }
-
-        .btn-sg-primary:hover {
-            background-color: var(--sg-teal-dark);
-            border-color: var(--sg-teal-dark);
-            color: #ffffff;
-        }
-
-        /* Modo Alto Contraste */
-        body.high-contrast {
-            --sg-bg: #000000;
-            --sg-card-bg: #000000;
-            --sg-text: #ffffff;
-            --sg-border: #ffffff;
-            --sg-teal: #ffff00;
-            --sg-teal-dark: #ffff00;
-            --sg-teal-light: #333300;
-        }
-
-        body.high-contrast .profile-card,
-        body.high-contrast .info-block {
-            border: 2px solid #ffffff !important;
-        }
-
-        body.high-contrast .btn-sg-primary {
-            background-color: #ffff00 !important;
-            color: #000000 !important;
-            font-weight: bold;
-        }
-    </style>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
 
+    <!-- Enlace de Salto Accesible (Skip Link) -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
     <!-- Barra Superior de Accesibilidad -->
     <div class="accessibility-bar">
         <div class="container d-flex justify-content-between align-items-center">
-            <span><i class="bi bi-universal-access me-1"></i> Accesibilidad y Usabilidad</span>
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
             <div class="d-flex gap-3">
-                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto"><i class="bi bi-zoom-in"></i> Texto +</button>
-                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Reducir tamaño de texto"><i class="bi bi-zoom-out"></i> Texto -</button>
-                <button type="button" onclick="toggleContrast()" aria-label="Activar alto contraste"><i class="bi bi-circle-half"></i> Alto Contraste</button>
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto"><i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +</button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Reducir tamaño de texto"><i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -</button>
+                <button type="button" onclick="toggleContrast()" aria-label="Activar alto contraste"><i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste</button>
             </div>
         </div>
     </div>
 
     <!-- Navegación Principal -->
-    <nav class="navbar navbar-custom py-3">
+    <nav class="navbar navbar-custom py-3" aria-label="Navegación principal">
         <div class="container justify-content-between">
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/AsistentePersonal/main}">
-                <i class="bi bi-heart-pulse-fill text-teal fs-4"></i>
+                <i class="bi bi-heart-pulse-fill text-teal fs-4" aria-hidden="true"></i>
                 <span class="fs-5">SgOVI - Área Profesional</span>
             </a>
             <div class="d-flex align-items-center gap-2">
-                <a th:href="@{/AsistentePersonal/main}" class="btn btn-outline-secondary btn-sm fw-bold px-3 d-flex align-items-center gap-1">
-                    <i class="bi bi-arrow-left"></i> Volver al Panel
+                <a th:href="@{/AsistentePersonal/main}" class="btn btn-sg-outline btn-sm px-3 d-flex align-items-center gap-1">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al Panel
                 </a>
                 <a th:href="@{/AsistentePersonal/logout}" class="btn btn-outline-danger btn-sm fw-bold px-3 d-flex align-items-center gap-1">
-                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Cerrar Sesión
                 </a>
             </div>
         </div>
     </nav>
 
     <!-- Contenido Principal -->
-    <main class="container py-5 flex-grow-1" style="max-width: 850px;">
+    <main id="main-content" class="container py-5 flex-grow-1" style="max-width: 850px;" tabindex="-1">
 
         <!-- Título de Sección -->
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h1 class="h2 text-dark fw-bold m-0 d-flex align-items-center gap-2">
-                <i class="bi bi-person-vcard-fill text-teal"></i> Mi Perfil Profesional
+                <i class="bi bi-person-vcard-fill text-teal" aria-hidden="true"></i> Mi Perfil Profesional
             </h1>
         </div>
 
         <!-- Tarjeta Principal del Perfil -->
-        <div class="profile-card mb-4">
+        <div class="profile-card mb-4" th:if="${asistente != null}">
 
             <!-- Banner Superior de Identificación -->
             <div class="profile-header-banner d-flex align-items-center gap-3">
-                <div class="avatar-circle flex-shrink-0">
+                <div class="avatar-circle flex-shrink-0" aria-hidden="true">
                     <i class="bi bi-person-fill"></i>
                 </div>
                 <div>
                     <h2 class="h3 fw-bold text-dark mb-1" th:text="${asistente.nombre + ' ' + asistente.apellidos}">
                         Nombre Apellidos
                     </h2>
-                    <span class="badge bg-white text-secondary border font-monospace px-2 py-1"
-                          th:text="${'ID Asistente: #' + asistente.idAsistente}">
-                        ID Asistente: #0
-                    </span>
                 </div>
             </div>
 
@@ -211,7 +82,7 @@
                     <div class="col-md-6">
                         <div class="info-block h-100">
                             <label class="fw-bold text-teal small text-uppercase d-flex align-items-center gap-1 mb-2">
-                                <i class="bi bi-envelope-fill"></i> Correo Electrónico
+                                <i class="bi bi-envelope-fill" aria-hidden="true"></i> Correo Electrónico
                             </label>
                             <p class="text-dark m-0 fs-6 fw-semibold text-break" th:text="${asistente.email}">
                                 correo@ejemplo.com
@@ -222,15 +93,15 @@
                     <div class="col-md-6">
                         <div class="info-block h-100">
                             <label class="fw-bold text-teal small text-uppercase d-flex align-items-center gap-1 mb-2">
-                                <i class="bi bi-telephone-fill"></i> Teléfono de Contacto
+                                <i class="bi bi-telephone-fill" aria-hidden="true"></i> Teléfono de Contacto
                             </label>
                             <p class="text-dark m-0 fs-6 fw-semibold"
-                               th:if="${asistente.telefono != null and asistente.telefono != ''}"
+                               th:if="${asistente.telefono != null and !#strings.isEmpty(asistente.telefono)}"
                                th:text="${asistente.telefono}">
                                 600000000
                             </p>
-                            <p class="text-muted fst-italic m-0 small"
-                               th:unless="${asistente.telefono != null and asistente.telefono != ''}">
+                            <p class="text-muted-custom fst-italic m-0 small"
+                               th:unless="${asistente.telefono != null and !#strings.isEmpty(asistente.telefono)}">
                                 No especificado
                             </p>
                         </div>
@@ -243,15 +114,15 @@
                     <div class="col-md-6">
                         <div class="info-block h-100">
                             <label class="fw-bold text-teal small text-uppercase d-flex align-items-center gap-1 mb-2">
-                                <i class="bi bi-map-fill"></i> Provincia
+                                <i class="bi bi-map-fill" aria-hidden="true"></i> Provincia
                             </label>
                             <p class="text-dark m-0 fw-medium"
-                               th:if="${asistente.provincia != null and asistente.provincia != ''}"
+                               th:if="${asistente.provincia != null and !#strings.isEmpty(asistente.provincia)}"
                                th:text="${asistente.provincia}">
                                 Castellón
                             </p>
-                            <p class="text-muted fst-italic m-0 small"
-                               th:unless="${asistente.provincia != null and asistente.provincia != ''}">
+                            <p class="text-muted-custom fst-italic m-0 small"
+                               th:unless="${asistente.provincia != null and !#strings.isEmpty(asistente.provincia)}">
                                 No especificada
                             </p>
                         </div>
@@ -261,15 +132,15 @@
                     <div class="col-md-6">
                         <div class="info-block h-100">
                             <label class="fw-bold text-teal small text-uppercase d-flex align-items-center gap-1 mb-2">
-                                <i class="bi bi-geo-alt-fill"></i> Zona / Municipio de Cobertura
+                                <i class="bi bi-geo-alt-fill" aria-hidden="true"></i> Zona / Municipio de Cobertura
                             </label>
                             <p class="text-dark m-0 fw-medium"
-                               th:if="${asistente.zona != null and asistente.zona != ''}"
+                               th:if="${asistente.zona != null and !#strings.isEmpty(asistente.zona)}"
                                th:text="${asistente.zona}">
                                 Castelló de la Plana
                             </p>
-                            <p class="text-muted fst-italic m-0 small"
-                               th:unless="${asistente.zona != null and asistente.zona != ''}">
+                            <p class="text-muted-custom fst-italic m-0 small"
+                               th:unless="${asistente.zona != null and !#strings.isEmpty(asistente.zona)}">
                                 No especificada
                             </p>
                         </div>
@@ -279,15 +150,15 @@
                 <!-- Preferencias de Servicio -->
                 <div class="info-block mb-4">
                     <label class="fw-bold text-teal small text-uppercase d-flex align-items-center gap-1 mb-2">
-                        <i class="bi bi-sliders"></i> Preferencias de Servicio (PAP / PATI)
+                        <i class="bi bi-sliders" aria-hidden="true"></i> Preferencias de Servicio (PAP / PATI)
                     </label>
                     <p class="text-dark m-0 fw-semibold"
-                       th:if="${asistente.preferencias != null and asistente.preferencias != ''}"
+                       th:if="${asistente.preferencias != null and !#strings.isEmpty(asistente.preferencias)}"
                        th:text="${asistente.preferencias}">
                         Servicios preferenciales
                     </p>
-                    <p class="text-muted fst-italic m-0 small"
-                       th:unless="${asistente.preferencias != null and asistente.preferencias != ''}">
+                    <p class="text-muted-custom fst-italic m-0 small"
+                       th:unless="${asistente.preferencias != null and !#strings.isEmpty(asistente.preferencias)}">
                         No configuradas
                     </p>
                 </div>
@@ -295,16 +166,16 @@
                 <!-- Disponibilidad Horaria -->
                 <div class="info-block mb-4">
                     <label class="fw-bold text-teal small text-uppercase d-flex align-items-center gap-1 mb-2">
-                        <i class="bi bi-clock-fill"></i> Disponibilidad Horaria Declarada
+                        <i class="bi bi-clock-fill" aria-hidden="true"></i> Disponibilidad Horaria Declarada
                     </label>
-                    <p class="text-dark m-0 small style-text"
+                    <p class="text-dark m-0 small"
                        style="white-space: pre-line;"
-                       th:if="${asistente.disponibilidad != null and asistente.disponibilidad != ''}"
+                       th:if="${asistente.disponibilidad != null and !#strings.isEmpty(asistente.disponibilidad)}"
                        th:text="${asistente.disponibilidad}">
                         Horarios libres...
                     </p>
-                    <p class="text-muted fst-italic m-0 small"
-                       th:unless="${asistente.disponibilidad != null and asistente.disponibilidad != ''}">
+                    <p class="text-muted-custom fst-italic m-0 small"
+                       th:unless="${asistente.disponibilidad != null and !#strings.isEmpty(asistente.disponibilidad)}">
                         Sin especificar disponibilidad horaria actualmente.
                     </p>
                 </div>
@@ -313,17 +184,23 @@
 
                 <!-- Botones de Acción -->
                 <div class="d-flex flex-column flex-sm-row gap-3 justify-content-between align-items-stretch align-items-sm-center">
-                    <a th:href="@{/AsistentePersonal/update}" class="btn btn-sg-primary fw-bold px-4 py-2-5 d-inline-flex align-items-center justify-content-center gap-2">
-                        <i class="bi bi-pencil-square"></i> Editar Datos del Perfil
+                    <a th:href="@{/AsistentePersonal/update}" class="btn btn-sg-primary px-4 py-2 d-inline-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-pencil-square" aria-hidden="true"></i> Editar Datos del Perfil
                     </a>
 
                     <!-- Botón para abrir Modal de Confirmación de Baja -->
-                    <button type="button" class="btn btn-outline-danger fw-bold px-4 py-2-5 d-inline-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                        <i class="bi bi-trash3-fill"></i> Darse de Baja
+                    <button type="button" class="btn btn-outline-danger fw-bold px-4 py-2 d-inline-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                        <i class="bi bi-trash3-fill" aria-hidden="true"></i> Darse de Baja
                     </button>
                 </div>
 
             </div>
+        </div>
+
+        <!-- Alerta de seguridad si la variable 'asistente' no está presente -->
+        <div class="alert alert-sg-danger d-flex align-items-center gap-2" th:unless="${asistente != null}">
+            <i class="bi bi-exclamation-triangle-fill fs-5" aria-hidden="true"></i>
+            <div>No se ha podido cargar la información del perfil del asistente personal.</div>
         </div>
 
     </main>
@@ -334,7 +211,7 @@
             <div class="modal-content border-0 shadow">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title fw-bold" id="deleteAccountModalLabel">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmar Cancelación de Cuenta
+                        <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i> Confirmar Cancelación de Cuenta
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
@@ -342,14 +219,14 @@
                     <p class="fs-6 text-dark mb-2">
                         ¿Estás seguro de que deseas darte de baja como Asistente Personal en <strong>SgOVI</strong>?
                     </p>
-                    <p class="text-muted small m-0">
+                    <p class="text-muted-custom small m-0">
                         Esta acción eliminará tu perfil del registro público de asistentes y no podrás ser asignado a nuevos contratos.
                     </p>
                 </div>
                 <div class="modal-footer bg-light border-top-0 d-flex justify-content-center gap-2">
                     <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
-                    <!-- Enlace Thymeleaf -->
-                    <a th:href="@{/AsistentePersonal/delete/{id}(id=${asistente.idAsistente})}" class="btn btn-danger px-4 fw-bold">
+                    <!-- Enlace Thymeleaf con comprobación nula segura -->
+                    <a th:if="${asistente != null}" th:href="@{/AsistentePersonal/delete/{id}(id=${asistente.idAsistente})}" class="btn btn-danger px-4 fw-bold">
                         Sí, Darse de Baja
                     </a>
                 </div>
@@ -358,7 +235,7 @@
     </div>
 
     <!-- Pie de Página -->
-    <footer class="bg-white border-top py-3 text-center text-muted small mt-auto">
+    <footer class="bg-white border-top py-3 text-center text-muted-custom small mt-auto">
         <div class="container">
             <p class="m-0"><strong>SgOVI</strong> &copy; 2026 - Plataforma para la Vida Independiente</p>
         </div>
