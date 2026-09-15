@@ -343,4 +343,11 @@ public class UsuarioOVIController {
 
         return "UsuarioOVI/contratos";
     }
+
+    @GetMapping("/list")
+    public String listarUsuarios(Model model) {
+        // Agrega los usuarios al modelo
+        model.addAttribute("usuarios", usuarioOVIDao.getUsuariosOVI());
+        return "UsuarioOVI/list"; 
+    }
 }
