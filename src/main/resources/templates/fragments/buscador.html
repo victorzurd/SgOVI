@@ -1,45 +1,29 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="buscador(action)" class="p-3 bg-light rounded border">
+    <form th:action="@{${action}}" method="get" class="row g-2 align-items-center">
+        
+        <!-- Campo de texto o búsqueda si existiera -->
+        <div class="col-md-5">
+            <input type="text" name="query" class="form-control" placeholder="Buscar por nombre, email..." th:value="${param.query}">
+        </div>
 
-<body>
+        <!-- Desplegable de Provincias -->
+        <div class="col-md-4">
+            <label for="selectProvincia" class="visually-hidden">Provincia</label>
+            <select id="selectProvincia" name="provincia" class="form-select" aria-label="Seleccionar provincia">
+                <option value="">-- Todas las provincias --</option>
+                <option th:each="prov : ${T(es.uji.ei1027.clubesportiu.model.Provincia).values()}"
+                        th:value="${prov}"
+                        th:text="${prov.nombre}"
+                        th:selected="${param.provincia != null and param.provincia[0] == prov.name()}">
+                </option>
+            </select>
+        </div>
 
-<div th:fragment="buscador(action)">
-
-<form method="get" class="row mb-3">
-
-    <!-- Filtro -->
-    <div class="col-md-3" th:if="${mostrarZona}">
-        <select name="zona" class="form-select">
-            <option value="">Todas las zonas</option>
-            <option value="Castellón"
-                    th:selected="${zona == 'Castellón'}">Castellón</option>
-            <option value="Benicàssim"
-                    th:selected="${zona == 'Benicàssim'}">Benicàssim</option>
-            <option value="Vila-real"
-                    th:selected="${zona == 'Vila-real'}">Vila-real</option>
-        </select>
-    </div>
-
-    <!-- Buscar -->
-    <div class="col-md-4">
-        <label for="buscar" class="visually-hidden">Buscar</label>
-        <input
-            id="buscar"
-            type="text"
-            name="buscar"
-            class="form-control"
-            placeholder="Buscar..."
-            th:value="${buscar}">
-    </div>
-    <div class="col-auto">
-        <button class="btn btn-teal">
-            Buscar
-        </button>
-    </div>
-
-</form>
-
+        <!-- Botón de Filtrar/Buscar -->
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-sg-primary w-100">
+                <i class="bi bi-search" aria-hidden="true"></i> Buscar
+            </button>
+        </div>
+    </form>
 </div>
-
-</body>
-</html>
