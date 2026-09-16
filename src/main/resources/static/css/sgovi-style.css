@@ -886,3 +886,32 @@ body.high-contrast .email-message-box {
     border: 2px solid #FFFFFF !important;
     color: #FFFFFF !important;
 }
+/* ==========================================================================
+   MÓDULO DE FILTROS Y BÚSQUEDAS (TABLAS)
+   ========================================================================== */
+.filter-bar {
+    background-color: #FFFFFF;
+    border: 1px solid var(--sg-border);
+    border-radius: var(--sg-radius);
+    padding: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+.filter-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--sg-slate);
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+/* Modo Alto Contraste para la barra de filtros */
+body.high-contrast .filter-bar {
+    background-color: #000000 !important;
+    border: 2px solid #FFFFFF !important;
+}
+
+body.high-contrast .filter-label {
+    color: #FFFF00 !important;
+}

@@ -4,74 +4,252 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SgOVI - Gestión de Chats</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/usuarioOVI.css}" />
-</head>
-<body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-5">
-        <div class="container">
-            <a class="navbar-brand text-teal fw-bold" th:href="@{/TecnicoOVI/dashboard}">
-                SgOVI - Gestión Técnica
+    <!-- Frameworks externos (CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Sistema de Diseño Centralizado SgOVI -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/sgovi-style.css}" href="sgovi-style.css" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Enlace de Salto Accesible -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Barra Superior de Accesibilidad -->
+    <div class="accessibility-bar" role="region" aria-label="Herramientas de accesibilidad">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
+            <div class="d-flex gap-4">
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto">
+                    <i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +
+                </button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Disminuir tamaño de texto">
+                    <i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -
+                </button>
+                <button type="button" onclick="toggleContrast()" aria-label="Cambiar a modo alto contraste">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación Principal -->
+    <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
+        <div class="container justify-content-between">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/TecnicoOVI/dashboard}">
+                <i class="bi bi-heart-pulse-fill text-teal" aria-hidden="true"></i>
+                <span>SgOVI - Gestión Técnica</span>
             </a>
-            <div class="d-flex align-items-center">
-                <a th:href="@{/TecnicoOVI/logout}" class="btn btn-outline-danger btn-sm fw-bold">Cerrar Sesión</a>
+            <div class="d-flex gap-3 align-items-center">
+                <a th:href="@{/TecnicoOVI/dashboard}" class="btn btn-sg-outline btn-sm px-3 py-2 fw-semibold">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver al Panel
+                </a>
+                <a th:href="@{/TecnicoOVI/logout}" class="btn btn-outline-danger btn-sm px-3 py-2 fw-semibold">
+                    <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar Sesión
+                </a>
             </div>
         </div>
     </nav>
 
-    <main class="container mb-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-teal fw-bold">Historial Global de Chats</h2>
-            <a th:href="@{/TecnicoOVI/dashboard}" class="btn btn-teal">Volver</a>
+    <!-- Contenido Principal -->
+    <main id="main-content" class="container py-4 flex-grow-1" tabindex="-1">
+        
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="icon-box mb-0 flex-shrink-0" aria-hidden="true">
+                <i class="bi bi-chat-dots-fill text-teal"></i>
+            </div>
+            <div>
+                <h1 class="h3 text-teal fw-bold mb-1">Historial Global de Chats</h1>
+                <p class="text-muted-custom mb-0">Consulta y busca las conversaciones registradas en el sistema.</p>
+            </div>
         </div>
 
-        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+        <!-- Barra de Buscador y Filtros -->
+        <section class="filter-bar" aria-label="Filtros de búsqueda">
+            <form id="filterForm" class="row g-3 align-items-end" onsubmit="event.preventDefault();">
+                <div class="col-md-5">
+                    <label for="searchInput" class="filter-label">Buscador General</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nombre, estado..." aria-label="Buscar chats">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="startDate" class="filter-label">Fecha Inicio</label>
+                    <input type="date" class="form-control" id="startDate" aria-label="Fecha de inicio">
+                </div>
+                <div class="col-md-3">
+                    <label for="endDate" class="filter-label">Fecha Fin</label>
+                    <input type="date" class="form-control" id="endDate" aria-label="Fecha de fin">
+                </div>
+                <div class="col-md-1 text-end">
+                    <button type="button" class="btn btn-sg-outline w-100" onclick="resetFilters()" aria-label="Limpiar filtros" title="Limpiar filtros">
+                        <i class="bi bi-eraser-fill" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Tabla de Resultados -->
+        <div class="pillar-card p-0 overflow-hidden">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0 text-center">
-                    <thead class="table-light">
+                <table class="table-sg text-center mb-0" id="chatsTable">
+                    <thead>
                         <tr>
-                            <th>Nº</th>
-                            <th>Usuario</th>
-                            <th>Asistente</th>
-                            <th>Fecha Creación</th>
-                            <th>Estado</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Asistente</th>
+                            <th scope="col">Fecha Creación</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr th:each="chat, status : ${chats}">
-                            <td class="fw-bold text-muted" th:text="${status.count}">1</td>
+                    <tbody id="tableBody">
+                        <!-- Iteración Thymeleaf -->
+                        <tr th:each="chat : ${chats}" class="chat-row request-row">
                             <td>
-                                <span class="fw-semibold" th:text="${chat.nombreUsuario}">Nombre Usuario</span>
+                                <span class="fw-semibold text-dark" th:text="${chat.nombreUsuario}">Nombre Usuario</span>
                             </td>
                             <td>
-                                <span class="fw-semibold" th:text="${chat.nombreAsistente}">Nombre Asistente</span>
+                                <span class="text-muted-custom" th:text="${chat.nombreAsistente}">Nombre Asistente</span>
                             </td>
-                            <td th:text="${#dates.format(chat.fechaCreacion, 'dd/MM/yyyy HH:mm')}">01/01/2026</td>
+                            <!-- Identificamos la fecha con la clase chat-date para el script -->
+                            <td class="chat-date" th:text="${#dates.format(chat.fechaCreacion, 'dd/MM/yyyy HH:mm')}">01/01/2026 12:00</td>
                             <td>
-                                <span class="badge rounded-pill" 
-                                      th:classappend="${chat.estado == 'activo' || chat.estado == 'ACTIVO'} ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'"
+                                <span class="badge status-pill" 
+                                      th:classappend="${chat.estado == 'activo' || chat.estado == 'ACTIVO'} ? 'status-pill-success' : 'status-pill-info'"
                                       th:text="${chat.estado != null ? chat.estado.toUpperCase() : 'ACTIVO'}">
                                     ACTIVO
                                 </span>
                             </td>
-                            <td class="text-center">
-                                <a th:href="@{/chat/tecnico/ver/{id}(id=${chat.idChat})}" class="btn btn-outline-teal btn-sm fw-bold">
-                                    Ver Chat
+                            <td>
+                                <a th:href="@{/chat/tecnico/ver/{id}(id=${chat.idChat})}" class="btn btn-sg-primary btn-sm px-3" aria-label="Ver detalles del chat">
+                                    <i class="bi bi-eye-fill me-1" aria-hidden="true"></i> Ver Chat
                                 </a>
                             </td>
                         </tr>
                         
+                        <!-- Mensaje Thymeleaf (Si viene vacío desde el servidor) -->
                         <tr th:if="${#lists.isEmpty(chats)}">
-                            <td colspan="5" class="text-center py-5 text-muted">
-                                No hay chats registrados en el sistema.
+                            <td colspan="5" class="text-center py-5">
+                                <div class="text-muted-custom">
+                                    <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                    No hay chats registrados en el sistema.
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Fila oculta para cuando el filtro JS no encuentra resultados -->
+                        <tr id="noResultsRow" style="display: none;">
+                            <td colspan="5" class="text-center py-5">
+                                <div class="text-muted-custom">
+                                    <i class="bi bi-search fs-2 d-block mb-2"></i>
+                                    No se encontraron chats que coincidan con tu búsqueda.
+                                </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+
     </main>
 
+    <!-- Pie de Página -->
+    <footer class="bg-white border-top py-3 text-center text-muted-custom small mt-auto">
+        <div class="container">
+            <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
+        </div>
+    </footer>
+
+    <!-- Scripts Base -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scripts Funcionales SgOVI -->
+    <script>
+        // --- 1. ACCESIBILIDAD ---
+        function toggleFontSize(action) {
+            const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+            if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
+            if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        // --- 2. SISTEMA DE FILTRADO EN TIEMPO REAL ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchInput = document.getElementById('searchInput');
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+
+            // Escuchar eventos de entrada
+            searchInput.addEventListener('input', filterTable);
+            startDateInput.addEventListener('change', filterTable);
+            endDateInput.addEventListener('change', filterTable);
+        });
+
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const startDateVal = document.getElementById('startDate').value; // Formato: YYYY-MM-DD
+            const endDateVal = document.getElementById('endDate').value;     // Formato: YYYY-MM-DD
+            
+            const rows = document.querySelectorAll('.chat-row');
+            let visibleCount = 0;
+
+            // Convertir strings YYYY-MM-DD a objetos Date
+            const startDate = startDateVal ? new Date(`${startDateVal}T00:00:00`) : null;
+            const endDate = endDateVal ? new Date(`${endDateVal}T23:59:59`) : null;
+
+            rows.forEach(row => {
+                // 1. Comprobación de texto
+                const rowText = row.textContent.toLowerCase();
+                const matchesText = rowText.includes(query);
+
+                // 2. Comprobación de fecha
+                const dateCell = row.querySelector('.chat-date').textContent.trim();
+                let matchesDate = true;
+
+                if (dateCell && (startDate || endDate)) {
+                    // Esperamos formato dd/MM/yyyy HH:mm
+                    const datePart = dateCell.split(' ')[0]; // Extrae "dd/MM/yyyy"
+                    const [day, month, year] = datePart.split('/');
+                    
+                    if (day && month && year) {
+                        const rowDate = new Date(`${year}-${month}-${day}T12:00:00`); // 12:00 evita problemas de Timezone
+                        
+                        if (startDate && rowDate < startDate) {
+                            matchesDate = false;
+                        }
+                        if (endDate && rowDate > endDate) {
+                            matchesDate = false;
+                        }
+                    }
+                }
+
+                // 3. Aplicar visibilidad
+                if (matchesText && matchesDate) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Mostrar/Ocultar mensaje de "No hay resultados"
+            const noResultsRow = document.getElementById('noResultsRow');
+            if (rows.length > 0) { // Solo si la tabla no está vacía de base (vacía desde Thymeleaf)
+                noResultsRow.style.display = visibleCount === 0 ? '' : 'none';
+            }
+        }
+
+        // Función para limpiar todos los filtros rápidamente
+        function resetFilters() {
+            document.getElementById('filterForm').reset();
+            filterTable(); // Volver a mostrar todo
+        }
+    </script>
 </body>
 </html>
