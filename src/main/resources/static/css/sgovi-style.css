@@ -915,3 +915,105 @@ body.high-contrast .filter-bar {
 body.high-contrast .filter-label {
     color: #FFFF00 !important;
 }
+/* ==========================================================================
+   MÓDULO DE AUDITORÍA Y HISTORIAL DE CHAT (SgOVI)
+   ========================================================================== */
+
+.chat-audit-container {
+    height: 550px;
+    overflow-y: auto;
+    background-color: var(--sg-bg);
+    border: 1px solid var(--sg-border);
+    border-radius: 0 0 var(--sg-radius) var(--sg-radius);
+}
+
+.chat-audit-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-audit-container::-webkit-scrollbar-track {
+    background: #F1F5F9;
+}
+
+.chat-audit-container::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 999px;
+}
+
+.chat-audit-container::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+}
+
+.bubble-user {
+    background-color: #FFFFFF;
+    border: 1px solid var(--sg-border);
+    border-radius: 16px 16px 16px 4px;
+    color: var(--sg-dark);
+}
+
+.bubble-asistente {
+    background-color: var(--sg-primary-light);
+    border: 1px solid #B2F5EA;
+    border-radius: 16px 16px 4px 16px;
+    color: var(--sg-dark);
+}
+
+.msg-meta {
+    font-size: 0.75rem;
+    color: var(--sg-muted);
+    margin-top: 4px;
+    display: block;
+}
+
+.audit-avatar-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--sg-primary-light);
+    color: var(--sg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.audit-footer {
+    font-size: 0.875rem;
+    background-color: #F8FAFC;
+    border-top: 1px solid var(--sg-border);
+    color: var(--sg-muted);
+}
+
+/* Modo Alto Contraste para Auditoría de Chat */
+body.high-contrast .chat-audit-container {
+    background-color: #000000 !important;
+    border: 2px solid #FFFFFF !important;
+}
+
+body.high-contrast .bubble-user {
+    background-color: #000000 !important;
+    border: 2px solid #FFFFFF !important;
+    color: #FFFFFF !important;
+}
+
+body.high-contrast .bubble-asistente {
+    background-color: #000000 !important;
+    border: 2px solid #FFFF00 !important;
+    color: #FFFF00 !important;
+}
+
+body.high-contrast .msg-meta {
+    color: #CCCCCC !important;
+}
+
+body.high-contrast .audit-avatar-icon {
+    background-color: #000000 !important;
+    border: 2px solid #FFFF00 !important;
+    color: #FFFF00 !important;
+}
+
+body.high-contrast .audit-footer {
+    background-color: #000000 !important;
+    border-top: 2px solid #FFFFFF !important;
+    color: #FFFFFF !important;
+}

@@ -3,131 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SgOVI - Auditoría de Chat</title>
+    <title th:text="'SgOVI - Auditoría de Chat #' + ${idChat}">SgOVI - Auditoría de Chat</title>
 
+    <!-- Frameworks externos (CDN) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/usuarioOVI.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <style>
-        .text-teal { color: #000000 !important; }
-        .bg-teal-subtle { background-color: #ccfbf1 !important; }
-
-        .chat-container {
-            height: 550px;
-            overflow-y: auto;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-        }
-
-        .bubble {
-            max-width: 75%;
-            padding: 10px 15px;
-            border-radius: 15px;
-            margin-bottom: 10px;
-            position: relative;
-            word-break: break-word;
-        }
-
-        .bubble-user {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-top-left-radius: 2px;
-        }
-
-        .bubble-asistente {
-            background-color: #e0f2fe;
-            border: 1px solid #bae6fd;
-            border-top-right-radius: 2px;
-        }
-
-        .msg-meta {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-top: 4px;
-            display: block;
-        }
-
-        .audit-footer {
-            font-size: 0.875rem;
-        }
-
-        .chat-container::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        .chat-container::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-
-        .chat-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 999px;
-        }
-
-        .chat-container::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-    </style>
+    <!-- Sistema de Diseño Centralizado SgOVI -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/sgovi-style.css}" href="sgovi-style.css" />
 </head>
-<body class="bg-light">
+<body class="d-flex flex-column min-vh-100">
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
-        <div class="container">
-            <a class="navbar-brand text-teal fw-bold" th:href="@{/TecnicoOVI/dashboard}">
-                SgOVI - Gestión Técnica
+    <!-- Enlace de Salto Accesible -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Barra Superior de Accesibilidad -->
+    <div class="accessibility-bar" role="region" aria-label="Herramientas de accesibilidad">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
+            <div class="d-flex gap-4">
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto">
+                    <i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +
+                </button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Disminuir tamaño de texto">
+                    <i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -
+                </button>
+                <button type="button" onclick="toggleContrast()" aria-label="Cambiar a modo alto contraste">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación Principal -->
+    <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
+        <div class="container justify-content-between">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/TecnicoOVI/dashboard}">
+                <i class="bi bi-heart-pulse-fill text-teal" aria-hidden="true"></i>
+                <span>SgOVI - Gestión Técnica</span>
             </a>
-
-            <div class="d-flex align-items-center">
-                <a th:href="@{/TecnicoOVI/logout}" class="btn btn-outline-danger btn-sm fw-bold">
-                    Cerrar Sesión
+            <div class="d-flex gap-3 align-items-center">
+                <a th:href="@{/chat/tecnico/lista}" class="btn btn-sg-outline btn-sm px-3 py-2 fw-semibold">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver a Lista
+                </a>
+                <a th:href="@{/TecnicoOVI/logout}" class="btn btn-outline-danger btn-sm px-3 py-2 fw-semibold">
+                    <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar Sesión
                 </a>
             </div>
         </div>
     </nav>
 
-    <main class="container mb-5">
+    <!-- Contenido Principal -->
+    <main id="main-content" class="container py-4 flex-grow-1" tabindex="-1">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <div>
-                <h2 class="text-teal fw-bold mb-0">
+                <h1 class="h3 text-teal fw-bold mb-1">
                     Auditoría de Chat <span th:text="'#' + ${idChat}">#0</span>
-                </h2>
+                </h1>
+                <p class="text-muted-custom mb-0">Supervisión y trazabilidad del registro de la sesión de mensajería.</p>
             </div>
 
-            <a th:href="@{/chat/tecnico/lista}" class="btn btn-outline-secondary fw-semibold">
-                Volver
-            </a>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sg-outline btn-sm px-3" onclick="window.print();" aria-label="Imprimir informe de auditoría">
+                    <i class="bi bi-printer me-1" aria-hidden="true"></i> Imprimir
+                </button>
+                <a th:href="@{/chat/tecnico/lista}" class="btn btn-sg-outline btn-sm px-3 fw-semibold">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver
+                </a>
+            </div>
         </div>
 
-        <div class="card border-0 shadow-sm rounded-3">
-            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <div
-                        class="bg-teal-subtle text-teal rounded-circle p-2 me-3 d-flex align-items-center justify-content-center"
-                        style="width: 40px; height: 40px;"
-                        aria-hidden="true"
-                    >
-                        💬
+        <!-- Tarjeta de Auditoría -->
+        <div class="pillar-card p-0 overflow-hidden">
+            <!-- Encabezado de la Tarjeta y Filtro Integrado -->
+            <div class="bg-white border-bottom p-3">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-2">
+                    <div class="d-flex align-items-center">
+                        <div class="audit-avatar-icon me-3" aria-hidden="true">
+                            <i class="bi bi-chat-quote-fill"></i>
+                        </div>
+                        <div>
+                            <h2 class="h6 mb-0 fw-bold text-dark">Historial Completo de Mensajes</h2>
+                            <small class="text-muted-custom">Registro oficial inmutable almacenado en la base de datos</small>
+                        </div>
                     </div>
 
-                    <div>
-                        <h6 class="mb-0 fw-bold text-secondary">Historial Completo de Mensajes</h6>
-                        <small class="text-muted">Registro oficial de la conversación en la base de datos</small>
-                    </div>
+                    <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill">
+                        <i class="bi bi-shield-lock-fill me-1" aria-hidden="true"></i> MODO AUDITORÍA
+                    </span>
                 </div>
 
-                <span class="badge bg-warning text-dark fw-bold px-3 py-2">MODO AUDITORÍA</span>
+                <!-- Buscador de contenido en la conversación -->
+                <div class="input-group input-group-sm mt-3" th:if="${not #lists.isEmpty(mensajes)}">
+                    <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+                    <input type="text" id="chatSearchInput" class="form-control" placeholder="Buscar palabras clave en este chat..." aria-label="Buscar palabras clave en la conversación">
+                    <button class="btn btn-sg-outline" type="button" onclick="scrollChatToBottom()" title="Ir al final de la conversación">
+                        <i class="bi bi-arrow-down" aria-hidden="true"></i> Ir al final
+                    </button>
+                </div>
             </div>
 
-            <div class="card-body chat-container p-4 d-flex flex-column">
+            <!-- Contenedor de Conversación -->
+            <div class="chat-audit-container p-4 d-flex flex-column" id="chatAuditContainer" role="region" aria-label="Mensajes de la conversación">
 
                 <th:block th:if="${not #lists.isEmpty(mensajes)}">
                     <th:block th:each="msg : ${mensajes}">
 
-                        <div th:if="${msg.remitente == 'USUARIO'}" class="d-flex justify-content-start w-100 mb-2">
-                            <div class="bubble bubble-user shadow-sm">
-                                <strong class="d-block text-teal small mb-1">👤 Persona Usuaria</strong>
-                                <span th:text="${msg.contenido}">Texto del mensaje...</span>
+                        <!-- Mensaje de la Persona Usuaria -->
+                        <div th:if="${msg.remitente == 'USUARIO'}" class="d-flex justify-content-start w-100 mb-3 chat-message-item">
+                            <div class="chat-bubble bubble-user shadow-sm">
+                                <strong class="d-block text-teal small mb-1">
+                                    <i class="bi bi-person-fill me-1" aria-hidden="true"></i> Persona Usuaria
+                                </strong>
+                                <span class="message-content" th:text="${msg.contenido}">Texto del mensaje...</span>
                                 <span class="msg-meta text-start"
                                       th:text="${#dates.format(msg.fechaEnvio, 'dd/MM/yyyy HH:mm')}">
                                     01/01/2026 10:00
@@ -135,10 +124,13 @@
                             </div>
                         </div>
 
-                        <div th:if="${msg.remitente == 'ASISTENTE'}" class="d-flex justify-content-end w-100 mb-2">
-                            <div class="bubble bubble-asistente shadow-sm">
-                                <strong class="d-block text-primary small mb-1">💼 Asistente Personal</strong>
-                                <span th:text="${msg.contenido}">Texto del mensaje...</span>
+                        <!-- Mensaje del Asistente Personal -->
+                        <div th:if="${msg.remitente == 'ASISTENTE'}" class="d-flex justify-content-end w-100 mb-3 chat-message-item">
+                            <div class="chat-bubble bubble-asistente shadow-sm">
+                                <strong class="d-block text-primary small mb-1">
+                                    <i class="bi bi-person-badge-fill me-1" aria-hidden="true"></i> Asistente Personal
+                                </strong>
+                                <span class="message-content" th:text="${msg.contenido}">Texto del mensaje...</span>
                                 <span class="msg-meta text-end"
                                       th:text="${#dates.format(msg.fechaEnvio, 'dd/MM/yyyy HH:mm')}">
                                     01/01/2026 10:05
@@ -149,18 +141,87 @@
                     </th:block>
                 </th:block>
 
-                <div th:if="${#lists.isEmpty(mensajes)}" class="my-auto text-center text-muted">
-                    <p class="fs-4 mb-1">📭</p>
-                    <p>No se han enviado mensajes todavía en esta conversación.</p>
+                <!-- Estado Vacío -->
+                <div th:if="${#lists.isEmpty(mensajes)}" class="my-auto text-center text-muted-custom py-5">
+                    <i class="bi bi-inbox fs-1 d-block mb-2" aria-hidden="true"></i>
+                    <p class="fs-6 mb-0">No se han enviado mensajes todavía en esta conversación.</p>
+                </div>
+
+                <!-- Mensaje de no coincidencia en la búsqueda local -->
+                <div id="noSearchMatches" class="my-auto text-center text-muted-custom py-4" style="display: none;">
+                    <i class="bi bi-search fs-2 d-block mb-2" aria-hidden="true"></i>
+                    <p class="mb-0">No se encontraron mensajes que contengan el texto buscado.</p>
                 </div>
 
             </div>
 
-            <div class="card-footer bg-light border-top text-center py-3 text-muted small fw-medium audit-footer">
-                🔒 Vista de solo lectura. Como técnico supervisor del sistema, usted solo tiene permisos para monitorizar el chat por motivos de calidad y seguridad.
+            <!-- Pie de la Tarjeta (Aviso Legal y Técnico) -->
+            <div class="audit-footer text-center p-3 fw-medium">
+                <i class="bi bi-lock-fill me-1" aria-hidden="true"></i> Vista de solo lectura. Como técnico supervisor del sistema, usted solo tiene permisos para monitorizar el chat por motivos de calidad y seguridad.
             </div>
         </div>
     </main>
 
+    <!-- Pie de Página -->
+    <footer class="bg-white border-top py-3 text-center text-muted-custom small mt-auto">
+        <div class="container">
+            <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
+        </div>
+    </footer>
+
+    <!-- Scripts Base -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts Funcionales y Accesibilidad SgOVI -->
+    <script>
+        // --- 1. CONTROLES DE ACCESIBILIDAD ---
+        function toggleFontSize(action) {
+            const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+            if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
+            if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        // --- 2. FUNCIONES DE INTERFAZ DEL CHAT ---
+        function scrollChatToBottom() {
+            const container = document.getElementById('chatAuditContainer');
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        // Autoscroll inicial al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            scrollChatToBottom();
+
+            // Buscador local de texto dentro de la conversación
+            const searchInput = document.getElementById('chatSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const term = e.target.value.toLowerCase().trim();
+                    const messageItems = document.querySelectorAll('.chat-message-item');
+                    const noMatchesMsg = document.getElementById('noSearchMatches');
+                    let matchesCount = 0;
+
+                    messageItems.forEach(item => {
+                        const content = item.querySelector('.message-content').textContent.toLowerCase();
+                        if (content.includes(term)) {
+                            item.style.setProperty('display', '', 'important');
+                            matchesCount++;
+                        } else {
+                            item.style.setProperty('display', 'none', 'important');
+                        }
+                    });
+
+                    if (noMatchesMsg) {
+                        noMatchesMsg.style.display = (matchesCount === 0 && messageItems.length > 0) ? 'block' : 'none';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
