@@ -160,7 +160,6 @@
                 <table class="table table-sg mb-0 align-middle">
                     <thead>
                         <tr>
-                            <th scope="col" class="ps-4">ID</th>
                             <th scope="col">Usuario</th>
                             <th scope="col">Contacto</th>
                             <th scope="col">Dirección</th>
@@ -171,7 +170,6 @@
                     </thead>
                     <tbody>
                         <tr th:each="usuario : ${usuarios}" class="request-row">
-                            <td class="ps-4 fw-bold text-muted-custom" th:text="${usuario.idUsuario != null ? '#' + usuario.idUsuario : '-'}">#0</td>
                             <td>
                                 <div>
                                     <strong class="text-dark d-block" 
