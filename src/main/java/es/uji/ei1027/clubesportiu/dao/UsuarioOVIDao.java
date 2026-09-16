@@ -41,13 +41,14 @@ public class UsuarioOVIDao {
 
     public void updateUsuarioOVI(UsuarioOVI usuario) {
         jdbcTemplate.update(
-                "UPDATE usuarioovi SET nombre=?, apellidos=?, email=?, telefono=?, direccion=?, consentimientorgbd=?, estadoaceptado=? " +
+                "UPDATE usuarioovi SET nombre=?, apellidos=?, email=?, telefono=?, direccion=?, provincia=?, consentimientorgbd=?, estadoaceptado=? " +
                         "WHERE idusuario=?",
                 usuario.getNombre(),
                 usuario.getApellidos(),
                 usuario.getEmail(),
                 usuario.getTelefono(),
                 usuario.getDireccion(),
+                usuario.getProvincia(),
                 usuario.isConsentimientoRGBD(),
                 usuario.isEstadoAceptado(),
                 usuario.getIdUsuario());

@@ -186,10 +186,84 @@ VALUES (
     true, 
     true, 
     'Castellón Centro', 
-    'Castellón', 
+    'CASTELLON', 
     'Acompañamiento y soporte en movilidad', 
     5, 
     true
 )
 ON CONFLICT (email) DO NOTHING;
+
+-- =============================================================================
+-- 1. USUARIOS (3 Nuevos - Contraseña original para admin123)
+-- =============================================================================
+INSERT INTO usuarioovi (nombre, apellidos, email, telefono, direccion, provincia, consentimientorgbd, estadoaceptado, password) VALUES
+('Ana', 'Gómez Martín', 'ana.gomez@email.com', '600111222', 'Av. Valencia 45, Castellón', 'CASTELLON', true, true, 'rkZFXza8U4vE2gdfMWq9adlhPkwzaY+C'),
+('Carlos', 'Ruiz Vidal', 'carlos.ruiz@email.com', '600333444', 'C/ Colón 12, Valencia', 'VALENCIA', true, true, 'rkZFXza8U4vE2gdfMWq9adlhPkwzaY+C'),
+('Laura', 'Martínez Soler', 'laura.martinez@email.com', '600555666', 'C/ Mayor 88, Alicante', 'ALICANTE', true, true, 'rkZFXza8U4vE2gdfMWq9adlhPkwzaY+C')
+ON CONFLICT (email) DO NOTHING;
+
+-- =============================================================================
+-- 2. ASISTENTES PERSONALES (3 Nuevos - Contraseña original para admin123)
+-- =============================================================================
+INSERT INTO asistentepersonal (nombre, apellidos, email, contraseña, telefono, disponibilidad, estadoaceptado, activo, zona, provincia, preferencias, puntuacion, consentimientorgbd) VALUES
+('Pedro', 'Sánchez Gil', 'pedro.sanchez@email.com', 'rkZFXza8U4vE2gdfMWq9adlhPkwzaY+C', '677111222', 'Mañanas (8:00 - 14:00)', true, true, 'Grao', 'CASTELLON', 'Asistencia física y movilidad', 4, true),
+('Elena', 'Rodríguez Pons', 'elena.rodriguez@email.com', 'rkZFXza8U4vE2gdfMWq9adlhPkwzaY+C', '677333444', 'Tardes y fines de semana', true, true, 'Ciutat Vella', 'VALENCIA', 'Acompañamiento académico y laboral', 5, true),
+('David', 'Fernández Cano', 'david.fernandez@email.com', 'rkZFXza8U4vE2gdfMWq9adlhPkwzaY+C', '677555666', 'Jornada completa', true, true, 'Centro', 'ALICANTE', 'Conducción adaptada y tareas de hogar', 3, true)
+ON CONFLICT (email) DO NOTHING;
+
+-- =============================================================================
+-- 3. SELECCIONES (3 Registros coherentes con Usuarios 2, 3 y 4 y Asistentes 2, 3 y 4)
+-- =============================================================================
+INSERT INTO seleccion (fechaseleccion, estado, idusuario, idasistente) VALUES
+('2026-02-10', 'en_revision', 2, 2),  -- Ana con Pedro
+('2026-03-01', 'con_contrato', 3, 3), -- Carlos con Elena
+('2026-01-15', 'finalizada', 4, 4);   -- Laura con David
+
+-- =============================================================================
+-- 4. SOLICITUDES DE ASISTENCIA (3 Registros vinculados a los Usuarios 2, 3 y 4)
+-- =============================================================================
+INSERT INTO aprequest (idusuario, fechasolicitud, descripcion, estado, idseleccion, titulo, zona, provincia, preferencias, horario) VALUES
+(2, '2026-02-05', 'Acompañamiento a citas médicas y gestiones administrativas.', 'en_revision', 1, 'Apoyo puntual en mañanas', 'Castellón Centro', 'CASTELLON', 'Vehículo propio preferible', 'Lunes y Miércoles 9:00-12:00'),
+(3, '2026-02-20', 'Acompañamiento a clases universitarias y toma de apuntes.', 'con_contrato', 2, 'Apoyo universitario de tarde', 'Ciutat Vella', 'VALENCIA', 'Estudios universitarios preferibles', 'Lunes a Jueves 15:00-19:00'),
+(4, '2026-01-05', 'Asistencia para actividades de ocio e integración comunitaria.', 'finalizada', 3, 'Acompañamiento ocio fin de semana', 'Centro', 'ALICANTE', 'Movilidad reducida', 'Sábados 10:00-18:00');
+
+-- =============================================================================
+-- 5. CANDIDATOS (3 Postulaciones cruzando Asistentes 2, 3 y 4 con las Requests)
+-- =============================================================================
+INSERT INTO candidato (idasistente, idrequest) VALUES
+(2, 1), -- Pedro en la solicitud 1
+(3, 2), -- Elena en la solicitud 2
+(4, 3); -- David en la solicitud 3
+
+-- =============================================================================
+-- 6. COMUNICACIONES (3 Mensajes oficiales vinculados a las Selecciones 1, 2 y 3)
+-- =============================================================================
+INSERT INTO comunicacionusuarioovipap (idseleccion, fecha, mensaje, emisor, receptor) VALUES
+(1, '2026-02-11 10:00:00', 'Hola Pedro, ¿tienes disponibilidad para empezar la próxima semana?', 'Ana Gómez', 'Pedro Sánchez'),
+(2, '2026-03-02 09:30:00', 'Hola Elena, he enviado la documentación requerida para el contrato.', 'Carlos Ruiz', 'Elena Rodríguez'),
+(3, '2026-01-16 11:15:00', 'Hola David, todo listo para la asistencia de este fin de semana.', 'Laura Martínez', 'David Fernández');
+
+-- =============================================================================
+-- 7. REGISTRO DE CONTRATOS (3 Contratos asociados a las Solicitudes y Selecciones)
+-- =============================================================================
+INSERT INTO registrocontrato (fechainicio, fechafin, documentopdf, estado, idrequest, idseleccion) VALUES
+('2026-02-15', '2026-08-15', '/docs/contratos/contrato_req1_sel1.pdf', 'en_revision', 1, 1),
+('2026-03-05', '2026-09-05', '/docs/contratos/contrato_req2_sel2.pdf', 'con_contrato', 2, 2),
+('2026-01-20', '2026-02-20', '/docs/contratos/contrato_req3_sel3.pdf', 'finalizada', 3, 3);
+
+-- =============================================================================
+-- 8. CHATSESSION (3 Sesiones de chat entre Usuario, Asistente y Solicitud)
+-- =============================================================================
+INSERT INTO chatsession (idusuario, idasistente, idrequest, fechacreacion, estado) VALUES
+(2, 2, 1, '2026-02-10 09:00:00', 'en_revision'),
+(3, 3, 2, '2026-03-01 14:00:00', 'aprobado'),
+(4, 4, 3, '2026-01-15 16:30:00', 'finalizada');
+
+-- =============================================================================
+-- 9. MENSAJECHAT (3 Mensajes en el chat)
+-- =============================================================================
+INSERT INTO mensajechat (idchat, remitente, contenido, fechaenvio) VALUES
+(1, 'Ana Gómez', 'Buenos días Pedro, ¿podemos concretar los días de esta semana?', '2026-02-10 09:05:00'),
+(2, 'Carlos Ruiz', 'Hola Elena, nos vemos en la entrada del campus a las 15:00.', '2026-03-01 14:05:00'),
+(3, 'Laura Martínez', 'Muchas gracias por la ayuda prestada durante este mes, David.', '2026-01-15 16:35:00');
 

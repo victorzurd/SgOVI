@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <!-- Nueva Funcionalidad: Tarjetas de Resumen Métrico -->
+        <!-- Tarjetas de Resumen Métrico -->
         <div class="row g-3 mb-4" th:unless="${#lists.isEmpty(usuarios)}">
             <div class="col-sm-6 col-md-4">
                 <div class="info-block d-flex align-items-center gap-3">
@@ -108,15 +108,22 @@
                 <th:block th:replace="~{fragments/buscador :: buscador(action='/UsuarioOVI/list')}"/>
             </div>
 
-            <!-- Estado Vacío -->
-            <div th:if="${#lists.isEmpty(usuarios)}" class="text-center p-5 bg-white">
+            <!-- Estado Vacío (Servidor) -->
+            <div id="estadoVacio" th:if="${#lists.isEmpty(usuarios)}" class="text-center p-5 bg-white">
                 <i class="bi bi-inbox text-teal fs-1 d-block mb-3" aria-hidden="true"></i>
                 <h2 class="h5 fw-bold text-dark mb-2">No se encontraron usuarios</h2>
                 <p class="text-muted-custom mb-0">Actualmente no existen registros de usuarios en la base de datos o coincidentes con la búsqueda.</p>
             </div>
 
-            <!-- Tabla de Usuarios (Cumple WCAG 2.1 AAA) -->
-            <div class="table-responsive" th:unless="${#lists.isEmpty(usuarios)}">
+            <!-- Mensaje dinámico de Estado Vacío para el filtro en cliente -->
+            <div id="mensajeSinResultadosJS" class="text-center p-5 bg-white d-none">
+                <i class="bi bi-funnel text-teal fs-1 d-block mb-3" aria-hidden="true"></i>
+                <h2 class="h5 fw-bold text-dark mb-2">No se encontraron coincidencias</h2>
+                <p class="text-muted-custom mb-0">No hay usuarios registrados que coincidan con la provincia o palabra clave seleccionada.</p>
+            </div>
+
+            <!-- Tabla de Usuarios -->
+            <div id="contenedorTabla" class="table-responsive" th:unless="${#lists.isEmpty(usuarios)}">
                 <table class="table table-sg mb-0 align-middle">
                     <thead>
                         <tr>
@@ -124,32 +131,55 @@
                             <th scope="col">Usuario</th>
                             <th scope="col">Contacto</th>
                             <th scope="col">Dirección</th>
+                            <th scope="col">Provincia</th>
                             <th scope="col">Estado</th>
                             <th scope="col" class="text-center pe-4">Acción</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="usuario : ${usuarios}" class="request-row">
-                            <td class="ps-4 fw-bold text-muted-custom" th:text="${'#' + usuario.idUsuario}">#0</td>
+                            <td class="ps-4 fw-bold text-muted-custom" th:text="${usuario.idUsuario != null ? '#' + usuario.idUsuario : '-'}">#0</td>
                             <td>
                                 <div>
-                                    <strong class="text-dark d-block" th:text="${usuario.nombre + ' ' + usuario.apellidos}">Nombre Apellidos</strong>
+                                    <strong class="text-dark d-block" 
+                                            th:text="${usuario.nombre + (usuario.apellidos != null ? ' ' + usuario.apellidos : '')}">
+                                        Nombre Apellidos
+                                    </strong>
                                 </div>
                             </td>
                             <td>
                                 <div class="small">
-                                    <div class="text-dark d-flex align-items-center gap-1">
+                                    <div class="text-dark d-flex align-items-center gap-1" th:if="${usuario.email != null and !#strings.isEmpty(usuario.email)}">
                                         <i class="bi bi-envelope text-teal" aria-hidden="true"></i>
                                         <span th:text="${usuario.email}">email@example.com</span>
                                     </div>
-                                    <div class="text-muted-custom d-flex align-items-center gap-1">
+                                    <div class="text-muted-custom d-flex align-items-center gap-1" th:if="${usuario.telefono != null and !#strings.isEmpty(usuario.telefono)}">
                                         <i class="bi bi-telephone text-teal" aria-hidden="true"></i>
                                         <span th:text="${usuario.telefono}">000000000</span>
                                     </div>
+                                    <span class="text-muted fst-italic" th:if="${(usuario.email == null or #strings.isEmpty(usuario.email)) and (usuario.telefono == null or #strings.isEmpty(usuario.telefono))}">
+                                        Sin datos de contacto
+                                    </span>
                                 </div>
                             </td>
                             <td>
-                                <span class="small text-dark" th:text="${usuario.direccion}">Dirección</span>
+                                <span class="small text-dark" 
+                                      th:text="${usuario.direccion != null and !#strings.isEmpty(usuario.direccion) ? usuario.direccion : 'Sin dirección'}"
+                                      th:classappend="${usuario.direccion == null or #strings.isEmpty(usuario.direccion) ? 'text-muted fst-italic' : ''}">
+                                    Dirección
+                                </span>
+                            </td>
+                            <!-- Celda de Provincia blindada ante Objetos, Cadenas y Nulos -->
+                            <td class="celda-provincia">
+                                <span class="small text-dark" 
+                                    th:if="${usuario.provincia != null and !#strings.isEmpty(usuario.provincia)}"
+                                    th:text="${usuario.provincia?.nombre ?: usuario.provincia}">
+                                    Provincia
+                                </span>
+                                <span class="small text-muted fst-italic" 
+                                    th:if="${usuario.provincia == null or #strings.isEmpty(usuario.provincia)}">
+                                    Sin asignar
+                                </span>
                             </td>
                             <td>
                                 <span th:if="${usuario.estadoAceptado}" class="status-pill status-pill-success">
@@ -201,9 +231,10 @@
         </div>
     </footer>
 
-    <!-- Scripts de Accesibilidad -->
+    <!-- Scripts de Accesibilidad y Filtrado Front-End -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Funciones Globales de Accesibilidad
         function toggleFontSize(action) {
             const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
             if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
@@ -213,6 +244,87 @@
         function toggleContrast() {
             document.body.classList.toggle('high-contrast');
         }
+
+        // Filtrado Dinámico y Manejo de Interfaz
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputBuscador = document.getElementById('inputBuscador');
+            const selectProvincia = document.getElementById('selectProvincia');
+            const filas = document.querySelectorAll('.request-row');
+            const contenedorTabla = document.getElementById('contenedorTabla');
+            const mensajeSinResultados = document.getElementById('mensajeSinResultadosJS');
+
+            function aplicarFiltro() {
+                const textoBusqueda = inputBuscador ? inputBuscador.value.toLowerCase().trim() : '';
+                const provinciaValor = selectProvincia ? selectProvincia.value.toLowerCase().trim() : '';
+                
+                let provinciaTexto = '';
+                if (selectProvincia && selectProvincia.selectedIndex > 0) {
+                    provinciaTexto = selectProvincia.options[selectProvincia.selectedIndex].text.toLowerCase().trim();
+                }
+
+                let visibles = 0;
+
+                filas.forEach(fila => {
+                    const celdaProv = fila.querySelector('.celda-provincia');
+                    const textoProvinciaCelda = celdaProv ? celdaProv.textContent.toLowerCase().trim() : '';
+                    const esSinAsignar = textoProvinciaCelda.includes('sin asignar');
+
+                    // 1. Búsqueda libre en todo el contenido de la fila (incluye "sin asignar")
+                    const textoFilaCompleta = fila.textContent.toLowerCase();
+                    const coincideTexto = textoBusqueda === '' || textoFilaCompleta.includes(textoBusqueda);
+
+                    // 2. Coincidencia por selector de provincia
+                    let coincideProvincia = false;
+                    if (provinciaValor === '' || provinciaValor === 'todas') {
+                        coincideProvincia = true; // Opción "-- Todas las provincias --"
+                    } else if (provinciaValor === 'sin_asignar' || provinciaTexto.includes('sin asignar')) {
+                        coincideProvincia = esSinAsignar;
+                    } else if (!esSinAsignar) {
+                        coincideProvincia = textoProvinciaCelda.includes(provinciaValor) || 
+                                           (provinciaTexto !== '' && textoProvinciaCelda.includes(provinciaTexto));
+                    }
+
+                    if (coincideTexto && coincideProvincia) {
+                        fila.style.setProperty('display', '', 'important');
+                        visibles++;
+                    } else {
+                        fila.style.setProperty('display', 'none', 'important');
+                    }
+                });
+
+                // Control dinámico de la tabla / mensaje vacío
+                if (filas.length > 0) {
+                    if (visibles === 0) {
+                        if (contenedorTabla) contenedorTabla.classList.add('d-none');
+                        if (mensajeSinResultados) mensajeSinResultados.classList.remove('d-none');
+                    } else {
+                        if (contenedorTabla) contenedorTabla.classList.remove('d-none');
+                        if (mensajeSinResultados) mensajeSinResultados.classList.add('d-none');
+                    }
+                }
+            }
+
+            // Captura flexible del formulario del buscador para evitar Submit de recarga HTML
+            const formBuscador = inputBuscador ? inputBuscador.closest('form') : document.querySelector('form');
+            if (formBuscador) {
+                formBuscador.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    aplicarFiltro();
+                });
+            }
+
+            // Eventos en tiempo real para escribir y seleccionar
+            if (inputBuscador) {
+                inputBuscador.addEventListener('input', aplicarFiltro);
+                inputBuscador.addEventListener('keyup', aplicarFiltro);
+            }
+            if (selectProvincia) {
+                selectProvincia.addEventListener('change', aplicarFiltro);
+            }
+
+            // Ejecución al cargar
+            aplicarFiltro();
+        });
     </script>
 </body>
 </html>
