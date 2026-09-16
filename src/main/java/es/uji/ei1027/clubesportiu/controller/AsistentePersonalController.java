@@ -47,8 +47,7 @@ public class AsistentePersonalController {
         this.registroContratoDao = dao;
     }
 
-
-     @ModelAttribute("provincias")
+    @ModelAttribute("provincias")
     public Provincia[] getProvincias() {
         return Provincia.values();
     }
@@ -64,55 +63,45 @@ public class AsistentePersonalController {
         );
     }
 
-    
-    @RequestMapping("/list")
-    public String list(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "") String buscar,
-            @RequestParam(defaultValue = "") String zona,
-            Model model) {
+   @RequestMapping("/list")
+public String list(
+        @RequestParam(name = "page", defaultValue = "1") int page,
+        @RequestParam(name = "buscar", required = false, defaultValue = "") String buscar,
+        @RequestParam(name = "provincia", required = false, defaultValue = "") String provincia,
+        Model model) {
+
+        String queryBusqueda = (buscar != null) ? buscar.trim() : "";
+        String queryProvincia = (provincia != null) ? provincia.trim() : "";
 
         Paginacion paginacion = new Paginacion();
         paginacion.setPage(page);
-        paginacion.setBuscar(buscar);
+        paginacion.setBuscar(queryBusqueda);
 
-        int total = asistentePersonalDao.countAsistentes(buscar);
+        int total = asistentePersonalDao.countAsistentes(queryBusqueda, queryProvincia);
         int totalPages = (int) Math.ceil((double) total / paginacion.getSize());
 
-        model.addAttribute(
-                "asistentes",
-                asistentePersonalDao.getAsistentesPaginados(
-                        buscar,
-                        paginacion.getSize(),
-                        paginacion.getOffset()));
+        List<AsistentePersonal> asistentes = asistentePersonalDao.getAsistentesPaginados(
+                queryBusqueda,
+                queryProvincia,
+                paginacion.getSize(),
+                paginacion.getOffset());
 
+        model.addAttribute("asistentes", asistentes);
         model.addAttribute("page", page);
-        model.addAttribute("buscar", buscar);
-        model.addAttribute("provincia", zona);
+        model.addAttribute("buscar", queryBusqueda);
+        model.addAttribute("provinciaSeleccionada", queryProvincia);
         model.addAttribute("totalPages", totalPages);
-        model.addAttribute("mostrarZona", true);
-
-        // ← AÑADE ESTA LÍNEA
         model.addAttribute("urlBase", "/AsistentePersonal/list");
-
-        model.addAttribute(
-                "numSolicitudes",
-                asistentePersonalDao.countAsistentesPendientes());
+        model.addAttribute("numSolicitudes", asistentePersonalDao.countAsistentesPendientes());
 
         return "AsistentePersonal/list";
     }
 
-
     @RequestMapping("/list/pendientes")
     public String listPendientes(Model model) {
-
-        model.addAttribute("asistentes",
-            asistentePersonalDao.getAsistentesPersonalesPendientes());
-
+        model.addAttribute("asistentes", asistentePersonalDao.getAsistentesPersonalesPendientes());
         return "AsistentePersonal/TecnicoSolicitudes";
     }
-
-
 
     @RequestMapping("/main")
     public String main(HttpSession session, Model model) {
@@ -125,21 +114,12 @@ public class AsistentePersonalController {
         return "AsistentePersonal/main";
     }
 
-
-
-
-    
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String register(Model model) {
         model.addAttribute("asistente", new AsistentePersonal());
         return "AsistentePersonal/register"; 
     }
 
-
-
-
-
-    
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String registerSubmit(@ModelAttribute("asistente") AsistentePersonal asistente,
                                 BindingResult result, HttpSession session) {
@@ -162,21 +142,11 @@ public class AsistentePersonalController {
         return "redirect:/AsistentePersonal/esperaValidacion"; 
     }
 
-
-
-
-
-
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model Model) {
         Model.addAttribute("asistente", new UserDetails());
         return "AsistentePersonal/login";
     }
-
-
-
-
-
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String loginSubmit(@ModelAttribute("asistente") UserDetails usuario,
@@ -205,27 +175,17 @@ public class AsistentePersonalController {
         return "redirect:/AsistentePersonal/esperaValidacion";
     }
 
+    @RequestMapping("/perfil")
+    public String perfil(Model model, HttpSession session) {
+        AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
+        if (asistente == null) {
+            return "redirect:/AsistentePersonal/login"; 
+        }
+        AsistentePersonal asistenteBD = asistentePersonalDao.getAsistentePersonalByEmail(asistente.getEmail());
+        model.addAttribute("asistente", asistenteBD);
+        return "AsistentePersonal/perfil"; 
+    }
 
-
-
-
-     
-     @RequestMapping("/perfil")
-     public String perfil(Model model, HttpSession session) {
-         AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
-            if (asistente == null) {
-                return "redirect:/AsistentePersonal/login"; 
-            }
-         AsistentePersonal asistenteBD = asistentePersonalDao.getAsistentePersonalByEmail(asistente.getEmail());
-         model.addAttribute("asistente", asistenteBD);
-         return "AsistentePersonal/perfil"; 
-     }
-
-
-
-
-
-    
     @RequestMapping("/update")
     public String editForm(Model model, HttpSession session) {
         AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
@@ -236,11 +196,6 @@ public class AsistentePersonalController {
         return "AsistentePersonal/update"; 
     }
 
-
-
-
-
-    
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String editSubmit(@ModelAttribute("asistente") AsistentePersonal asistente,
                              BindingResult result) {
@@ -263,20 +218,11 @@ public class AsistentePersonalController {
         return "redirect:main";
     }
 
-
-
-
-
-
-    
     @RequestMapping("/delete/{idAsistente}")
     public String delete(@PathVariable int idAsistente) {
         asistentePersonalDao.deleteAsistentePersonal(idAsistente);
         return "redirect:/";
     }
-
-
-
 
     @RequestMapping("/aceptar/{idAsistente}")
     public String aceptar(@PathVariable int idAsistente, HttpSession session, Model model) {
@@ -331,7 +277,6 @@ public class AsistentePersonalController {
         return "redirect:/AsistentePersonal/list";
     }
 
-
     @RequestMapping(value = "/esperaValidacion", method = RequestMethod.GET)
     public String esperaValidacion(HttpSession session, Model model) {
         AsistentePersonal asistenteSesion = (AsistentePersonal) session.getAttribute("asistenteLogueado");
@@ -339,41 +284,29 @@ public class AsistentePersonalController {
             return "redirect:/AsistentePersonal/login";
         }
         
-        
         AsistentePersonal asistenteReal = asistentePersonalDao.getAsistentePersonalByEmail(asistenteSesion.getEmail());
         
-        
         if (asistenteReal != null && asistenteReal.isEstadoAceptado()) {
-            
             session.setAttribute("asistenteLogueado", asistenteReal);
-            
-            
             return "redirect:/AsistentePersonal/main"; 
         }
-        
         
         return "AsistentePersonal/esperaValidacion"; 
     }
 
-    
     @RequestMapping(value = "/solicitudes", method = RequestMethod.GET)
     public String misSolicitudes(HttpSession session, Model model) {
-        
         AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
         if (asistente == null) {
             return "redirect:/AsistentePersonal/login";
         }
 
-        
         List<APRequest> solicitudes = apRequestDao.getAPRequestsByAsistente(asistente.getIdAsistente());
-
-        
         model.addAttribute("solicitudesAsistente", solicitudes);
 
         return "AsistentePersonal/solicitudes";
     }
 
-    
     @RequestMapping(value = "/solicitudes/aceptar/{id}", method = RequestMethod.GET)
     public String aceptarSolicitud(@PathVariable("id") int idRequest, HttpSession session) {
         AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
@@ -390,7 +323,6 @@ public class AsistentePersonalController {
         return "redirect:/AsistentePersonal/solicitudes";
     }
 
-    
     @RequestMapping(value = "/solicitudes/rechazar/{id}", method = RequestMethod.GET)
     public String rechazarSolicitud(@PathVariable("id") int idRequest, HttpSession session) {
         AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
@@ -407,7 +339,6 @@ public class AsistentePersonalController {
         return "redirect:/AsistentePersonal/solicitudes";
     }
 
-
     @RequestMapping(value = "/contratos", method = RequestMethod.GET)
     public String misContratos(
             @RequestParam(defaultValue = "1") int page,
@@ -415,8 +346,7 @@ public class AsistentePersonalController {
             HttpSession session,
             Model model) {
 
-        AsistentePersonal asistente =
-                (AsistentePersonal) session.getAttribute("asistenteLogueado");
+        AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
 
         if (asistente == null) {
             return "redirect:/AsistentePersonal/login";
@@ -430,8 +360,7 @@ public class AsistentePersonalController {
                 asistente.getIdAsistente(),
                 buscar);
 
-        int totalPages =
-                (int) Math.ceil((double) total / paginacion.getSize());
+        int totalPages = (int) Math.ceil((double) total / paginacion.getSize());
 
         model.addAttribute(
                 "contratosAsistente",
@@ -442,11 +371,9 @@ public class AsistentePersonalController {
                         paginacion.getOffset()));
 
         model.addAttribute("usuarioLogueado", asistente);
-
         model.addAttribute("page", page);
         model.addAttribute("buscar", buscar);
         model.addAttribute("totalPages", totalPages);
-
         model.addAttribute("urlBase", "/AsistentePersonal/contratos");
 
         return "AsistentePersonal/contratos";

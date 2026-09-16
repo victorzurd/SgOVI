@@ -22,10 +22,9 @@ public class AsistentePersonalDao {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    
     public void addAsistentePersonal(AsistentePersonal asistente) {
         jdbcTemplate.update(
-            "INSERT INTO AsistentePersonal (nombre, apellidos, email, contraseña, telefono, disponibilidad, estadoAceptado, activo, zona, provincia, preferencias, puntuacion, consentimientoRGBD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO asistentepersonal (nombre, apellidos, email, contraseña, telefono, disponibilidad, estadoaceptado, activo, zona, provincia, preferencias, puntuacion, consentimientorgbd) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             asistente.getNombre(),
             asistente.getApellidos(),
             asistente.getEmail(),
@@ -42,10 +41,9 @@ public class AsistentePersonalDao {
         );
     }
 
-    
     public void updateAsistentePersonal(AsistentePersonal asistente) {
         jdbcTemplate.update(
-            "UPDATE AsistentePersonal SET nombre=?, apellidos=?, email=?, contraseña=?, telefono=?, disponibilidad=?, estadoAceptado=?, activo=?, zona=?, provincia=?, preferencias=?, puntuacion=?, consentimientoRGBD=? WHERE idAsistente=?",
+            "UPDATE asistentepersonal SET nombre=?, apellidos=?, email=?, contraseña=?, telefono=?, disponibilidad=?, estadoaceptado=?, activo=?, zona=?, provincia=?, preferencias=?, puntuacion=?, consentimientorgbd=? WHERE idasistente=?",
             asistente.getNombre(),
             asistente.getApellidos(),
             asistente.getEmail(),
@@ -63,16 +61,14 @@ public class AsistentePersonalDao {
         );
     }
 
-    
     public void deleteAsistentePersonal(int idAsistente) {
-        jdbcTemplate.update("DELETE FROM AsistentePersonal WHERE idAsistente=?", idAsistente);
+        jdbcTemplate.update("DELETE FROM asistentepersonal WHERE idasistente=?", idAsistente);
     }
 
-    
     public AsistentePersonal getAsistentePersonal(int idAsistente) {
         try {
             return jdbcTemplate.queryForObject(
-                    "SELECT * FROM AsistentePersonal WHERE idAsistente=?",
+                    "SELECT * FROM asistentepersonal WHERE idasistente=?",
                     new AsistentePersonalRowMapper(),
                     idAsistente
             );
@@ -81,19 +77,16 @@ public class AsistentePersonalDao {
         }
     }
 
-    
     public List<AsistentePersonal> getAsistentesPersonales() {
         return jdbcTemplate.query(
-                "SELECT * FROM AsistentePersonal WHERE estadoAceptado = true",
+                "SELECT * FROM asistentepersonal WHERE estadoaceptado = true",
                 new AsistentePersonalRowMapper()
         );
     }
 
-    
-
     public List<AsistentePersonal> buscarCompatibles(APRequest request) {
         return jdbcTemplate.query(
-                "SELECT * FROM AsistentePersonal",
+                "SELECT * FROM asistentepersonal",
                 new AsistentePersonalRowMapper()
         );
     }
@@ -101,7 +94,7 @@ public class AsistentePersonalDao {
     public AsistentePersonal getAsistentePersonalByEmail(String email) {
         try {
             return jdbcTemplate.queryForObject(
-                    "SELECT * FROM AsistentePersonal WHERE email=?",
+                    "SELECT * FROM asistentepersonal WHERE email=?",
                     new AsistentePersonalRowMapper(),
                     email
             );
@@ -110,10 +103,9 @@ public class AsistentePersonalDao {
         }
     }
 
-    
     public boolean existeEmail(String email, int idAsistente) {
         Integer count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM AsistentePersonal WHERE email = ? AND idAsistente != ?",
+                "SELECT COUNT(*) FROM asistentepersonal WHERE email = ? AND idasistente != ?",
                 Integer.class,
                 email,
                 idAsistente
@@ -121,39 +113,43 @@ public class AsistentePersonalDao {
         return count != null && count > 0;
     }
 
-        
-        public List<AsistentePersonal> getAsistentesPersonalesPendientes() {
-            return jdbcTemplate.query(
-                    "SELECT * FROM AsistentePersonal WHERE estadoAceptado = false",
-                    new AsistentePersonalRowMapper()
-            );
-        }
-
+    public List<AsistentePersonal> getAsistentesPersonalesPendientes() {
+        return jdbcTemplate.query(
+                "SELECT * FROM asistentepersonal WHERE estadoaceptado = false",
+                new AsistentePersonalRowMapper()
+        );
+    }
 
     public int countAsistentesPendientes() {
         Integer count = jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM AsistentePersonal WHERE estadoAceptado = false",
+            "SELECT COUNT(*) FROM asistentepersonal WHERE estadoaceptado = false",
             Integer.class
         );
         return (count != null) ? count : 0;
     }
 
     public List<AsistentePersonal> getAsistentesPaginados(String buscar, int limit, int offset) {
+        String texto = (buscar == null) ? "" : buscar.trim();
+        String filtro = "%" + texto + "%";
 
         String sql =
-            "SELECT * FROM AsistentePersonal " +
-            "WHERE estadoAceptado = true " +
-            "AND (LOWER(nombre) LIKE LOWER(?) " +
-            "OR LOWER(apellidos) LIKE LOWER(?) " +
-            "OR LOWER(email) LIKE LOWER(?)) " +
-            "ORDER BY nombre " +
+            "SELECT * FROM asistentepersonal " +
+            "WHERE estadoaceptado = true " +
+            "AND (" +
+            "   LOWER(nombre) LIKE LOWER(?) " +
+            "   OR LOWER(apellidos) LIKE LOWER(?) " +
+            "   OR LOWER(email) LIKE LOWER(?) " +
+            "   OR LOWER(COALESCE(provincia, '')) LIKE LOWER(?) " +
+            "   OR LOWER(COALESCE(zona, '')) LIKE LOWER(?)" +
+            ") " +
+            "ORDER BY nombre ASC " +
             "LIMIT ? OFFSET ?";
-
-        String filtro = "%" + buscar + "%";
 
         return jdbcTemplate.query(
                 sql,
                 new AsistentePersonalRowMapper(),
+                filtro,
+                filtro,
                 filtro,
                 filtro,
                 filtro,
@@ -163,19 +159,25 @@ public class AsistentePersonalDao {
     }
 
     public int countAsistentes(String buscar) {
+        String texto = (buscar == null) ? "" : buscar.trim();
+        String filtro = "%" + texto + "%";
 
         String sql =
-            "SELECT COUNT(*) FROM AsistentePersonal " +
-            "WHERE estadoAceptado = true " +
-            "AND (LOWER(nombre) LIKE LOWER(?) " +
-            "OR LOWER(apellidos) LIKE LOWER(?) " +
-            "OR LOWER(email) LIKE LOWER(?))";
-
-        String filtro = "%" + buscar + "%";
+            "SELECT COUNT(*) FROM asistentepersonal " +
+            "WHERE estadoaceptado = true " +
+            "AND (" +
+            "   LOWER(nombre) LIKE LOWER(?) " +
+            "   OR LOWER(apellidos) LIKE LOWER(?) " +
+            "   OR LOWER(email) LIKE LOWER(?) " +
+            "   OR LOWER(COALESCE(provincia, '')) LIKE LOWER(?) " +
+            "   OR LOWER(COALESCE(zona, '')) LIKE LOWER(?)" +
+            ")";
 
         Integer total = jdbcTemplate.queryForObject(
                 sql,
                 Integer.class,
+                filtro,
+                filtro,
                 filtro,
                 filtro,
                 filtro
@@ -183,4 +185,65 @@ public class AsistentePersonalDao {
 
         return total == null ? 0 : total;
     }
+    public List<AsistentePersonal> getAsistentesPaginados(String buscar, String provincia, int limit, int offset) {
+    String texto = (buscar == null) ? "" : buscar.trim();
+    String filtroBuscar = "%" + texto + "%";
+    String prov = (provincia == null) ? "" : provincia.trim();
+
+    String sql =
+        "SELECT * FROM asistentepersonal " +
+        "WHERE estadoaceptado = true " +
+        "AND (" +
+        "   LOWER(nombre) LIKE LOWER(?) " +
+        "   OR LOWER(apellidos) LIKE LOWER(?) " +
+        "   OR LOWER(email) LIKE LOWER(?) " +
+        "   OR LOWER(COALESCE(zona, '')) LIKE LOWER(?)" +
+        ") " +
+        "AND (? = '' OR LOWER(COALESCE(provincia, '')) = LOWER(?)) " +
+        "ORDER BY nombre ASC " +
+        "LIMIT ? OFFSET ?";
+
+    return jdbcTemplate.query(
+            sql,
+            new AsistentePersonalRowMapper(),
+            filtroBuscar,
+            filtroBuscar,
+            filtroBuscar,
+            filtroBuscar,
+            prov,
+            prov,
+            limit,
+            offset
+    );
+}
+
+public int countAsistentes(String buscar, String provincia) {
+    String texto = (buscar == null) ? "" : buscar.trim();
+    String filtroBuscar = "%" + texto + "%";
+    String prov = (provincia == null) ? "" : provincia.trim();
+
+    String sql =
+        "SELECT COUNT(*) FROM asistentepersonal " +
+        "WHERE estadoaceptado = true " +
+        "AND (" +
+        "   LOWER(nombre) LIKE LOWER(?) " +
+        "   OR LOWER(apellidos) LIKE LOWER(?) " +
+        "   OR LOWER(email) LIKE LOWER(?) " +
+        "   OR LOWER(COALESCE(zona, '')) LIKE LOWER(?)" +
+        ") " +
+        "AND (? = '' OR LOWER(COALESCE(provincia, '')) = LOWER(?))";
+
+    Integer total = jdbcTemplate.queryForObject(
+            sql,
+            Integer.class,
+            filtroBuscar,
+            filtroBuscar,
+            filtroBuscar,
+            filtroBuscar,
+            prov,
+            prov
+    );
+
+    return total == null ? 0 : total;
+}
 }
