@@ -862,3 +862,27 @@ body.high-contrast .chat-main-card {
     border: 2px solid #FFFFFF !important;
     background-color: #000000 !important;
 }
+
+/* --- Módulo de Notificaciones y Previsualización de Correos --- */
+.bg-sg-light {
+    background-color: var(--sg-primary-light) !important;
+}
+
+.email-preview-card {
+    border-radius: var(--sg-radius);
+    overflow: hidden;
+}
+
+.email-message-box {
+    background-color: var(--sg-bg);
+    border: 1px solid var(--sg-border);
+    border-radius: 12px;
+}
+
+/* Soporte de Alto Contraste para vista previa de correo */
+body.high-contrast .email-preview-card,
+body.high-contrast .email-message-box {
+    background-color: #000000 !important;
+    border: 2px solid #FFFFFF !important;
+    color: #FFFFFF !important;
+}
