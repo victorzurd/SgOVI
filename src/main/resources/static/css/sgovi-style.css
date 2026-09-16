@@ -1017,3 +1017,68 @@ body.high-contrast .audit-footer {
     border-top: 2px solid #FFFFFF !important;
     color: #FFFFFF !important;
 }
+
+/* ==========================================================================
+   MÓDULO DE PAGINACIÓN (SgOVI)
+   ========================================================================== */
+.pagination-wrapper {
+    background-color: #FFFFFF;
+    border: 1px solid var(--sg-border);
+    border-top: none;
+    border-bottom-left-radius: var(--sg-radius);
+    border-bottom-right-radius: var(--sg-radius);
+    padding: 0.85rem 1.25rem;
+}
+
+.pagination-sg .page-link {
+    color: var(--sg-slate);
+    border-color: var(--sg-border);
+    font-weight: 600;
+    border-radius: 8px;
+    margin: 0 2px;
+    transition: all 0.2s ease;
+    box-shadow: none;
+}
+
+.pagination-sg .page-link:hover {
+    color: var(--sg-primary);
+    background-color: var(--sg-primary-light);
+    border-color: var(--sg-primary);
+}
+
+.pagination-sg .page-item.active .page-link {
+    background-color: var(--sg-primary);
+    border-color: var(--sg-primary);
+    color: #FFFFFF;
+}
+
+.pagination-sg .page-item.disabled .page-link {
+    color: var(--sg-muted);
+    background-color: #F8FAFC;
+    border-color: var(--sg-border);
+}
+
+/* Modo Alto Contraste para Paginación */
+body.high-contrast .pagination-wrapper {
+    background-color: #000000 !important;
+    border: 2px solid #FFFFFF !important;
+    border-top: none !important;
+}
+
+body.high-contrast .pagination-sg .page-link {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #FFFFFF !important;
+}
+
+body.high-contrast .pagination-sg .page-item.active .page-link {
+    background-color: #FFFF00 !important;
+    color: #000000 !important;
+    border: 2px solid #FFFF00 !important;
+    font-weight: 800 !important;
+}
+
+body.high-contrast .pagination-sg .page-item.disabled .page-link {
+    color: #666666 !important;
+    border-color: #666666 !important;
+}

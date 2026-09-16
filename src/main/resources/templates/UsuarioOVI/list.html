@@ -103,15 +103,16 @@
         <!-- Tarjeta Principal de Tabla y Buscador -->
         <div class="pillar-card p-0 overflow-hidden mb-4">
             
-            <!-- Formulario de Búsqueda Integrado con Ordenación por Estado -->
+            <!-- Formulario de Búsqueda e Integración de Filtros -->
             <div class="p-3 border-bottom bg-light">
-                <form th:action="@{/UsuarioOVI/list}" method="get" class="row g-2 align-items-center">
+                <form id="filterForm" th:action="@{/UsuarioOVI/list}" method="get" class="row g-2 align-items-center">
                     <div class="col-md-4">
                         <div class="input-group">
                             <span class="input-group-text bg-white">
                                 <i class="bi bi-search text-muted" aria-hidden="true"></i>
                             </span>
                             <input type="text" 
+                                   id="searchInput"
                                    name="buscar" 
                                    class="form-control" 
                                    placeholder="Buscar por nombre, apellidos, email o dirección..." 
@@ -120,7 +121,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <select name="provincia" class="form-select" aria-label="Filtrar por provincia">
+                        <select id="provinciaSelect" name="provincia" class="form-select" aria-label="Filtrar por provincia">
                             <option value="">-- Todas las provincias --</option>
                             <option th:each="p : ${provincias}" 
                                     th:value="${p}" 
@@ -129,7 +130,7 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <select name="estado" class="form-select" aria-label="Ordenar por estado">
+                        <select id="estadoSelect" name="estado" class="form-select" aria-label="Ordenar por estado">
                             <option value="">-- Ordenar estado --</option>
                             <option value="pendiente" th:selected="${estadoSeleccionado == 'pendiente'}">Pendientes primero</option>
                             <option value="aceptado" th:selected="${estadoSeleccionado == 'aceptado'}">Aceptados primero</option>
@@ -241,13 +242,37 @@
                                 </div>
                             </td>
                         </tr>
+
+                        <!-- Fila para cuando no hay coincidencias de filtrado -->
+                        <tr id="noResultsRow" class="d-none">
+                            <td colspan="6" class="text-center py-5">
+                                <div class="text-muted-custom">
+                                    <i class="bi bi-search fs-2 d-block mb-2" aria-hidden="true"></i>
+                                    No se encontraron usuarios que coincidan con los filtros aplicados.
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
-            <!-- Fragmento de Paginación Integrado -->
-            <div class="p-3 border-top bg-light">
-                <th:block th:replace="~{fragments/paginacion :: paginacion('/UsuarioOVI/list')}"/>
+            <!-- Módulo de Paginación Integrado -->
+            <div class="pagination-wrapper d-flex justify-content-between align-items-center flex-wrap gap-3" id="paginationControls" th:unless="${#lists.isEmpty(usuarios)}">
+                <div class="d-flex align-items-center gap-2">
+                    <label for="rowsPerPageSelect" class="filter-label mb-0">Mostrar:</label>
+                    <select id="rowsPerPageSelect" class="form-select form-select-sm w-auto" aria-label="Número de filas por página">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                    <span class="text-muted-custom small ms-2" id="paginationInfo">Mostrando 0-0 de 0</span>
+                </div>
+                <nav aria-label="Navegación de páginas">
+                    <ul class="pagination pagination-sg pagination-sm mb-0" id="paginationList">
+                        <!-- Botones de navegación generados dinámicamente -->
+                    </ul>
+                </nav>
             </div>
         </div>
     </main>
@@ -259,10 +284,12 @@
         </div>
     </footer>
 
-    <!-- Scripts de Accesibilidad -->
+    <!-- Scripts Base -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts de Accesibilidad y Paginación SgOVI -->
     <script>
-        // Funciones Globales de Accesibilidad
+        // --- 1. ACCESIBILIDAD ---
         function toggleFontSize(action) {
             const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
             if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
@@ -271,6 +298,104 @@
 
         function toggleContrast() {
             document.body.classList.toggle('high-contrast');
+        }
+
+        // --- 2. GESTIÓN DE PAGINACIÓN DINÁMICA ---
+        let currentPage = 1;
+        let rowsPerPage = 10;
+        let filteredRows = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const rowsPerPageSelect = document.getElementById('rowsPerPageSelect');
+
+            if (rowsPerPageSelect) {
+                rowsPerPageSelect.addEventListener('change', (e) => {
+                    rowsPerPage = parseInt(e.target.value, 10);
+                    currentPage = 1;
+                    applyPagination();
+                });
+            }
+
+            applyPagination();
+        });
+
+        function applyPagination() {
+            const allRows = Array.from(document.querySelectorAll('.request-row'));
+            if (allRows.length === 0) return;
+
+            filteredRows = allRows; // Administra todas las filas renderizadas
+
+            // 1. Ocultar todas las filas inicialmente
+            allRows.forEach(row => row.classList.add('d-none'));
+
+            // 2. Calcular límites de paginación
+            const totalItems = filteredRows.length;
+            const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
+
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, totalItems);
+
+            // 3. Mostrar únicamente las filas de la página activa
+            for (let i = startIndex; i < endIndex; i++) {
+                if (filteredRows[i]) {
+                    filteredRows[i].classList.remove('d-none');
+                }
+            }
+
+            // 4. Actualizar estado visible de la interfaz
+            updatePaginationUI(totalItems, startIndex, endIndex, totalPages);
+        }
+
+        function updatePaginationUI(totalItems, startIndex, endIndex, totalPages) {
+            const infoText = document.getElementById('paginationInfo');
+            const paginationList = document.getElementById('paginationList');
+
+            if (!infoText || !paginationList) return;
+
+            if (totalItems === 0) {
+                infoText.textContent = 'Mostrando 0 de 0 registros';
+                paginationList.innerHTML = '';
+                return;
+            }
+
+            infoText.textContent = `Mostrando ${startIndex + 1}-${endIndex} de ${totalItems} registros`;
+
+            let html = '';
+
+            // Botón Anterior
+            html += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <button type="button" class="page-link" onclick="goToPage(${currentPage - 1})" aria-label="Página anterior" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                </button>
+            </li>`;
+
+            // Números de Página con elipsis
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <button type="button" class="page-link" onclick="goToPage(${i})" aria-label="Página ${i}">${i}</button>
+                    </li>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+
+            // Botón Siguiente
+            html += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <button type="button" class="page-link" onclick="goToPage(${currentPage + 1})" aria-label="Página siguiente" ${currentPage === totalPages ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+            </li>`;
+
+            paginationList.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            applyPagination();
         }
     </script>
 </body>

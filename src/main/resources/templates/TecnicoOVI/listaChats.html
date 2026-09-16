@@ -114,7 +114,6 @@
                             <td>
                                 <span class="text-muted-custom" th:text="${chat.nombreAsistente}">Nombre Asistente</span>
                             </td>
-                            <!-- Identificamos la fecha con la clase chat-date para el script -->
                             <td class="chat-date" th:text="${#dates.format(chat.fechaCreacion, 'dd/MM/yyyy HH:mm')}">01/01/2026 12:00</td>
                             <td>
                                 <span class="badge status-pill" 
@@ -134,23 +133,42 @@
                         <tr th:if="${#lists.isEmpty(chats)}">
                             <td colspan="5" class="text-center py-5">
                                 <div class="text-muted-custom">
-                                    <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                    <i class="bi bi-inbox fs-2 d-block mb-2" aria-hidden="true"></i>
                                     No hay chats registrados en el sistema.
                                 </div>
                             </td>
                         </tr>
 
                         <!-- Fila oculta para cuando el filtro JS no encuentra resultados -->
-                        <tr id="noResultsRow" style="display: none;">
+                        <tr id="noResultsRow" class="d-none">
                             <td colspan="5" class="text-center py-5">
                                 <div class="text-muted-custom">
-                                    <i class="bi bi-search fs-2 d-block mb-2"></i>
+                                    <i class="bi bi-search fs-2 d-block mb-2" aria-hidden="true"></i>
                                     No se encontraron chats que coincidan con tu búsqueda.
                                 </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Módulo de Paginación Integrado -->
+            <div class="pagination-wrapper d-flex justify-content-between align-items-center flex-wrap gap-3" id="paginationControls">
+                <div class="d-flex align-items-center gap-2">
+                    <label for="rowsPerPageSelect" class="filter-label mb-0">Mostrar:</label>
+                    <select id="rowsPerPageSelect" class="form-select form-select-sm w-auto" aria-label="Número de filas por página">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                    <span class="text-muted-custom small ms-2" id="paginationInfo">Mostrando 0-0 de 0</span>
+                </div>
+                <nav aria-label="Navegación de páginas">
+                    <ul class="pagination pagination-sg pagination-sm mb-0" id="paginationList">
+                        <!-- Botones de páginas generados mediante JS -->
+                    </ul>
+                </nav>
             </div>
         </div>
 
@@ -179,76 +197,149 @@
             document.body.classList.toggle('high-contrast');
         }
 
-        // --- 2. SISTEMA DE FILTRADO EN TIEMPO REAL ---
+        // --- 2. SISTEMA DE FILTRADO Y PAGINACIÓN EN TIEMPO REAL ---
+        let currentPage = 1;
+        let rowsPerPage = 10;
+        let filteredRows = [];
+
         document.addEventListener("DOMContentLoaded", () => {
             const searchInput = document.getElementById('searchInput');
             const startDateInput = document.getElementById('startDate');
             const endDateInput = document.getElementById('endDate');
+            const rowsPerPageSelect = document.getElementById('rowsPerPageSelect');
 
-            // Escuchar eventos de entrada
-            searchInput.addEventListener('input', filterTable);
-            startDateInput.addEventListener('change', filterTable);
-            endDateInput.addEventListener('change', filterTable);
+            // Eventos de filtrado
+            searchInput.addEventListener('input', () => { currentPage = 1; filterTable(); });
+            startDateInput.addEventListener('change', () => { currentPage = 1; filterTable(); });
+            endDateInput.addEventListener('change', () => { currentPage = 1; filterTable(); });
+
+            // Evento de cambio de filas por página
+            rowsPerPageSelect.addEventListener('change', (e) => {
+                rowsPerPage = parseInt(e.target.value, 10);
+                currentPage = 1;
+                filterTable();
+            });
+
+            // Inicialización
+            filterTable();
         });
 
         function filterTable() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const startDateVal = document.getElementById('startDate').value; // Formato: YYYY-MM-DD
-            const endDateVal = document.getElementById('endDate').value;     // Formato: YYYY-MM-DD
+            const startDateVal = document.getElementById('startDate').value;
+            const endDateVal = document.getElementById('endDate').value;
             
-            const rows = document.querySelectorAll('.chat-row');
-            let visibleCount = 0;
-
-            // Convertir strings YYYY-MM-DD a objetos Date
+            const allRows = Array.from(document.querySelectorAll('.chat-row'));
             const startDate = startDateVal ? new Date(`${startDateVal}T00:00:00`) : null;
             const endDate = endDateVal ? new Date(`${endDateVal}T23:59:59`) : null;
 
-            rows.forEach(row => {
-                // 1. Comprobación de texto
+            // 1. Filtrar filas según texto y fecha
+            filteredRows = allRows.filter(row => {
                 const rowText = row.textContent.toLowerCase();
                 const matchesText = rowText.includes(query);
 
-                // 2. Comprobación de fecha
-                const dateCell = row.querySelector('.chat-date').textContent.trim();
+                const dateCell = row.querySelector('.chat-date') ? row.querySelector('.chat-date').textContent.trim() : '';
                 let matchesDate = true;
 
                 if (dateCell && (startDate || endDate)) {
-                    // Esperamos formato dd/MM/yyyy HH:mm
-                    const datePart = dateCell.split(' ')[0]; // Extrae "dd/MM/yyyy"
+                    const datePart = dateCell.split(' ')[0];
                     const [day, month, year] = datePart.split('/');
                     
                     if (day && month && year) {
-                        const rowDate = new Date(`${year}-${month}-${day}T12:00:00`); // 12:00 evita problemas de Timezone
-                        
-                        if (startDate && rowDate < startDate) {
-                            matchesDate = false;
-                        }
-                        if (endDate && rowDate > endDate) {
-                            matchesDate = false;
-                        }
+                        const rowDate = new Date(`${year}-${month}-${day}T12:00:00`);
+                        if (startDate && rowDate < startDate) matchesDate = false;
+                        if (endDate && rowDate > endDate) matchesDate = false;
                     }
                 }
 
-                // 3. Aplicar visibilidad
-                if (matchesText && matchesDate) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
+                return matchesText && matchesDate;
             });
 
-            // Mostrar/Ocultar mensaje de "No hay resultados"
+            // 2. Ocultar todas las filas inicialmente
+            allRows.forEach(row => row.classList.add('d-none'));
+
+            // 3. Mostrar u ocultar mensaje "Sin resultados"
             const noResultsRow = document.getElementById('noResultsRow');
-            if (rows.length > 0) { // Solo si la tabla no está vacía de base (vacía desde Thymeleaf)
-                noResultsRow.style.display = visibleCount === 0 ? '' : 'none';
+            if (allRows.length > 0) {
+                if (filteredRows.length === 0) {
+                    noResultsRow.classList.remove('d-none');
+                } else {
+                    noResultsRow.classList.add('d-none');
+                }
             }
+
+            // 4. Calcular paginación
+            const totalItems = filteredRows.length;
+            const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
+
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, totalItems);
+
+            // 5. Mostrar solo las filas pertenecientes a la página actual
+            for (let i = startIndex; i < endIndex; i++) {
+                if (filteredRows[i]) {
+                    filteredRows[i].classList.remove('d-none');
+                }
+            }
+
+            // 6. Actualizar UI de controles
+            updatePaginationUI(totalItems, startIndex, endIndex, totalPages);
         }
 
-        // Función para limpiar todos los filtros rápidamente
+        function updatePaginationUI(totalItems, startIndex, endIndex, totalPages) {
+            const infoText = document.getElementById('paginationInfo');
+            const paginationList = document.getElementById('paginationList');
+
+            if (totalItems === 0) {
+                infoText.textContent = 'Mostrando 0 de 0 registros';
+                paginationList.innerHTML = '';
+                return;
+            }
+
+            infoText.textContent = `Mostrando ${startIndex + 1}-${endIndex} de ${totalItems} registros`;
+
+            let html = '';
+
+            // Botón Anterior
+            html += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <button type="button" class="page-link" onclick="goToPage(${currentPage - 1})" aria-label="Página anterior" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                </button>
+            </li>`;
+
+            // Números de Página con elipsis
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <button type="button" class="page-link" onclick="goToPage(${i})" aria-label="Página ${i}">${i}</button>
+                    </li>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+
+            // Botón Siguiente
+            html += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <button type="button" class="page-link" onclick="goToPage(${currentPage + 1})" aria-label="Página siguiente" ${currentPage === totalPages ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+            </li>`;
+
+            paginationList.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            filterTable();
+        }
+
         function resetFilters() {
             document.getElementById('filterForm').reset();
-            filterTable(); // Volver a mostrar todo
+            currentPage = 1;
+            filterTable();
         }
     </script>
 </body>
