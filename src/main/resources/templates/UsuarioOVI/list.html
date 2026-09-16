@@ -226,7 +226,6 @@
                                     <a th:if="${!usuario.estadoAceptado}" 
                                        th:href="@{/UsuarioOVI/aceptar/{id}(id=${usuario.idUsuario})}"
                                        class="btn btn-sm btn-sg-primary px-3 d-inline-flex align-items-center gap-1"
-                                       onclick="return confirm('¿Estás seguro de que deseas aceptar a este usuario en el sistema?')"
                                        th:aria-label="${'Aceptar al usuario ' + usuario.nombre}">
                                         <i class="bi bi-check-lg" aria-hidden="true"></i>
                                         <span>Aceptar</span>
@@ -234,7 +233,6 @@
                                     <a th:if="${!usuario.estadoAceptado}" 
                                        th:href="@{/UsuarioOVI/rechazar/{id}(id=${usuario.idUsuario})}"
                                        class="btn btn-sm btn-outline-danger px-3 d-inline-flex align-items-center gap-1"
-                                       onclick="return confirm('¿Estás seguro de que deseas rechazar a este usuario del sistema?')"
                                        th:aria-label="${'Denegar al usuario ' + usuario.nombre}">
                                         <i class="bi bi-x-lg" aria-hidden="true"></i>
                                         <span>Denegar</span>
