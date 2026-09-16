@@ -23,13 +23,14 @@ public class UsuarioOVIDao {
 
     public void addUsuarioOVI(UsuarioOVI usuario) {
         jdbcTemplate.update(
-                "INSERT INTO usuarioovi (nombre, apellidos, email, telefono, direccion, consentimientorgbd, estadoaceptado, password) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO usuarioovi (nombre, apellidos, email, telefono, direccion, provincia, consentimientorgbd, estadoaceptado, password) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 usuario.getNombre(),
                 usuario.getApellidos(),
                 usuario.getEmail(),
                 usuario.getTelefono(),
                 usuario.getDireccion(),
+                usuario.getProvincia(),
                 usuario.isConsentimientoRGBD(),
                 usuario.isEstadoAceptado(),
                 usuario.getPassword());
@@ -83,55 +84,34 @@ public class UsuarioOVIDao {
         }
     }
 
-    public List<UsuarioOVI> getUsuariosPaginados(String buscar,
-                                             int limit,
-                                             int offset) {
-
-        String filtro = "%" + buscar + "%";
-
-        return jdbcTemplate.query(
-            """
-            SELECT *
-            FROM usuarioovi
-            WHERE
-                LOWER(nombre) LIKE LOWER(?)
-                OR LOWER(apellidos) LIKE LOWER(?)
-                OR LOWER(email) LIKE LOWER(?)
-            ORDER BY idusuario
-            LIMIT ? OFFSET ?
-            """,
-            new UsuarioOVIRowMapper(),
-            filtro,
-            filtro,
-            filtro,
-            limit,
-            offset
-        );
+    public List<UsuarioOVI> getUsuariosPaginados(String query, String provincia, int limit, int offset) {
+        String filtro = "%" + query + "%";
+        String sql = "SELECT * FROM usuarioovi WHERE (LOWER(nombre) LIKE LOWER(?) OR LOWER(apellidos) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?))";
+        
+        if (provincia != null && !provincia.isEmpty()) {
+            sql += " AND provincia = ? ORDER BY idusuario LIMIT ? OFFSET ?";
+            return jdbcTemplate.query(sql, new UsuarioOVIRowMapper(), filtro, filtro, filtro, provincia, limit, offset);
+        } else {
+            sql += " ORDER BY idusuario LIMIT ? OFFSET ?";
+            return jdbcTemplate.query(sql, new UsuarioOVIRowMapper(), filtro, filtro, filtro, limit, offset);
+        }
     }
 
-    public int countUsuarios(String buscar) {
-
-        String filtro = "%" + buscar + "%";
-
-        Integer total = jdbcTemplate.queryForObject(
-            """
-            SELECT COUNT(*)
-            FROM usuarioovi
-            WHERE
-                LOWER(nombre) LIKE LOWER(?)
-                OR LOWER(apellidos) LIKE LOWER(?)
-                OR LOWER(email) LIKE LOWER(?)
-            """,
-            Integer.class,
-            filtro,
-            filtro,
-            filtro
-        );
+    public int countUsuarios(String query, String provincia) {
+        String filtro = "%" + query + "%";
+        String sql = "SELECT COUNT(*) FROM usuarioovi WHERE (LOWER(nombre) LIKE LOWER(?) OR LOWER(apellidos) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?))";
+        
+        Integer total;
+        if (provincia != null && !provincia.isEmpty()) {
+            sql += " AND provincia = ?";
+            total = jdbcTemplate.queryForObject(sql, Integer.class, filtro, filtro, filtro, provincia);
+        } else {
+            total = jdbcTemplate.queryForObject(sql, Integer.class, filtro, filtro, filtro);
+        }
 
         return total == null ? 0 : total;
     }
 
-    // Contar usuarios registrados pendientes de validación
     public int countUsuariosPendientes() {
         String sql = "SELECT COUNT(*) FROM usuarioovi WHERE estadoaceptado = FALSE";
         return jdbcTemplate.queryForObject(sql, Integer.class);

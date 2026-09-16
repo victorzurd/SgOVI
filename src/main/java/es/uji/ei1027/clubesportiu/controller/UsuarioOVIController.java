@@ -26,7 +26,6 @@ import es.uji.ei1027.clubesportiu.util.Paginacion;
 import es.uji.ei1027.clubesportiu.validator.UsuarioOVIValidator;
 import jakarta.servlet.http.HttpSession;
 
-
 @Controller
 @RequestMapping("/UsuarioOVI")
 public class UsuarioOVIController {
@@ -62,7 +61,8 @@ public class UsuarioOVIController {
 
     @RequestMapping("/list")
     public String list(
-            @RequestParam(defaultValue = "") String buscar,
+            @RequestParam(value = "query", defaultValue = "") String query,
+            @RequestParam(value = "provincia", defaultValue = "") String provincia,
             @RequestParam(defaultValue = "1") int page,
             Model model) {
 
@@ -71,15 +71,16 @@ public class UsuarioOVIController {
         model.addAttribute(
                 "usuarios",
                 usuarioOVIDao.getUsuariosPaginados(
-                        buscar,
+                        query,
+                        provincia,
                         pageSize,
                         (page - 1) * pageSize));
 
-        int total =
-                usuarioOVIDao.countUsuarios(buscar);
+        int total = usuarioOVIDao.countUsuarios(query, provincia);
 
         model.addAttribute("page", page);
-        model.addAttribute("buscar", buscar);
+        model.addAttribute("query", query);
+        model.addAttribute("provincia", provincia);
         model.addAttribute("totalPages",
                 (int) Math.ceil((double) total / pageSize));
 
@@ -306,7 +307,7 @@ public class UsuarioOVIController {
     @GetMapping("/contratos")
     public String misContratos(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "") String buscar,
+            @RequestParam(value = "buscar", defaultValue = "") String buscar,
             HttpSession session,
             Model model) {
 
@@ -342,12 +343,5 @@ public class UsuarioOVIController {
         model.addAttribute("mostrarZona", false);
 
         return "UsuarioOVI/contratos";
-    }
-
-    @GetMapping("/list")
-    public String listarUsuarios(Model model) {
-        // Agrega los usuarios al modelo
-        model.addAttribute("usuarios", usuarioOVIDao.getUsuariosOVI());
-        return "UsuarioOVI/list"; 
     }
 }
