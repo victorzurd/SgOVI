@@ -116,4 +116,42 @@ public class UsuarioOVIDao {
         String sql = "SELECT COUNT(*) FROM usuarioovi WHERE estadoaceptado = FALSE";
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
+
+    public List<UsuarioOVI> getUsuariosPaginados(String buscar, String provincia, String estado, int limit, int offset) {
+    String texto = (buscar == null) ? "" : buscar.trim();
+    String filtroBuscar = "%" + texto + "%";
+    String prov = (provincia == null) ? "" : provincia.trim();
+
+    String ordenSql = "ORDER BY nombre ASC";
+    if ("pendiente".equalsIgnoreCase(estado)) {
+        ordenSql = "ORDER BY estadoaceptado ASC, nombre ASC";
+    } else if ("aceptado".equalsIgnoreCase(estado)) {
+        ordenSql = "ORDER BY estadoaceptado DESC, nombre ASC";
+    }
+
+    String sql =
+        "SELECT * FROM usuarioovi " +
+        "WHERE (" +
+        "   LOWER(nombre) LIKE LOWER(?) " +
+        "   OR LOWER(apellidos) LIKE LOWER(?) " +
+        "   OR LOWER(email) LIKE LOWER(?) " +
+        "   OR LOWER(COALESCE(direccion, '')) LIKE LOWER(?)" +
+        ") " +
+        "AND (? = '' OR LOWER(COALESCE(provincia, '')) = LOWER(?)) " +
+        ordenSql + " " +
+        "LIMIT ? OFFSET ?";
+
+    return jdbcTemplate.query(
+            sql,
+            new UsuarioOVIRowMapper(),
+            filtroBuscar,
+            filtroBuscar,
+            filtroBuscar,
+            filtroBuscar,
+            prov,
+            prov,
+            limit,
+            offset
+    );
+}
 }

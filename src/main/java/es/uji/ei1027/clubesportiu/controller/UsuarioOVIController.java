@@ -61,32 +61,40 @@ public class UsuarioOVIController {
 
     @RequestMapping("/list")
     public String list(
-            @RequestParam(value = "query", defaultValue = "") String query,
-            @RequestParam(value = "provincia", defaultValue = "") String provincia,
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "buscar", required = false, defaultValue = "") String buscar,
+            @RequestParam(name = "provincia", required = false, defaultValue = "") String provincia,
+            @RequestParam(name = "estado", required = false, defaultValue = "") String estado,
             Model model) {
 
-        int pageSize = 6;
+        String queryBusqueda = (buscar != null) ? buscar.trim() : "";
+        String queryProvincia = (provincia != null) ? provincia.trim() : "";
+        String queryEstado = (estado != null) ? estado.trim() : "";
 
-        model.addAttribute(
-                "usuarios",
-                usuarioOVIDao.getUsuariosPaginados(
-                        query,
-                        provincia,
-                        pageSize,
-                        (page - 1) * pageSize));
+        Paginacion paginacion = new Paginacion();
+        paginacion.setPage(page);
+        paginacion.setBuscar(queryBusqueda);
 
-        int total = usuarioOVIDao.countUsuarios(query, provincia);
+        int total = usuarioOVIDao.countUsuarios(queryBusqueda, queryProvincia);
+        int totalPages = (int) Math.ceil((double) total / paginacion.getSize());
 
+        List<UsuarioOVI> usuarios = usuarioOVIDao.getUsuariosPaginados(
+                queryBusqueda,
+                queryProvincia,
+                queryEstado,
+                paginacion.getSize(),
+                paginacion.getOffset());
+
+        model.addAttribute("usuarios", usuarios);
         model.addAttribute("page", page);
-        model.addAttribute("query", query);
-        model.addAttribute("provincia", provincia);
-        model.addAttribute("totalPages",
-                (int) Math.ceil((double) total / pageSize));
+        model.addAttribute("buscar", queryBusqueda);
+        model.addAttribute("provinciaSeleccionada", queryProvincia);
+        model.addAttribute("estadoSeleccionado", queryEstado);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("urlBase", "/UsuarioOVI/list");
 
         return "UsuarioOVI/list";
     }
-
     @RequestMapping(value = "/register")
     public String addForm(Model model) {
         model.addAttribute("usuario", new UsuarioOVI());

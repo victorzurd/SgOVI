@@ -111,13 +111,13 @@
             </div>
         </div>
 
-        <!-- Tarjeta Principal con Buscador y Tabla -->
+        <!-- Tarjeta Principal con Buscador, Filtros y Tabla -->
         <div class="pillar-card p-0 overflow-hidden mb-4">
             
-            <!-- Formulario de Búsqueda Integrado con Desplegable -->
+            <!-- Formulario de Búsqueda Integrado con Desplegables de Provincia y Estado -->
             <div class="p-3 border-bottom bg-light">
                 <form th:action="@{/AsistentePersonal/list}" method="get" class="row g-2 align-items-center">
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <div class="input-group">
                             <span class="input-group-text bg-white">
                                 <i class="bi bi-search text-muted" aria-hidden="true"></i>
@@ -139,11 +139,18 @@
                                     th:selected="${p.toString() == provinciaSeleccionada}">Provincia</option>
                         </select>
                     </div>
-                    <div class="col-md-4 d-flex gap-2">
+                    <div class="col-md-2">
+                        <select name="estado" class="form-select" aria-label="Ordenar por estado">
+                            <option value="">-- Ordenar estado --</option>
+                            <option value="pendiente" th:selected="${estadoSeleccionado == 'pendiente'}">Pendientes primero</option>
+                            <option value="aceptado" th:selected="${estadoSeleccionado == 'aceptado'}">Aceptados primero</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex gap-2">
                         <button type="submit" class="btn btn-sg-primary px-3 flex-grow-1">
                             <i class="bi bi-search me-1" aria-hidden="true"></i> Buscar
                         </button>
-                        <a th:if="${(buscar != null && !buscar.isEmpty()) || (provinciaSeleccionada != null && !provinciaSeleccionada.isEmpty())}" 
+                        <a th:if="${(buscar != null && !buscar.isEmpty()) || (provinciaSeleccionada != null && !provinciaSeleccionada.isEmpty()) || (estadoSeleccionado != null && !estadoSeleccionado.isEmpty())}" 
                            th:href="@{/AsistentePersonal/list}" 
                            class="btn btn-outline-secondary d-flex align-items-center">
                             <i class="bi bi-x-circle me-1" aria-hidden="true"></i> Limpiar

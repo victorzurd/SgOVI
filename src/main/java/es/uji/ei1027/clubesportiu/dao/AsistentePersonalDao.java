@@ -185,22 +185,28 @@ public class AsistentePersonalDao {
 
         return total == null ? 0 : total;
     }
-    public List<AsistentePersonal> getAsistentesPaginados(String buscar, String provincia, int limit, int offset) {
+    public List<AsistentePersonal> getAsistentesPaginados(String buscar, String provincia, String estado, int limit, int offset) {
     String texto = (buscar == null) ? "" : buscar.trim();
     String filtroBuscar = "%" + texto + "%";
     String prov = (provincia == null) ? "" : provincia.trim();
 
+    String ordenSql = "ORDER BY nombre ASC";
+    if ("pendiente".equalsIgnoreCase(estado)) {
+        ordenSql = "ORDER BY estadoaceptado ASC, nombre ASC";
+    } else if ("aceptado".equalsIgnoreCase(estado)) {
+        ordenSql = "ORDER BY estadoaceptado DESC, nombre ASC";
+    }
+
     String sql =
         "SELECT * FROM asistentepersonal " +
-        "WHERE estadoaceptado = true " +
-        "AND (" +
+        "WHERE (" +
         "   LOWER(nombre) LIKE LOWER(?) " +
         "   OR LOWER(apellidos) LIKE LOWER(?) " +
         "   OR LOWER(email) LIKE LOWER(?) " +
         "   OR LOWER(COALESCE(zona, '')) LIKE LOWER(?)" +
         ") " +
         "AND (? = '' OR LOWER(COALESCE(provincia, '')) = LOWER(?)) " +
-        "ORDER BY nombre ASC " +
+        ordenSql + " " +
         "LIMIT ? OFFSET ?";
 
     return jdbcTemplate.query(
@@ -224,8 +230,7 @@ public int countAsistentes(String buscar, String provincia) {
 
     String sql =
         "SELECT COUNT(*) FROM asistentepersonal " +
-        "WHERE estadoaceptado = true " +
-        "AND (" +
+        "WHERE (" +
         "   LOWER(nombre) LIKE LOWER(?) " +
         "   OR LOWER(apellidos) LIKE LOWER(?) " +
         "   OR LOWER(email) LIKE LOWER(?) " +

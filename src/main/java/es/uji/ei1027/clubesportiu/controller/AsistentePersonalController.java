@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,14 +65,16 @@ public class AsistentePersonalController {
     }
 
    @RequestMapping("/list")
-public String list(
-        @RequestParam(name = "page", defaultValue = "1") int page,
-        @RequestParam(name = "buscar", required = false, defaultValue = "") String buscar,
-        @RequestParam(name = "provincia", required = false, defaultValue = "") String provincia,
-        Model model) {
+    public String list(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "buscar", required = false, defaultValue = "") String buscar,
+            @RequestParam(name = "provincia", required = false, defaultValue = "") String provincia,
+            @RequestParam(name = "estado", required = false, defaultValue = "") String estado,
+            Model model) {
 
         String queryBusqueda = (buscar != null) ? buscar.trim() : "";
         String queryProvincia = (provincia != null) ? provincia.trim() : "";
+        String queryEstado = (estado != null) ? estado.trim() : "";
 
         Paginacion paginacion = new Paginacion();
         paginacion.setPage(page);
@@ -83,6 +86,7 @@ public String list(
         List<AsistentePersonal> asistentes = asistentePersonalDao.getAsistentesPaginados(
                 queryBusqueda,
                 queryProvincia,
+                queryEstado,
                 paginacion.getSize(),
                 paginacion.getOffset());
 
@@ -90,13 +94,13 @@ public String list(
         model.addAttribute("page", page);
         model.addAttribute("buscar", queryBusqueda);
         model.addAttribute("provinciaSeleccionada", queryProvincia);
+        model.addAttribute("estadoSeleccionado", queryEstado);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("urlBase", "/AsistentePersonal/list");
         model.addAttribute("numSolicitudes", asistentePersonalDao.countAsistentesPendientes());
 
         return "AsistentePersonal/list";
     }
-
     @RequestMapping("/list/pendientes")
     public String listPendientes(Model model) {
         model.addAttribute("asistentes", asistentePersonalDao.getAsistentesPersonalesPendientes());
@@ -242,7 +246,7 @@ public String list(
             return "AsistentePersonal/correo";
         }
 
-        return "redirect:/AsistentePersonal/list/pendientes";
+        return "redirect:/AsistentePersonal/list";
     }
 
     @RequestMapping("logout")
