@@ -191,7 +191,13 @@ public class APRequestController {
     }
 
     @GetMapping("/assign/{id}")
-    public String asignarAsistentes(@PathVariable("id") int id, Model model, HttpSession session) {
+    public String asignarAsistentes(
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "") String buscar,
+            @RequestParam(defaultValue = "") String provincia,
+            Model model, 
+            HttpSession session) {
+
         TecnicoOVI tecnico = (TecnicoOVI) session.getAttribute("tecnicoLogueado");
         if (tecnico == null) {
             return "redirect:/TecnicoOVI/login";
@@ -202,8 +208,9 @@ public class APRequestController {
             return "redirect:/APRequest/list";
         }
 
-        List<AsistentePersonal> todosAsistentes = asistentePersonalDao.getAsistentesPersonales();
-        if (todosAsistentes == null) todosAsistentes = new ArrayList<>();
+        // Obtener asistentes filtrados por texto y provincia
+        List<AsistentePersonal> asistentes = asistentePersonalDao.getAsistentesFiltrados(buscar, provincia);
+        if (asistentes == null) asistentes = new ArrayList<>();
 
         List<Integer> idsAsignados = candidatoDao.getIdsCandidatosPorSolicitud(id);
         if (idsAsignados == null) idsAsignados = new ArrayList<>();
@@ -214,11 +221,13 @@ public class APRequestController {
         boolean tieneAsistente = (request.getIdSeleccion() != null);
 
         model.addAttribute("request", request);
-        model.addAttribute("asistentes", todosAsistentes);
+        model.addAttribute("asistentes", asistentes);
         model.addAttribute("ids", idsAsignados);
         model.addAttribute("candidatos", candidatos);
         model.addAttribute("tecnico", tecnico);
-        model.addAttribute("tieneAsistente", tieneAsistente); 
+        model.addAttribute("tieneAsistente", tieneAsistente);
+        model.addAttribute("buscar", buscar);
+        model.addAttribute("provincia", provincia);
 
         return "APRequest/assign";
     }

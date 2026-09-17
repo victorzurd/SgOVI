@@ -3,99 +3,307 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>SgOVI - Asistentes Aceptados</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/database.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SgOVI - Bolsa de Asistentes Aceptados</title>
 
-    <style>
-        .text-teal { color: #0d9488 !important; }
-        .btn-teal { background-color: #0d9488 !important; color: white !important; }
-        .btn-teal:hover { background-color: #0f766e !important; color: white !important; }
-    </style>
+    <!-- Frameworks externos -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Estilos unificados SgOVI -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/sgovi-style.css}" href="/css/sgovi-style.css">
 </head>
 
-<body class="bg-light">
+<body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
-        <div class="container">
-            <a class="navbar-brand text-teal fw-bold" th:href="@{/TecnicoOVI/dashboard}">SgOVI - Gestión Técnica</a>
-            <a th:href="@{/TecnicoOVI/logout}" class="btn btn-outline-danger btn-sm fw-bold">Cerrar Sesión</a>
+    <!-- Barra de Accesibilidad -->
+    <div class="accessibility-bar" role="region" aria-label="Herramientas de accesibilidad">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
+            <div class="d-flex gap-4">
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto">
+                    <i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +
+                </button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Disminuir tamaño de texto">
+                    <i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -
+                </button>
+                <button type="button" onclick="toggleContrast()" aria-label="Cambiar a modo alto contraste">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación Principal -->
+    <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
+        <div class="container justify-content-between">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/TecnicoOVI/dashboard}">
+                <i class="bi bi-heart-pulse-fill text-teal" aria-hidden="true"></i>
+                <span>SgOVI - Gestión Técnica</span>
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a th:href="@{/APRequest/gestion/{id}(id=${request.idRequest})}" class="btn btn-sg-outline btn-sm px-3 py-2">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver a Gestión
+                </a>
+                <a th:href="@{/TecnicoOVI/logout}" class="btn btn-outline-danger btn-sm px-3 py-2 fw-semibold">
+                    <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar Sesión
+                </a>
+            </div>
         </div>
     </nav>
 
-    <main class="container">
-        
-        <div th:if="${tieneAsistente}" class="alert alert-warning border-0 shadow-sm mb-4" role="alert">
-            ⚠️ <strong>Solicitud Completada:</strong> El usuario ya ha seleccionado un asistente definitivo para esta solicitud. Las opciones están deshabilitadas.
-        </div>
+    <!-- Contenedor Principal -->
+    <main class="container py-4 flex-grow-1">
+        <div class="pillar-card p-4 p-md-5">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="text-teal fw-bold mb-0">Bolsa de Asistentes Aceptados</h2>
-                <p class="text-secondary">Selecciona a los candidatos que quieres proponer al usuario.</p>
-            </div>
-            
-            <div class="d-flex gap-2">
-                <a th:href="@{/APRequest/gestion/{id}(id=${request.idRequest})}" class="btn btn-teal">Volver a gestión</a>
-                <a th:if="${!tieneAsistente}" th:href="@{/APRequest/candidatos/{id}(id=${request.idRequest})}" class="btn btn-primary">Ver lista candidatos</a>
-                <button th:if="${tieneAsistente}" class="btn btn-secondary" disabled="disabled">🔒 Lista bloqueada</button>
-            </div>
-        </div>
-
-        <div class="card shadow-sm border-0 mb-5">
-            <div class="card-header bg-white border-bottom py-3">
-                <h5 class="mb-0 fw-bold text-secondary">
-                    Asignar Candidatos para la Solicitud #<span th:text="${request.idRequest}"></span>
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle shadow-sm rounded overflow-hidden mt-3">
-                        <thead class="table-dark text-center">
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Apellidos</th>
-                                <th>Email</th>
-                                <th>Teléfono</th>
-                                <th>Zona</th>
-                                <th>Disponibilidad</th>
-                                <th>Puntuación</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                            <tr th:each="asistente : ${asistentes}">
-                                <td th:text="${asistente.nombre}"></td>
-                                <td th:text="${asistente.apellidos}"></td>
-                                <td th:text="${asistente.email}"></td>
-                                <td th:text="${asistente.telefono}"></td>
-                                <td th:text="${asistente.zona}"></td>
-                                <td th:text="${asistente.disponibilidad}"></td>
-                                <td th:text="${asistente.puntuacion}"></td>
-
-                                <td>
-                                    <span th:if="${ids.contains(asistente.idAsistente)}" class="badge bg-secondary">Ya añadido</span>
-
-                                    <a th:if="${!ids.contains(asistente.idAsistente) and !tieneAsistente}"
-                                       th:href="@{/APRequest/candidatos/add/{idSol}/{idAsis}(idSol=${request.idRequest}, idAsis=${asistente.idAsistente})}"
-                                       class="btn btn-success btn-sm">Añadir candidato</a>
-
-                                    <button th:if="${!ids.contains(asistente.idAsistente) and tieneAsistente}" class="btn btn-secondary btn-sm" disabled="disabled">Bloqueado</button>
-                                </td>
-                            </tr>
-
-                            <tr th:if="${#lists.isEmpty(asistentes)}">
-                                <td colspan="8" class="text-center text-muted py-5">No hay asistentes</td>
-                            </tr>
-
-                        </tbody>
-                    </table>
+            <!-- Alerta de Bloqueo por Asignación Finalizada -->
+            <div th:if="${tieneAsistente}" class="alert alert-sg-danger border-0 mb-4 d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-5" aria-hidden="true"></i>
+                <div>
+                    <strong>Solicitud Completada:</strong> El usuario ya ha seleccionado un asistente definitivo para esta solicitud. Las opciones de asignación están bloqueadas.
                 </div>
             </div>
-        </div>
 
+            <!-- Cabecera de Sección -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 border-bottom pb-3">
+                <div>
+                    <span class="hero-badge mb-2">
+                        <i class="bi bi-person-plus-fill" aria-hidden="true"></i> Candidaturas
+                    </span>
+                    <h1 class="h3 fw-bold text-dark m-0">
+                        Bolsa de Asistentes Aceptados
+                    </h1>
+                    <p class="text-muted-custom m-0 small mt-1">
+                        Asignando candidatos a la Solicitud #<span th:text="${request.idRequest}"></span>
+                    </p>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a th:if="${!tieneAsistente}" 
+                       th:href="@{/APRequest/candidatos/{id}(id=${request.idRequest})}" 
+                       class="btn btn-sg-primary">
+                        <i class="bi bi-people-fill me-1" aria-hidden="true"></i> Ver Lista Candidatos
+                    </a>
+                    <button th:if="${tieneAsistente}" class="btn btn-sg-outline" disabled="disabled">
+                        <i class="bi bi-lock-fill me-1" aria-hidden="true"></i> Lista Bloqueada
+                    </button>
+                </div>
+            </div>
+
+            <!-- BARRA DE BÚSQUEDA GENERAL Y FILTRO POR PROVINCIA -->
+            <div class="filter-bar mb-4">
+                <form th:action="@{/APRequest/assign/{id}(id=${request.idRequest})}" method="get" class="row g-2 align-items-end">
+                    <div class="col-md-6">
+                        <label for="buscarInput" class="filter-label">
+                            <i class="bi bi-search me-1" aria-hidden="true"></i> Búsqueda General
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person-search" aria-hidden="true"></i></span>
+                            <input type="text" id="buscarInput" name="buscar" th:value="${buscar}" class="form-control" placeholder="Buscar por nombre, apellidos o email..." aria-label="Buscar por nombre, apellidos o email">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="provinciaSelect" class="filter-label">
+                            <i class="bi bi-geo-alt-fill me-1" aria-hidden="true"></i> Provincia / Zona
+                        </label>
+                        <select id="provinciaSelect" name="provincia" class="form-select" aria-label="Filtrar por provincia">
+                            <option value="">-- Todas las Provincias --</option>
+                            <option th:each="prov : ${provincias}" 
+                                    th:value="${prov.name()}" 
+                                    th:text="${prov}" 
+                                    th:selected="${prov.name() == provincia || prov.toString() == provincia}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-sg-primary w-100" title="Aplicar Filtros">
+                            <i class="bi bi-funnel-fill me-1" aria-hidden="true"></i> Filtrar
+                        </button>
+                        <a th:href="@{/APRequest/assign/{id}(id=${request.idRequest})}" class="btn btn-sg-outline" title="Limpiar Filtros">
+                            <i class="bi bi-eraser-fill" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabla Accesible de Asistentes -->
+            <div class="table-responsive" aria-live="polite">
+                <table class="table table-sg align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col"><i class="bi bi-person me-1" aria-hidden="true"></i> Nombre y Apellidos</th>
+                            <th scope="col"><i class="bi bi-envelope me-1" aria-hidden="true"></i> Email</th>
+                            <th scope="col"><i class="bi bi-telephone me-1" aria-hidden="true"></i> Teléfono</th>
+                            <th scope="col"><i class="bi bi-map me-1" aria-hidden="true"></i> Provincia</th>
+                            <th scope="col"><i class="bi bi-geo-alt me-1" aria-hidden="true"></i> Zona</th>
+                            <th scope="col"><i class="bi bi-clock me-1" aria-hidden="true"></i> Disponibilidad</th>
+                            <th scope="col" class="text-center"><i class="bi bi-gear me-1" aria-hidden="true"></i> Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="asistente : ${asistentes}" class="request-row">
+                            <td class="fw-bold text-dark" th:text="${asistente.nombre + ' ' + asistente.apellidos}">Nombre Apellidos</td>
+                            <td th:text="${asistente.email}">email@ejemplo.com</td>
+                            <td th:text="${asistente.telefono}">600000000</td>
+                            <td th:text="${asistente.provincia}">Provincia</td>
+                            <td>
+                                <span class="status-pill status-pill-info" th:text="${asistente.zona}">Zona</span>
+                            </td>
+                            <td th:text="${asistente.disponibilidad}">Mañanas</td>
+                            <td class="text-center">
+                                <span th:if="${ids.contains(asistente.idAsistente)}" class="status-pill status-pill-success">
+                                    <i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i> Ya Añadido
+                                </span>
+
+                                <a th:if="${!ids.contains(asistente.idAsistente) and !tieneAsistente}"
+                                   th:href="@{/APRequest/candidatos/add/{idSol}/{idAsis}(idSol=${request.idRequest}, idAsis=${asistente.idAsistente})}"
+                                   class="btn btn-sg-primary btn-sm px-3">
+                                    <i class="bi bi-plus-circle me-1" aria-hidden="true"></i> Añadir Candidato
+                                </a>
+
+                                <button th:if="${!ids.contains(asistente.idAsistente) and tieneAsistente}" 
+                                        class="btn btn-sg-outline btn-sm px-3" disabled="disabled">
+                                    <i class="bi bi-slash-circle me-1" aria-hidden="true"></i> Bloqueado
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Sin Registros -->
+                        <tr th:if="${#lists.isEmpty(asistentes)}">
+                            <td colspan="7" class="text-center py-5 text-muted-custom">
+                                <i class="bi bi-person-exclamation fs-2 d-block mb-2 text-teal" aria-hidden="true"></i>
+                                No se encontraron asistentes que coincidan con el criterio de búsqueda.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            <div class="pagination-wrapper d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3">
+                <div class="d-flex align-items-center gap-2">
+                    <label for="rowsPerPageSelect" class="filter-label mb-0">Mostrar:</label>
+                    <select id="rowsPerPageSelect" class="form-select form-select-sm w-auto" aria-label="Número de filas por página">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                    </select>
+                    <span class="text-muted-custom small ms-2" id="paginationInfo">Mostrando 0-0 de 0</span>
+                </div>
+                <nav aria-label="Navegación de páginas">
+                    <ul class="pagination pagination-sg pagination-sm mb-0" id="paginationList">
+                        <!-- Generado por JavaScript -->
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
     </main>
 
+    <!-- Pie de Página -->
+    <footer class="bg-white border-top py-4 text-center text-muted small mt-auto">
+        <div class="container">
+            <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleFontSize(action) {
+            const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+            if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
+            if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        // Paginación en cliente para tablas
+        let currentPage = 1;
+        let rowsPerPage = 10;
+        let allRows = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const rowsSelect = document.getElementById('rowsPerPageSelect');
+            if (rowsSelect) {
+                rowsSelect.addEventListener('change', (e) => {
+                    rowsPerPage = parseInt(e.target.value, 10);
+                    currentPage = 1;
+                    paginateTable();
+                });
+            }
+            paginateTable();
+        });
+
+        function paginateTable() {
+            allRows = Array.from(document.querySelectorAll('.request-row'));
+            const totalItems = allRows.length;
+            const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
+
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, totalItems);
+
+            allRows.forEach((row, index) => {
+                if (index >= startIndex && index < endIndex) {
+                    row.classList.remove('d-none');
+                } else {
+                    row.classList.add('d-none');
+                }
+            });
+
+            updatePaginationUI(totalItems, startIndex, endIndex, totalPages);
+        }
+
+        function updatePaginationUI(totalItems, startIndex, endIndex, totalPages) {
+            const infoText = document.getElementById('paginationInfo');
+            const paginationList = document.getElementById('paginationList');
+
+            if (!infoText || !paginationList) return;
+
+            if (totalItems === 0) {
+                infoText.textContent = 'Mostrando 0 de 0 registros';
+                paginationList.innerHTML = '';
+                return;
+            }
+
+            infoText.textContent = `Mostrando ${startIndex + 1}-${endIndex} de ${totalItems} registros`;
+
+            let html = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <button type="button" class="page-link" onclick="goToPage(${currentPage - 1})" aria-label="Página anterior" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                </button>
+            </li>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <button type="button" class="page-link" onclick="goToPage(${i})" aria-label="Página ${i}">${i}</button>
+                    </li>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+
+            html += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <button type="button" class="page-link" onclick="goToPage(${currentPage + 1})" aria-label="Página siguiente" ${currentPage === totalPages ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+            </li>`;
+
+            paginationList.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            paginateTable();
+        }
+    </script>
 </body>
 </html>

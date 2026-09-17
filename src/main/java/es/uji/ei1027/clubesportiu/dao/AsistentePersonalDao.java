@@ -1,5 +1,6 @@
 package es.uji.ei1027.clubesportiu.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -250,5 +251,74 @@ public int countAsistentes(String buscar, String provincia) {
     );
 
     return total == null ? 0 : total;
-}
+    }
+
+    public int countAsistentesFiltrados(String buscar, String provincia) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM asistentepersonal WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (buscar != null && !buscar.trim().isEmpty()) {
+            sql.append("AND (LOWER(nombre) LIKE LOWER(?) OR LOWER(apellidos) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?)) ");
+            String filtro = "%" + buscar.trim() + "%";
+            params.add(filtro);
+            params.add(filtro);
+            params.add(filtro);
+        }
+
+        if (provincia != null && !provincia.trim().isEmpty()) {
+            sql.append("AND (LOWER(provincia) = LOWER(?) OR LOWER(zona) = LOWER(?)) ");
+            params.add(provincia.trim());
+            params.add(provincia.trim());
+        }
+
+        return jdbcTemplate.queryForObject(sql.toString(), Integer.class, params.toArray());
+    }
+
+    public List<AsistentePersonal> getAsistentesFiltradosPaginados(String buscar, String provincia, int page, int size) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM asistentepersonal WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (buscar != null && !buscar.trim().isEmpty()) {
+            sql.append("AND (LOWER(nombre) LIKE LOWER(?) OR LOWER(apellidos) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?)) ");
+            String filtro = "%" + buscar.trim() + "%";
+            params.add(filtro);
+            params.add(filtro);
+            params.add(filtro);
+        }
+
+        if (provincia != null && !provincia.trim().isEmpty()) {
+            sql.append("AND (LOWER(provincia) = LOWER(?) OR LOWER(zona) = LOWER(?)) ");
+            params.add(provincia.trim());
+            params.add(provincia.trim());
+        }
+
+        sql.append("ORDER BY nombre ASC LIMIT ? OFFSET ?");
+        params.add(size);
+        params.add((page - 1) * size);
+
+        return jdbcTemplate.query(sql.toString(), new AsistentePersonalRowMapper(), params.toArray());
+    }
+
+    public List<AsistentePersonal> getAsistentesFiltrados(String buscar, String provincia) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM asistentepersonal WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        if (buscar != null && !buscar.trim().isEmpty()) {
+            sql.append("AND (LOWER(nombre) LIKE LOWER(?) OR LOWER(apellidos) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?)) ");
+            String filtro = "%" + buscar.trim() + "%";
+            params.add(filtro);
+            params.add(filtro);
+            params.add(filtro);
+        }
+
+        if (provincia != null && !provincia.trim().isEmpty()) {
+            sql.append("AND (LOWER(provincia) = LOWER(?) OR LOWER(zona) = LOWER(?)) ");
+            params.add(provincia.trim());
+            params.add(provincia.trim());
+        }
+
+        sql.append("ORDER BY nombre ASC");
+
+        return jdbcTemplate.query(sql.toString(), new AsistentePersonalRowMapper(), params.toArray());
+    }
 }
