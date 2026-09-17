@@ -21,22 +21,19 @@ public class APRequestDao {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    
     public void addAPRequest(APRequest request) {
+        jdbcTemplate.update(
+            "INSERT INTO aprequest (idusuario, descripcion, estado, titulo, zona, preferencias, horario, fechasolicitud) VALUES (?, ?, CAST(? AS estado), ?, ?, ?, ?, CURRENT_DATE)",
+            request.getIdUsuario(),
+            request.getDescripcion(),
+            request.getEstado().name(),
+            request.getTitulo(),
+            request.getZona(),
+            request.getPreferencias(),
+            request.getHorario()
+        );
+    }
 
-    jdbcTemplate.update(
-    "INSERT INTO aprequest (idusuario, descripcion, estado, titulo, zona, preferencias, horario, fechasolicitud) VALUES (?, ?, CAST(? AS estado), ?, ?, ?, ?, CURRENT_DATE)",
-        request.getIdUsuario(),
-        request.getDescripcion(),
-        request.getEstado().name(),
-        request.getTitulo(),
-        request.getZona(),
-        request.getPreferencias(),
-        request.getHorario()
-    );
-}
-
-    
     public void deleteAPRequest(int idRequest) {
         jdbcTemplate.update(
                 "DELETE FROM aprequest WHERE idrequest = ?",
@@ -45,7 +42,6 @@ public class APRequestDao {
     }
 
     public void updateAPRequest(APRequest request) {
-        
         String sql = "UPDATE aprequest SET idusuario=?, fechasolicitud=?, descripcion=?, estado=?::estado, titulo=?, zona=?, preferencias=?, horario=? WHERE idrequest=?";
         
         jdbcTemplate.update(sql, 
@@ -91,7 +87,6 @@ public class APRequestDao {
         }
     }
 
-    
     public List<APRequest> getAPRequests() {
         return jdbcTemplate.query(
                 "SELECT * FROM aprequest",
@@ -99,7 +94,6 @@ public class APRequestDao {
         );
     }
 
-    
     public List<APRequest> getAPRequestsByUsuario(int idUsuario) {
         return jdbcTemplate.query(
                 "SELECT * FROM aprequest WHERE idusuario=?",
@@ -108,9 +102,7 @@ public class APRequestDao {
         );
     }
 
-
-   public List<APRequest> getAPRequestsByAsistente(int idAsistente) {
-        
+    public List<APRequest> getAPRequestsByAsistente(int idAsistente) {
         String sql = "SELECT r.* FROM aprequest r " +
                     "JOIN seleccion s ON r.idrequest = s.idseleccion " + 
                     "WHERE s.idasistente = ?";
@@ -123,30 +115,30 @@ public class APRequestDao {
         return jdbcTemplate.queryForObject(sql, String.class, idUsuario);
     }
 
-    public int countAPRequests(String buscar) {
-
+    public int countAPRequests(String buscar, String estado) {
         String sql = """
             SELECT COUNT(*)
             FROM aprequest
-            WHERE LOWER(titulo) LIKE LOWER(?)
-            OR LOWER(descripcion) LIKE LOWER(?)
+            WHERE (LOWER(titulo) LIKE LOWER(?) OR LOWER(descripcion) LIKE LOWER(?))
+            AND (? = '' OR estado::text = ?)
             """;
 
         String filtro = "%" + buscar + "%";
 
-        return jdbcTemplate.queryForObject(sql, Integer.class, filtro, filtro);
+        return jdbcTemplate.queryForObject(sql, Integer.class, filtro, filtro, estado, estado);
     }
 
     public List<APRequest> getAPRequestsPaginados(
             String buscar,
+            String estado,
             int limit,
             int offset) {
 
         String sql = """
             SELECT *
             FROM aprequest
-            WHERE LOWER(titulo) LIKE LOWER(?)
-            OR LOWER(descripcion) LIKE LOWER(?)
+            WHERE (LOWER(titulo) LIKE LOWER(?) OR LOWER(descripcion) LIKE LOWER(?))
+            AND (? = '' OR estado::text = ?)
             ORDER BY idrequest DESC
             LIMIT ? OFFSET ?
             """;
@@ -158,20 +150,19 @@ public class APRequestDao {
                 new APRequestRowMapper(),
                 filtro,
                 filtro,
+                estado,
+                estado,
                 limit,
                 offset);
     }
 
-    public int countAPRequestsByUsuario(int idUsuario, String buscar) {
-
+    public int countAPRequestsByUsuario(int idUsuario, String buscar, String estado) {
         String sql = """
             SELECT COUNT(*)
             FROM aprequest
             WHERE idusuario = ?
-            AND (
-                    LOWER(titulo) LIKE LOWER(?)
-                OR LOWER(descripcion) LIKE LOWER(?)
-            )
+            AND (LOWER(titulo) LIKE LOWER(?) OR LOWER(descripcion) LIKE LOWER(?))
+            AND (? = '' OR estado::text = ?)
             """;
 
         String filtro = "%" + buscar + "%";
@@ -181,12 +172,15 @@ public class APRequestDao {
                 Integer.class,
                 idUsuario,
                 filtro,
-                filtro);
+                filtro,
+                estado,
+                estado);
     }
 
     public List<APRequest> getAPRequestsByUsuarioPaginados(
             int idUsuario,
             String buscar,
+            String estado,
             int limit,
             int offset) {
 
@@ -194,10 +188,8 @@ public class APRequestDao {
             SELECT *
             FROM aprequest
             WHERE idusuario = ?
-            AND (
-                    LOWER(titulo) LIKE LOWER(?)
-                OR LOWER(descripcion) LIKE LOWER(?)
-            )
+            AND (LOWER(titulo) LIKE LOWER(?) OR LOWER(descripcion) LIKE LOWER(?))
+            AND (? = '' OR estado::text = ?)
             ORDER BY idrequest DESC
             LIMIT ? OFFSET ?
             """;
@@ -210,11 +202,12 @@ public class APRequestDao {
                 idUsuario,
                 filtro,
                 filtro,
+                estado,
+                estado,
                 limit,
                 offset);
     }
 
-        // Contar solicitudes en revisión o pendientes
     public int countPeticionesPendientesOEnRevision() {
         String sql = "SELECT COUNT(*) FROM aprequest WHERE estado::text IN ('pendiente', 'en_revision')";
         return jdbcTemplate.queryForObject(sql, Integer.class);

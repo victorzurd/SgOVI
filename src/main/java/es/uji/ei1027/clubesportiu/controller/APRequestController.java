@@ -66,6 +66,11 @@ public class APRequestController {
         return Provincia.values();
     }
 
+    @ModelAttribute("estados")
+    public Estado[] getEstados() {
+        return Estado.values();
+    }
+
     @ModelAttribute("opcionesHorario")
     public List<String> getOpcionesHorario() {
         return Arrays.asList(
@@ -81,14 +86,13 @@ public class APRequestController {
     public String listAPRequests(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "") String buscar,
+            @RequestParam(defaultValue = "") String estado,
             HttpSession session,
             Model model) {
 
         Paginacion paginacion = new Paginacion();
         paginacion.setPage(page);
         paginacion.setBuscar(buscar);
-
-
 
         List<APRequest> requests;
         String rol;
@@ -98,27 +102,29 @@ public class APRequestController {
 
             rol = "TECNICO";
 
-            total = apRequestDao.countAPRequests(buscar);
+            total = apRequestDao.countAPRequests(buscar, estado);
 
             requests = apRequestDao.getAPRequestsPaginados(
                     buscar,
+                    estado,
                     paginacion.getSize(),
                     paginacion.getOffset());
 
         } else if (session.getAttribute("usuarioLogueado") != null) {
 
-            UsuarioOVI usuario =
-                    (UsuarioOVI) session.getAttribute("usuarioLogueado");
+            UsuarioOVI usuario = (UsuarioOVI) session.getAttribute("usuarioLogueado");
 
             rol = "USUARIO";
 
             total = apRequestDao.countAPRequestsByUsuario(
                     usuario.getIdUsuario(),
-                    buscar);
+                    buscar,
+                    estado);
 
             requests = apRequestDao.getAPRequestsByUsuarioPaginados(
                     usuario.getIdUsuario(),
                     buscar,
+                    estado,
                     paginacion.getSize(),
                     paginacion.getOffset());
 
@@ -143,6 +149,7 @@ public class APRequestController {
         model.addAttribute("requests", requests);
         model.addAttribute("rol", rol);
         model.addAttribute("buscar", buscar);
+        model.addAttribute("estado", estado);
         model.addAttribute("page", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("urlBase", "/APRequest/list");
@@ -211,7 +218,6 @@ public class APRequestController {
         model.addAttribute("ids", idsAsignados);
         model.addAttribute("candidatos", candidatos);
         model.addAttribute("tecnico", tecnico);
-        
         model.addAttribute("tieneAsistente", tieneAsistente); 
 
         return "APRequest/assign";
@@ -266,7 +272,6 @@ public class APRequestController {
         model.addAttribute("tieneAsistente", tieneAsistente);
         model.addAttribute("candidatos", candidatos);
         model.addAttribute("idSolicitud", idSolicitud);
-        
         model.addAttribute("request", solicitud); 
 
         return "UsuarioOVI/candidatos";

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<body>
+    <div th:fragment="buscadorEstado(action)">
+        <form th:action="@{${action}}" method="get" class="row g-2 align-items-center">
+            <div class="col-md-7">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search" aria-hidden="true"></i></span>
+                    <input type="text" name="buscar" th:value="${buscar}" class="form-control" placeholder="Buscar por título o descripción..." aria-label="Buscar por título o descripción">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="estado" class="form-select" aria-label="Filtrar por estado">
+                    <option value="">-- Todos los Estados --</option>
+                    <option th:each="est : ${estados}" 
+                            th:value="${est}" 
+                            th:text="${#strings.capitalize(est.name().replace('_', ' '))}"
+                            th:selected="${est.name() == estado}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-sg-primary w-100" title="Buscar">
+                    <i class="bi bi-search me-1" aria-hidden="true"></i> Buscar
+                </button>
+                <a th:href="@{${action}}" class="btn btn-sg-outline" title="Limpiar filtros">
+                    <i class="bi bi-eraser-fill" aria-hidden="true"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
