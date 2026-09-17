@@ -72,7 +72,7 @@
                 </div>
             </div>
 
-            <!-- ÚNICO BUSCADOR: Consulta directa a Base de Datos con Paginación -->
+            <!-- ÚNICO BUSCADOR: Consulta directa a Base de Datos -->
             <div class="mb-4">
                 <th:block th:replace="~{fragments/buscador(action='/APRequest/list')}"/>
             </div>
@@ -150,8 +150,24 @@
                 </table>
             </div>
 
-            <!-- Paginación Thymeleaf (Fragmento) -->
-            <th:block th:replace="~{fragments/paginacion :: paginacion('/APRequest/list')}"/>
+            <!-- Módulo de Paginación Integrado (Estilo listaChats) -->
+            <div class="pagination-wrapper d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3" id="paginationControls">
+                <div class="d-flex align-items-center gap-2">
+                    <label for="rowsPerPageSelect" class="filter-label mb-0">Mostrar:</label>
+                    <select id="rowsPerPageSelect" class="form-select form-select-sm w-auto" aria-label="Número de filas por página">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                    <span class="text-muted-custom small ms-2" id="paginationInfo">Mostrando 0-0 de 0</span>
+                </div>
+                <nav aria-label="Navegación de páginas">
+                    <ul class="pagination pagination-sg pagination-sm mb-0" id="paginationList">
+                        <!-- Botones de páginas generados mediante JS -->
+                    </ul>
+                </nav>
+            </div>
 
         </div>
     </main>
@@ -163,7 +179,7 @@
         </div>
     </footer>
 
-    <!-- Scripts de Accesibilidad -->
+    <!-- Scripts de Accesibilidad y Paginación -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Control del Tamaño de Texto
@@ -176,6 +192,96 @@
         // Control del Modo Alto Contraste
         function toggleContrast() {
             document.body.classList.toggle('high-contrast');
+        }
+
+        // --- SISTEMA DE PAGINACIÓN DINÁMICA (Estilo listaChats) ---
+        let currentPage = 1;
+        let rowsPerPage = 10;
+        let allRows = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const rowsPerPageSelect = document.getElementById('rowsPerPageSelect');
+
+            if (rowsPerPageSelect) {
+                rowsPerPageSelect.addEventListener('change', (e) => {
+                    rowsPerPage = parseInt(e.target.value, 10);
+                    currentPage = 1;
+                    paginateTable();
+                });
+            }
+
+            paginateTable();
+        });
+
+        function paginateTable() {
+            allRows = Array.from(document.querySelectorAll('.request-row'));
+            const totalItems = allRows.length;
+            const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
+
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, totalItems);
+
+            allRows.forEach((row, index) => {
+                if (index >= startIndex && index < endIndex) {
+                    row.classList.remove('d-none');
+                } else {
+                    row.classList.add('d-none');
+                }
+            });
+
+            updatePaginationUI(totalItems, startIndex, endIndex, totalPages);
+        }
+
+        function updatePaginationUI(totalItems, startIndex, endIndex, totalPages) {
+            const infoText = document.getElementById('paginationInfo');
+            const paginationList = document.getElementById('paginationList');
+
+            if (!infoText || !paginationList) return;
+
+            if (totalItems === 0) {
+                infoText.textContent = 'Mostrando 0 de 0 registros';
+                paginationList.innerHTML = '';
+                return;
+            }
+
+            infoText.textContent = `Mostrando ${startIndex + 1}-${endIndex} de ${totalItems} registros`;
+
+            let html = '';
+
+            // Botón Anterior
+            html += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <button type="button" class="page-link" onclick="goToPage(${currentPage - 1})" aria-label="Página anterior" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                </button>
+            </li>`;
+
+            // Números de Página con elipsis
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <button type="button" class="page-link" onclick="goToPage(${i})" aria-label="Página ${i}">${i}</button>
+                    </li>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+
+            // Botón Siguiente
+            html += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <button type="button" class="page-link" onclick="goToPage(${currentPage + 1})" aria-label="Página siguiente" ${currentPage === totalPages ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+            </li>`;
+
+            paginationList.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            paginateTable();
         }
     </script>
 </body>

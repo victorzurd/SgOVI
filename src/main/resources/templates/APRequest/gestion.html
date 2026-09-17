@@ -4,138 +4,163 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SgOVI - Gestión de Petición</title>
+
+    <!-- Frameworks externos (CDN) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/usuarioOVI.css}" />
+
+    <!-- Sistema de Diseño Centralizado SgOVI -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/sgovi-style.css}" href="sgovi-style.css" />
 </head>
 
-<body class="bg-light">
+<body class="d-flex flex-column min-vh-100">
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-5">
-        <div class="container">
-            <a class="navbar-brand text-teal fw-bold" th:href="@{/TecnicoOVI/dashboard}">
-                SgOVI - Gestión Técnica
+    <!-- Enlace de Salto Accesible -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Barra Superior de Accesibilidad -->
+    <div class="accessibility-bar" role="region" aria-label="Herramientas de accesibilidad">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
+            <div class="d-flex gap-4">
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto">
+                    <i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +
+                </button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Disminuir tamaño de texto">
+                    <i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -
+                </button>
+                <button type="button" onclick="toggleContrast()" aria-label="Cambiar a modo alto contraste">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación Principal -->
+    <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
+        <div class="container justify-content-between">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/TecnicoOVI/dashboard}">
+                <i class="bi bi-heart-pulse-fill text-teal" aria-hidden="true"></i>
+                <span>SgOVI - Gestión Técnica</span>
             </a>
-            <div class="d-flex align-items-center">
-                <a th:href="@{/TecnicoOVI/logout}" class="btn btn-outline-danger btn-sm fw-bold">Cerrar Sesión</a>
+            <div class="d-flex align-items-center gap-2">
+                <a th:href="@{/TecnicoOVI/dashboard}" class="btn btn-sg-outline btn-sm px-3 py-2">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Panel Principal
+                </a>
+                <a th:href="@{/TecnicoOVI/logout}" class="btn btn-outline-danger btn-sm px-3 py-2 fw-semibold">
+                    <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar Sesión
+                </a>
             </div>
         </div>
     </nav>
 
-    <main class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-teal fw-bold mb-0">Detalles de la Petición</span></h2>
-            <a th:href="@{/APRequest/list}" class="btn btn-outline-secondary fw-bold px-4">Volver al listado</a>
+    <!-- Contenido Principal -->
+    <main id="main-content" class="container py-4 flex-grow-1" tabindex="-1">
+        
+        <!-- Encabezado de Página -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <div>
+                <h1 class="h3 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                    <i class="bi bi-file-earmark-text-fill text-teal" aria-hidden="true"></i>
+                    <span>Detalles de la Petición</span>
+                </h1>
+                <p class="text-muted-custom small mb-0">Consulta detallada y centro de operaciones para la gestión de la solicitud.</p>
+            </div>
+            <div>
+                <a th:href="@{/APRequest/list}" class="btn btn-sg-outline px-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al listado
+                </a>
+            </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-8 mb-4">
-                <div class="card shadow-sm border-0 rounded-4">
-                    <div class="card-body p-4 p-md-5">
-                        
-                        <h3 class="fw-bold text-dark mb-4" th:text="${request.titulo}">Título de la petición</h3>
-                        
-                        <div class="row mb-3 align-items-center">
-                            <div class="col-sm-4 fw-bold text-secondary">Usuario Solicitante:</div>
-                            <div class="col-sm-8 fs-5" th:text="${nombreUsuario}">Nombre del Usuario</div>
-                        </div>
-                        
-                        <div class="row mb-3 align-items-center">
-                            <div class="col-sm-4 fw-bold text-secondary">Fecha de Solicitud:</div>
-                            <div class="col-sm-8" th:text="${#temporals.format(request.fechaSolicitud, 'dd/MM/yyyy')}">01/01/2026</div>
-                        </div>
-                        
-                        <div class="row mb-4 align-items-center">
-                            <div class="col-sm-4 fw-bold text-secondary">Estado Actual:</div>
-                            <div class="col-sm-8">
-                                <span class="badge bg-secondary fs-6 px-3 py-2" th:text="${request.estado}">Pendiente</span>
-                            </div>
-                        </div>
-                        
-                        <hr class="text-muted mb-4">
-                        
-                        <div class="row mb-3">
-                            <div class="col-sm-4 fw-bold text-secondary">Zona:</div>
-                            <div class="col-sm-8" th:text="${request.zona ?: 'No especificada'}">Castellón</div>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-sm-4 fw-bold text-secondary">Horario/Disponibilidad:</div>
-                            <div class="col-sm-8" th:text="${request.horario ?: 'No especificado'}">Mañanas</div>
-                        </div>
-                        
-                        <div class="row mb-4">
-                            <div class="col-sm-4 fw-bold text-secondary">Preferencias:</div>
-                            <div class="col-sm-8" th:text="${request.preferencias ?: 'Ninguna'}">Coche propio</div>
-                        </div>
-                        
-                        <hr class="text-muted mb-4">
-                        
-                        <div>
-                            <div class="fw-bold text-secondary mb-3">Descripción detallada:</div>
-                            <div class="p-4 bg-light rounded-3 border" 
-                                 th:text="${request.descripcion}" 
-                                 style="white-space: pre-wrap; font-size: 0.95rem;">
-                                Texto descriptivo...
-                            </div>
-                        </div>
-
+        <div class="row g-4">
+            <!-- Columna Izquierda: Información Detallada -->
+            <div class="col-lg-8">
+                <div class="pillar-card p-4 p-md-5">
+                    
+                    <h2 class="h4 fw-bold text-dark mb-4" th:text="${request.titulo}">Título de la petición</h2>
+                    
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 fw-bold text-muted-custom">Usuario Solicitante:</div>
+                        <div class="col-sm-8 fs-5 fw-semibold text-dark" th:text="${nombreUsuario}">Nombre del Usuario</div>
                     </div>
+                    
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 fw-bold text-muted-custom">Fecha de Solicitud:</div>
+                        <div class="col-sm-8 text-dark" th:text="${#temporals.format(request.fechaSolicitud, 'dd/MM/yyyy')}">01/01/2026</div>
+                    </div>
+                    
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-sm-4 fw-bold text-muted-custom">Estado Actual:</div>
+                        <div class="col-sm-8">
+                            <span class="status-pill status-pill-info" th:text="${request.estado}">Pendiente</span>
+                        </div>
+                    </div>
+                    
+                    <hr class="text-muted mb-4">
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold text-muted-custom">Zona:</div>
+                        <div class="col-sm-8 text-dark" th:text="${request.zona ?: 'No especificada'}">Castellón</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold text-muted-custom">Horario / Disponibilidad:</div>
+                        <div class="col-sm-8 text-dark text-pre-line" th:text="${request.horario ?: 'No especificado'}">Mañanas</div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-sm-4 fw-bold text-muted-custom">Preferencias:</div>
+                        <div class="col-sm-8 text-dark" th:text="${request.preferencias ?: 'Ninguna'}">Coche propio</div>
+                    </div>
+                    
+                    <hr class="text-muted mb-4">
+                    
+                    <div>
+                        <div class="fw-bold text-muted-custom mb-3">Descripción detallada:</div>
+                        <div class="p-4 bg-light rounded-3 border request-description-box" 
+                             th:text="${request.descripcion}">
+                            Texto descriptivo...
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
+            <!-- Columna Derecha: Centro de Acciones -->
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 2rem;">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold text-teal mb-4 border-bottom pb-3">Centro de Acciones</h5>
-                        
-                        <div class="d-grid gap-3">
+                <div class="pillar-card sticky-top-card">
+                    <h2 class="h5 fw-bold text-teal mb-4 border-bottom pb-3">Centro de Acciones</h2>
+                    
+                    <div class="d-grid gap-3">
 
-                            <a th:href="@{/APRequest/update/{id}(id=${request.idRequest})}"
-                            class="btn btn-outline-secondary btn-lg text-start py-3 fs-6 fw-bold">
-                                <i class="bi bi-pencil-square me-2 fs-5 align-middle"></i>
-                                Cambiar Estado
-                            </a>
+                        <!-- Gestionar Candidatos -->
+                        <a th:href="@{/APRequest/assign/{id}(id=${request.idRequest})}"
+                           class="btn btn-sg-outline btn-lg text-start py-3 fs-6 fw-bold d-flex align-items-center gap-2">
+                            <i class="bi bi-people-fill fs-5" aria-hidden="true"></i>
+                            <span>Gestionar Candidatos</span>
+                        </a>
 
-                            <a th:href="@{/APRequest/assign/{id}(id=${request.idRequest})}"
-                            class="btn btn-outline-primary btn-lg text-start py-3 fs-6 fw-bold">
-                                <i class="bi bi-people-fill me-2 fs-5 align-middle"></i>
-                                Gestionar Candidatos
-                            </a>
-
-                            <!-- SI NO EXISTE CONTRATO -->
-                            <div th:if="${!existeContrato}">
-
-                                <form th:action="@{/contrato/generar/{idRequest}(idRequest=${request.idRequest})}"
-                                    method="post">
-
-                                    <button type="submit"
-                                            class="btn btn-teal btn-lg text-start py-3 fs-6 fw-bold w-100">
-
-                                        <i class="bi bi-file-earmark-pdf-fill me-2"></i>
-                                        Generar Contrato
-
-                                    </button>
-
-                                </form>
-
-                            </div>
-
-                            <!-- SI YA EXISTE -->
-                            <div th:if="${existeContrato}">
-
-                                <a th:href="@{/contratos/{pdf}(pdf=${'contrato_' + request.idRequest + '.pdf'})}"
-                                target="_blank"
-                                class="btn btn-success btn-lg text-start py-3 fs-6 fw-bold w-100">
-
-                                    <i class="bi bi-file-earmark-pdf-fill me-2"></i>
-                                    Abrir Contrato
-
-                                </a>
-
-                            </div>
-
+                        <!-- Generar Contrato (Si no existe) -->
+                        <div th:if="${!existeContrato}">
+                            <form th:action="@{/contrato/generar/{idRequest}(idRequest=${request.idRequest})}" method="post">
+                                <button type="submit" class="btn btn-sg-primary btn-lg text-start py-3 fs-6 fw-bold w-100 d-flex align-items-center gap-2">
+                                    <i class="bi bi-file-earmark-pdf-fill fs-5" aria-hidden="true"></i>
+                                    <span>Generar Contrato</span>
+                                </button>
+                            </form>
                         </div>
+
+                        <!-- Abrir Contrato (Si existe) -->
+                        <div th:if="${existeContrato}">
+                            <a th:href="@{/contratos/{pdf}(pdf=${'contrato_' + request.idRequest + '.pdf'})}"
+                               target="_blank"
+                               class="btn btn-success btn-lg text-start py-3 fs-6 fw-bold w-100 d-flex align-items-center gap-2">
+                                <i class="bi bi-file-earmark-pdf-fill fs-5" aria-hidden="true"></i>
+                                <span>Abrir Contrato</span>
+                            </a>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -143,5 +168,25 @@
         </div>
     </main>
 
+    <!-- Pie de página -->
+    <footer class="bg-white border-top py-3 text-center text-muted-custom small mt-auto">
+        <div class="container">
+            <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
+        </div>
+    </footer>
+
+    <!-- Scripts Base y Accesibilidad -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleFontSize(action) {
+            const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+            if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
+            if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+    </script>
 </body>
 </html>
