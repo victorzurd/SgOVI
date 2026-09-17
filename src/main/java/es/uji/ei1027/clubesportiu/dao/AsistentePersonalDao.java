@@ -304,8 +304,9 @@ public int countAsistentes(String buscar, String provincia) {
         List<Object> params = new ArrayList<>();
 
         if (buscar != null && !buscar.trim().isEmpty()) {
-            sql.append("AND (LOWER(nombre) LIKE LOWER(?) OR LOWER(apellidos) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?)) ");
+            sql.append("AND (LOWER(nombre) LIKE LOWER(?) OR LOWER(apellidos) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?) OR LOWER(zona) LIKE LOWER(?)) ");
             String filtro = "%" + buscar.trim() + "%";
+            params.add(filtro);
             params.add(filtro);
             params.add(filtro);
             params.add(filtro);
