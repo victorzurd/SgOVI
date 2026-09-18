@@ -103,18 +103,20 @@ CREATE TABLE IF NOT EXISTS comunicacionusuarioovipap (
 );
 
 -- 7. Tabla: registrocontrato
-CREATE TABLE IF NOT EXISTS registrocontrato (
-    idcontrato SERIAL PRIMARY KEY,
-    fechainicio DATE NOT NULL,
-    fechafin DATE,
-    documentopdf VARCHAR(255),
-    estado estado NOT NULL,
-    idrequest INT NOT NULL,
-    idseleccion INT NOT NULL,
-    CONSTRAINT fk_contrato_request FOREIGN KEY (idrequest) 
-        REFERENCES aprequest(idrequest) ON DELETE CASCADE,
-    CONSTRAINT fk_contrato_seleccion FOREIGN KEY (idseleccion) 
-        REFERENCES seleccion(idseleccion) ON DELETE CASCADE
+CREATE TABLE contrato (
+    id_contrato SERIAL PRIMARY KEY,
+    id_request INT NOT NULL REFERENCES ap_request(id_request),
+    id_asistente INT NOT NULL REFERENCES asistentepersonal(id_asistente),
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(20) DEFAULT 'PENDIENTE_FIRMA', -- PENDIENTE_FIRMA, FIRMADO, CANCELADO
+    contenido_html TEXT NOT NULL,
+    firma_usuario TEXT,               -- Imagen en formato Base64 (data:image/png;base64,...)
+    fecha_firma_usuario TIMESTAMP,
+    ip_usuario VARCHAR(45),
+    firma_asistente TEXT,             -- Imagen en formato Base64
+    fecha_firma_asistente TIMESTAMP,
+    ip_asistente VARCHAR(45),
+    ruta_pdf VARCHAR(255)
 );
 
 -- 8. Tabla: chatsession
