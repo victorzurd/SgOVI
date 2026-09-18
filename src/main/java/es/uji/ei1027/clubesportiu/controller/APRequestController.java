@@ -21,15 +21,16 @@ import es.uji.ei1027.clubesportiu.dao.APRequestDao;
 import es.uji.ei1027.clubesportiu.dao.AsistentePersonalDao;
 import es.uji.ei1027.clubesportiu.dao.CandidatoDao;
 import es.uji.ei1027.clubesportiu.dao.MensajeChatDao;
-import es.uji.ei1027.clubesportiu.dao.RegistroContratoDao;
 import es.uji.ei1027.clubesportiu.model.APRequest;
 import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
+import es.uji.ei1027.clubesportiu.model.Contrato;
 import es.uji.ei1027.clubesportiu.model.Estado;
 import es.uji.ei1027.clubesportiu.model.MensajeChat;
 import es.uji.ei1027.clubesportiu.model.Provincia;
 import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
 import es.uji.ei1027.clubesportiu.model.UsuarioOVI;
 import es.uji.ei1027.clubesportiu.util.Paginacion;
+import es.uji.ei1027.clubesportiu.dao.ContratoDao;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -39,12 +40,10 @@ public class APRequestController {
     private APRequestDao apRequestDao;
     private AsistentePersonalDao asistentePersonalDao;
     private CandidatoDao candidatoDao; 
+    private ContratoDao ContratoDao;
 
     @Autowired
     private MensajeChatDao mensajeChatDao;
-
-    @Autowired
-    private RegistroContratoDao registroContratoDao;
 
     @Autowired
     public void setAPRequestDao(APRequestDao apRequestDao) {
@@ -145,6 +144,9 @@ public class APRequestController {
                 }
             }
         }
+
+        Map<Integer, Contrato> contratosMap = ContratoDao.getContratosMap(); 
+        model.addAttribute("contratosMap", contratosMap);
 
         model.addAttribute("requests", requests);
         model.addAttribute("rol", rol);
@@ -409,7 +411,7 @@ public class APRequestController {
 
         model.addAttribute("request", request);
         model.addAttribute("nombreUsuario", nombreUsuario);
-        model.addAttribute("existeContrato", registroContratoDao.existeContrato(id));
+        model.addAttribute("existeContrato", ContratoDao.existeContrato(id));
         
         return "APRequest/gestion"; 
     }

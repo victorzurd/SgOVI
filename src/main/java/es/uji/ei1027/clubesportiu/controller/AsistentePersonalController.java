@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +30,6 @@ public class AsistentePersonalController {
 
     private AsistentePersonalDao asistentePersonalDao;
     private es.uji.ei1027.clubesportiu.dao.APRequestDao apRequestDao;
-    private es.uji.ei1027.clubesportiu.dao.RegistroContratoDao registroContratoDao;
-
     @Autowired
     public void setAsistentePersonalDao(AsistentePersonalDao dao) {
         this.asistentePersonalDao = dao;
@@ -41,11 +38,6 @@ public class AsistentePersonalController {
     @Autowired
     public void setAPRequestDao(es.uji.ei1027.clubesportiu.dao.APRequestDao dao) {
         this.apRequestDao = dao;
-    }
-
-    @Autowired
-    public void setRegistroContratoDao(es.uji.ei1027.clubesportiu.dao.RegistroContratoDao dao) {
-        this.registroContratoDao = dao;
     }
 
     @ModelAttribute("provincias")
@@ -341,45 +333,5 @@ public class AsistentePersonalController {
         }
 
         return "redirect:/AsistentePersonal/solicitudes";
-    }
-
-    @RequestMapping(value = "/contratos", method = RequestMethod.GET)
-    public String misContratos(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "") String buscar,
-            HttpSession session,
-            Model model) {
-
-        AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
-
-        if (asistente == null) {
-            return "redirect:/AsistentePersonal/login";
-        }
-
-        Paginacion paginacion = new Paginacion();
-        paginacion.setPage(page);
-        paginacion.setBuscar(buscar);
-
-        int total = registroContratoDao.countContratosPorAsistente(
-                asistente.getIdAsistente(),
-                buscar);
-
-        int totalPages = (int) Math.ceil((double) total / paginacion.getSize());
-
-        model.addAttribute(
-                "contratosAsistente",
-                registroContratoDao.getContratosPorAsistentePaginados(
-                        asistente.getIdAsistente(),
-                        buscar,
-                        paginacion.getSize(),
-                        paginacion.getOffset()));
-
-        model.addAttribute("usuarioLogueado", asistente);
-        model.addAttribute("page", page);
-        model.addAttribute("buscar", buscar);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("urlBase", "/AsistentePersonal/contratos");
-
-        return "AsistentePersonal/contratos";
     }
 }

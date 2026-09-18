@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import es.uji.ei1027.clubesportiu.dao.RegistroContratoDao;
+import es.uji.ei1027.clubesportiu.dao.ContratoDao;
 import es.uji.ei1027.clubesportiu.dao.UsuarioOVIDao;
 import es.uji.ei1027.clubesportiu.model.Provincia;
 import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpSession;
 public class UsuarioOVIController {
 
     private UsuarioOVIDao usuarioOVIDao;
-    private RegistroContratoDao registroContratoDao;
+    private ContratoDao ContratoDao;
 
     @Autowired
     public void setUsuarioOVIDao(UsuarioOVIDao usuarioOVIDao) {
@@ -39,8 +39,8 @@ public class UsuarioOVIController {
     }
 
     @Autowired
-    public void setRegistroContratoDao(RegistroContratoDao registroContratoDao) {
-        this.registroContratoDao = registroContratoDao;
+    public void setRegistroContratoDao(ContratoDao registroContratoDao) {
+        this.ContratoDao = registroContratoDao;
     }
 
     @ModelAttribute("provincias")
@@ -310,46 +310,5 @@ public class UsuarioOVIController {
         }
 
         return "redirect:/UsuarioOVI/list";
-    }
-
-    @GetMapping("/contratos")
-    public String misContratos(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(value = "buscar", defaultValue = "") String buscar,
-            HttpSession session,
-            Model model) {
-
-        UsuarioOVI usuario = (UsuarioOVI) session.getAttribute("usuarioLogueado");
-
-        if (usuario == null) {
-            return "redirect:/UsuarioOVI/login";
-        }
-
-        Paginacion paginacion = new Paginacion();
-        paginacion.setPage(page);
-        paginacion.setBuscar(buscar);
-
-        int total = registroContratoDao.countContratosPorUsuario(
-                usuario.getIdUsuario(),
-                buscar);
-
-        model.addAttribute(
-                "contratos",
-                registroContratoDao.getContratosPorUsuarioPaginados(
-                        usuario.getIdUsuario(),
-                        buscar,
-                        paginacion.getSize(),
-                        paginacion.getOffset()));
-
-        model.addAttribute("nombreUsuario", usuario.getNombre());
-
-        model.addAttribute("page", page);
-        model.addAttribute("buscar", buscar);
-        model.addAttribute("totalPages",
-                (int) Math.ceil((double) total / paginacion.getSize()));
-
-        model.addAttribute("mostrarZona", false);
-
-        return "UsuarioOVI/contratos";
     }
 }
