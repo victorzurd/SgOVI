@@ -38,16 +38,16 @@
     <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
         <div class="container justify-content-between">
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2" 
-               th:href="${rol == 'TECNICO' ? '/TecnicoOVI/dashboard' : (rol == 'ASISTENTE' ? '/asistente/dashboard' : '/UsuarioOVI/dashboard')}">
+               th:href="${rol == 'TECNICO' ? '/TecnicoOVI/dashboard' : '/UsuarioOVI/dashboard'}">
                 <i class="bi bi-heart-pulse-fill text-teal" aria-hidden="true"></i>
                 <span>SgOVI - <span th:text="${rol == 'TECNICO' ? 'Gestión Técnica' : 'Área Personal'}">Área Personal</span></span>
             </a>
             <div class="d-flex align-items-center gap-2">
-                <a th:href="${rol == 'TECNICO' ? '/TecnicoOVI/dashboard' : (rol == 'ASISTENTE' ? '/asistente/dashboard' : '/UsuarioOVI/dashboard')}" 
+                <a th:href="${rol == 'TECNICO' ? '/TecnicoOVI/dashboard' : '/UsuarioOVI/dashboard'}" 
                    class="btn btn-sg-outline btn-sm px-3 py-2">
                     <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Panel Principal
                 </a>
-                <a th:href="${rol == 'TECNICO' ? '/TecnicoOVI/logout' : (rol == 'ASISTENTE' ? '/asistente/logout' : '/UsuarioOVI/logout')}" 
+                <a th:href="${rol == 'TECNICO' ? '/TecnicoOVI/logout' : '/UsuarioOVI/logout'}" 
                    class="btn btn-outline-danger btn-sm px-3 py-2 fw-semibold">
                     <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar Sesión
                 </a>
@@ -105,7 +105,7 @@
                             <!-- Columna solo para Perfil TÉCNICO -->
                             <td th:if="${rol == 'TECNICO'}" th:text="${nombresUsuarios[request.idUsuario]}">Nombre del Usuario</td>
 
-                            <!-- Columna solo para Perfil USUARIO / ASISTENTE -->
+                            <!-- Columna solo para Perfil USUARIO OVI -->
                             <td th:if="${rol != 'TECNICO'}">
                                 <span th:if="${request.idSeleccion != null}" class="status-pill status-pill-success">
                                     <i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i> Asistente Asignado
@@ -115,71 +115,26 @@
                                 </span>
                             </td>
 
-                            <!-- Acciones segun Rol y Estado de Contrato -->
+                            <!-- Acciones según Rol -->
                             <td class="text-center">
                                 <div class="btn-action-group d-flex justify-content-center gap-2">
-                                    
-                                    <!-- ROL TÉCNICO -->
                                     <th:block th:if="${rol == 'TECNICO'}">
                                         <a th:href="@{/APRequest/gestion/{id}(id=${request.idRequest})}" 
                                            class="btn btn-sg-primary btn-sm px-3">
                                             <i class="bi bi-sliders me-1" aria-hidden="true"></i> Gestionar
                                         </a>
                                     </th:block>
-
-                                    <!-- ROL USUARIO O ASISTENTE -->
+                                    
                                     <th:block th:if="${rol != 'TECNICO'}">
-                                        <!-- Solicitud sin asistente asignado aún -->
                                         <a th:if="${request.idSeleccion == null}" 
                                            th:href="@{/APRequest/candidatos/{id}(id=${request.idRequest})}" 
                                            class="btn btn-sg-outline btn-sm px-3">
                                             <i class="bi bi-people-fill me-1" aria-hidden="true"></i> Ver asistentes
                                         </a>
-
-                                        <!-- Solicitud con asistente asignado -->
-                                        <th:block th:if="${request.idSeleccion != null}">
-                                            <th:block th:with="contrato=${contratosMap != null ? contratosMap[request.idRequest] : null}">
-                                                
-                                                <!-- Caso A: Existe contrato generado -->
-                                                <th:block th:if="${contrato != null}">
-                                                    
-                                                    <!-- Firma pendiente USUARIO -->
-                                                    <a th:if="${rol == 'USUARIO' and contrato.firmaUsuario == null}" 
-                                                       th:href="@{/contrato/firmar-usuario/{id}(id=${contrato.idContrato})}" 
-                                                       class="btn btn-sg-primary btn-sm px-3">
-                                                        <i class="bi bi-pen-fill me-1" aria-hidden="true"></i> Firmar Contrato
-                                                    </a>
-
-                                                    <!-- Firma pendiente ASISTENTE -->
-                                                    <a th:if="${rol == 'ASISTENTE' and contrato.firmaAsistente == null}" 
-                                                       th:href="@{/contrato/firmar-asistente/{id}(id=${contrato.idContrato})}" 
-                                                       class="btn btn-sg-primary btn-sm px-3">
-                                                        <i class="bi bi-pen-fill me-1" aria-hidden="true"></i> Firmar Contrato
-                                                    </a>
-
-                                                    <!-- Esperando a la otra parte -->
-                                                    <span th:if="${(rol == 'USUARIO' and contrato.firmaUsuario != null and contrato.firmaAsistente == null) or (rol == 'ASISTENTE' and contrato.firmaAsistente != null and contrato.firmaUsuario == null)}" 
-                                                          class="status-pill status-pill-warning py-2 px-3">
-                                                        <i class="bi bi-clock-history me-1" aria-hidden="true"></i> Pendiente Firma
-                                                    </span>
-
-                                                    <!-- Contrato Firmado por Ambos -->
-                                                    <span th:if="${contrato.estado == 'FIRMADO' or (contrato.firmaUsuario != null and contrato.firmaAsistente != null)}" 
-                                                          class="status-pill status-pill-success py-2 px-3">
-                                                        <i class="bi bi-file-earmark-check-fill me-1" aria-hidden="true"></i> Contrato Firmado
-                                                    </span>
-
-                                                </th:block>
-
-                                                <!-- Caso B: Asignado pero contrato no generado todavía por el técnico -->
-                                                <span th:if="${contrato == null}" class="status-pill status-pill-info py-2 px-3">
-                                                    <i class="bi bi-clock me-1" aria-hidden="true"></i> Esperando Contrato
-                                                </span>
-
-                                            </th:block>
-                                        </th:block>
+                                        <span th:if="${request.idSeleccion != null}" class="status-pill status-pill-success py-2 px-3">
+                                            <i class="bi bi-check2-all me-1" aria-hidden="true"></i> Completado
+                                        </span>
                                     </th:block>
-
                                 </div>
                             </td>
                         </tr>

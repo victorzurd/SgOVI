@@ -81,7 +81,7 @@ public class ContratoDao {
     }
 
     public boolean existeContrato(int idRequest) {
-        String sql = "SELECT COUNT(*) FROM contrato WHERE id_request = ?";
+        String sql = "SELECT COUNT(*) FROM contrato WHERE idrequest = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, idRequest);
         return count != null && count > 0;
     }

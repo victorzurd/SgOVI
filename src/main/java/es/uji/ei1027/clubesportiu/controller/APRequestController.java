@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import es.uji.ei1027.clubesportiu.dao.APRequestDao;
 import es.uji.ei1027.clubesportiu.dao.AsistentePersonalDao;
 import es.uji.ei1027.clubesportiu.dao.CandidatoDao;
+import es.uji.ei1027.clubesportiu.dao.ContratoDao;
 import es.uji.ei1027.clubesportiu.dao.MensajeChatDao;
 import es.uji.ei1027.clubesportiu.model.APRequest;
 import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
@@ -30,7 +31,6 @@ import es.uji.ei1027.clubesportiu.model.Provincia;
 import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
 import es.uji.ei1027.clubesportiu.model.UsuarioOVI;
 import es.uji.ei1027.clubesportiu.util.Paginacion;
-import es.uji.ei1027.clubesportiu.dao.ContratoDao;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -58,6 +58,11 @@ public class APRequestController {
     @Autowired
     public void setCandidatoDao(CandidatoDao candidatoDao) {
         this.candidatoDao = candidatoDao;
+    }
+
+    @Autowired
+    public void setContratoDao(ContratoDao contratoDao) {
+        this.ContratoDao = contratoDao;
     }
 
     @ModelAttribute("provincias")

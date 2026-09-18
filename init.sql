@@ -102,8 +102,8 @@ CREATE TABLE IF NOT EXISTS comunicacionusuarioovipap (
         REFERENCES seleccion(idseleccion) ON DELETE CASCADE
 );
 
--- 7. Tabla: registrocontrato
-CREATE TABLE IF NOT EXISTS registrocontrato (
+-- 7. Tabla: contrato
+CREATE TABLE IF NOT EXISTS contrato (
     idcontrato SERIAL PRIMARY KEY,
     fechainicio DATE NOT NULL,
     fechafin DATE NOT NULL,
