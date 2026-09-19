@@ -17,9 +17,10 @@ public class ContratoDao {
     private JdbcTemplate jdbcTemplate;
 
     public void crearContrato(Contrato c) {
-        String sql = "INSERT INTO contrato (id_request, id_asistente, id_usuario, contenido_html, estado) " +
-                     "VALUES (?, ?, ?, ?, 'pendiente_firma')";
-        jdbcTemplate.update(sql, c.getIdRequest(), c.getIdAsistente(), c.getIdUsuario(), c.getContenidoHtml());
+        // Se añadieron fecha_inicio y fecha_fin a la consulta
+        String sql = "INSERT INTO contrato (id_request, id_asistente, id_usuario, contenido_html, fecha_inicio, fecha_fin, estado) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, 'pendiente_firma')";
+        jdbcTemplate.update(sql, c.getIdRequest(), c.getIdAsistente(), c.getIdUsuario(), c.getContenidoHtml(), c.getFechaInicio(), c.getFechaFin());
     }
 
     @Transactional

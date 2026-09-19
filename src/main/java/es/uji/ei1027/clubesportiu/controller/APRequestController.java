@@ -40,7 +40,7 @@ public class APRequestController {
     private APRequestDao apRequestDao;
     private AsistentePersonalDao asistentePersonalDao;
     private CandidatoDao candidatoDao; 
-    private ContratoDao ContratoDao;
+    private ContratoDao contratoDao; // Corrección de nomenclatura
 
     @Autowired
     private MensajeChatDao mensajeChatDao;
@@ -62,7 +62,7 @@ public class APRequestController {
 
     @Autowired
     public void setContratoDao(ContratoDao contratoDao) {
-        this.ContratoDao = contratoDao;
+        this.contratoDao = contratoDao; // Corrección
     }
 
     @ModelAttribute("provincias")
@@ -103,49 +103,25 @@ public class APRequestController {
         int total;
 
         if (session.getAttribute("tecnicoLogueado") != null) {
-
             rol = "TECNICO";
-
             total = apRequestDao.countAPRequests(buscar, estado);
-
-            requests = apRequestDao.getAPRequestsPaginados(
-                    buscar,
-                    estado,
-                    paginacion.getSize(),
-                    paginacion.getOffset());
-
+            requests = apRequestDao.getAPRequestsPaginados(buscar, estado, paginacion.getSize(), paginacion.getOffset());
         } else if (session.getAttribute("usuarioLogueado") != null) {
-
             UsuarioOVI usuario = (UsuarioOVI) session.getAttribute("usuarioLogueado");
-
             rol = "USUARIO";
-
-            total = apRequestDao.countAPRequestsByUsuario(
-                    usuario.getIdUsuario(),
-                    buscar,
-                    estado);
-
-            requests = apRequestDao.getAPRequestsByUsuarioPaginados(
-                    usuario.getIdUsuario(),
-                    buscar,
-                    estado,
-                    paginacion.getSize(),
-                    paginacion.getOffset());
-
+            total = apRequestDao.countAPRequestsByUsuario(usuario.getIdUsuario(), buscar, estado);
+            requests = apRequestDao.getAPRequestsByUsuarioPaginados(usuario.getIdUsuario(), buscar, estado, paginacion.getSize(), paginacion.getOffset());
         } else {
             return "redirect:/";
         }
 
         int totalPages = (int) Math.ceil((double) total / paginacion.getSize());
-
         Map<Integer, String> nombresUsuarios = new HashMap<>();
 
         if ("TECNICO".equals(rol)) {
             for (APRequest req : requests) {
                 if (req.getIdUsuario() != 0) {
-                    nombresUsuarios.put(
-                            req.getIdUsuario(),
-                            apRequestDao.getNombreUsuarioPorId(req.getIdUsuario()));
+                    nombresUsuarios.put(req.getIdUsuario(), apRequestDao.getNombreUsuarioPorId(req.getIdUsuario()));
                 }
             }
         }
@@ -212,7 +188,6 @@ public class APRequestController {
             return "redirect:/APRequest/list";
         }
 
-        // Obtener asistentes filtrados por texto y provincia
         List<AsistentePersonal> asistentes = asistentePersonalDao.getAsistentesFiltrados(buscar, provincia);
         if (asistentes == null) asistentes = new ArrayList<>();
 
@@ -242,9 +217,7 @@ public class APRequestController {
         if (tecnico == null) {
             return "redirect:/TecnicoOVI/login";
         }
-
         candidatoDao.addCandidato(idSolicitud, idAsistente);
-
         return "redirect:/APRequest/assign/" + idSolicitud;
     }
 
@@ -254,7 +227,6 @@ public class APRequestController {
         if (tecnico == null) {
             return "redirect:/TecnicoOVI/login";
         }
-
         return "APRequest/propuestaEnviada";
     }
 
@@ -264,9 +236,7 @@ public class APRequestController {
         if (tecnico == null) {
             return "redirect:/TecnicoOVI/login";
         }
-
         candidatoDao.deleteCandidato(idSolicitud, idAsistente);
-
         return "redirect:/APRequest/assign/" + idSolicitud;
     }
 
@@ -279,7 +249,6 @@ public class APRequestController {
 
         APRequest solicitud = apRequestDao.getAPRequest(idSolicitud);
         boolean tieneAsistente = (solicitud != null && solicitud.getIdSeleccion() != null);
-
         List<AsistentePersonal> candidatos = candidatoDao.getAsistentesCandidatos(idSolicitud);
 
         model.addAttribute("tieneAsistente", tieneAsistente);
@@ -307,13 +276,11 @@ public class APRequestController {
         }
 
         apRequestDao.asignarAsistente(idSolicitud, idAsistente, usuario.getIdUsuario());
-
         return "redirect:/APRequest/list"; 
     }
 
     @GetMapping("/candidatos/{idSolicitud}")
     public String verListaCandidatos(@PathVariable("idSolicitud") int idSolicitud, Model model, HttpSession session) {
-        
         List<AsistentePersonal> candidatos = candidatoDao.getAsistentesCandidatos(idSolicitud);
         if (candidatos == null) {
             candidatos = new ArrayList<>();
@@ -351,13 +318,10 @@ public class APRequestController {
         if (tecnico == null) {
             return "redirect:/TecnicoOVI/login";
         }
-
         List<MensajeChat> mensajes = mensajeChatDao.getMensajesPorChat(idChat);
-
         model.addAttribute("tecnico", tecnico);
         model.addAttribute("mensajes", mensajes);
         model.addAttribute("idChat", idChat);
-
         return "APRequest/verChatTecnico"; 
     }
 
@@ -367,33 +331,26 @@ public class APRequestController {
         if (tecnico == null) {
             return "redirect:/TecnicoOVI/login";
         }
-
         APRequest request = apRequestDao.getAPRequest(id);
         if (request == null) {
             return "redirect:/APRequest/list";
         }
-
         model.addAttribute("apRequest", request);
         model.addAttribute("estados", Estado.values()); 
-        
         return "APRequest/update";
     }
 
     @PostMapping("/update")
     public String processUpdateSubmit(@ModelAttribute("apRequest") APRequest apRequest, 
                                       BindingResult bindingResult, HttpSession session) {
-                                          
         TecnicoOVI tecnico = (TecnicoOVI) session.getAttribute("tecnicoLogueado");
         if (tecnico == null) {
             return "redirect:/TecnicoOVI/login";
         }
-
         if (bindingResult.hasErrors()) {
             return "APRequest/update";
         }
-        
         apRequestDao.updateAPRequest(apRequest);
-        
         return "redirect:/APRequest/gestion/" + apRequest.getIdRequest();
     }
 
@@ -410,13 +367,11 @@ public class APRequestController {
         }
         
         String nombreUsuario = apRequestDao.getNombreUsuarioPorId(request.getIdUsuario());
-
-        Contrato contrato = ContratoDao.getContratoPorRequest(request.getIdRequest());
+        Contrato contrato = contratoDao.getContratoPorRequest(request.getIdRequest()); // Corrección
         model.addAttribute("contrato", contrato);
-
         model.addAttribute("request", request);
         model.addAttribute("nombreUsuario", nombreUsuario);
-        model.addAttribute("existeContrato", ContratoDao.existeContrato(id));
+        model.addAttribute("existeContrato", contratoDao.existeContrato(id)); // Corrección
         
         return "APRequest/gestion"; 
     }

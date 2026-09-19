@@ -31,7 +31,8 @@ public class AsistentePersonalController {
 
     private AsistentePersonalDao asistentePersonalDao;
     private es.uji.ei1027.clubesportiu.dao.APRequestDao apRequestDao;
-    private es.uji.ei1027.clubesportiu.dao.ContratoDao ContratoDao;
+    private es.uji.ei1027.clubesportiu.dao.ContratoDao contratoDao; // Corrección de nomenclatura
+
     @Autowired
     public void setAsistentePersonalDao(AsistentePersonalDao dao) {
         this.asistentePersonalDao = dao;
@@ -44,7 +45,7 @@ public class AsistentePersonalController {
 
     @Autowired
     public void setContratoDao(es.uji.ei1027.clubesportiu.dao.ContratoDao dao) {
-        this.ContratoDao = dao;
+        this.contratoDao = dao; // Corrección
     }
 
     @ModelAttribute("provincias")
@@ -100,6 +101,7 @@ public class AsistentePersonalController {
 
         return "AsistentePersonal/list";
     }
+
     @RequestMapping("/list/pendientes")
     public String listPendientes(Model model) {
         model.addAttribute("asistentes", asistentePersonalDao.getAsistentesPersonalesPendientes());
@@ -126,17 +128,14 @@ public class AsistentePersonalController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String registerSubmit(@ModelAttribute("asistente") AsistentePersonal asistente,
                                 BindingResult result, HttpSession session) {
-
         AsistentePersonalValidator validator = new AsistentePersonalValidator(asistentePersonalDao);
         validator.validate(asistente, result);
-
         if (result.hasErrors()) {
             return "AsistentePersonal/register"; 
         }
 
         BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
         String passEncriptada = passwordEncryptor.encryptPassword(asistente.getContraseña());
-    
         asistente.setContraseña(passEncriptada);
         asistente.setEstadoAceptado(false); 
 
@@ -154,13 +153,10 @@ public class AsistentePersonalController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String loginSubmit(@ModelAttribute("asistente") UserDetails usuario,
                               BindingResult result, HttpSession session, Model model) {
-
         if (result.hasErrors()) {
             return "AsistentePersonal/login";
         }
-
         AsistentePersonal asistenteBD = asistentePersonalDao.getAsistentePersonalByEmail(usuario.getUsuario());
-
         if (asistenteBD == null) {
             result.rejectValue("email", "bad-credentials", "El correo electrónico o la contraseña son incorrectos.");
             model.addAttribute("error", "Credenciales incorrectas");
@@ -202,10 +198,8 @@ public class AsistentePersonalController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String editSubmit(@ModelAttribute("asistente") AsistentePersonal asistente,
                              BindingResult result) {
-
         AsistentePersonalValidator validator = new AsistentePersonalValidator(asistentePersonalDao);
         validator.validate(asistente, result);
-
         if (result.hasErrors()) {
             return "AsistentePersonal/update"; 
         }
@@ -229,22 +223,18 @@ public class AsistentePersonalController {
 
     @RequestMapping("/aceptar/{idAsistente}")
     public String aceptar(@PathVariable int idAsistente, HttpSession session, Model model) {
-
         TecnicoOVI tecnico = (TecnicoOVI) session.getAttribute("tecnicoLogueado");
         if (tecnico == null) {
             session.invalidate();
             return "redirect:/";
         }
-
         AsistentePersonal asistente = asistentePersonalDao.getAsistentePersonal(idAsistente);
-
         if (asistente != null) {
             asistente.setEstadoAceptado(true);
             asistentePersonalDao.updateAsistentePersonal(asistente);
             model.addAttribute("correoAsistente", asistente.getEmail());
             return "AsistentePersonal/correo";
         }
-
         return "redirect:/AsistentePersonal/list";
     }
 
@@ -256,21 +246,17 @@ public class AsistentePersonalController {
 
     @RequestMapping("/rechazar/{idAsistente}")
     public String rechazar(@PathVariable int idAsistente, HttpSession session, Model model) {
-
         TecnicoOVI tecnico = (TecnicoOVI) session.getAttribute("tecnicoLogueado");
         if (tecnico == null) {
             session.invalidate();
             return "redirect:/";
         }
-
         AsistentePersonal asistente = asistentePersonalDao.getAsistentePersonal(idAsistente);
-
         if (asistente != null) {
             asistentePersonalDao.deleteAsistentePersonal(idAsistente);
             model.addAttribute("correoAsistente", asistente.getEmail());
             return "AsistentePersonal/correoDenegado";
         }
-
         return "redirect:/AsistentePersonal/list/pendientes";
     }
 
@@ -288,12 +274,10 @@ public class AsistentePersonalController {
         }
         
         AsistentePersonal asistenteReal = asistentePersonalDao.getAsistentePersonalByEmail(asistenteSesion.getEmail());
-        
         if (asistenteReal != null && asistenteReal.isEstadoAceptado()) {
             session.setAttribute("asistenteLogueado", asistenteReal);
             return "redirect:/AsistentePersonal/main"; 
         }
-        
         return "AsistentePersonal/esperaValidacion"; 
     }
 
@@ -303,10 +287,8 @@ public class AsistentePersonalController {
         if (asistente == null) {
             return "redirect:/AsistentePersonal/login";
         }
-
         List<APRequest> solicitudes = apRequestDao.getAPRequestsByAsistente(asistente.getIdAsistente());
         model.addAttribute("solicitudesAsistente", solicitudes);
-
         return "AsistentePersonal/solicitudes";
     }
 
@@ -316,13 +298,11 @@ public class AsistentePersonalController {
         if (asistente == null) {
             return "redirect:/AsistentePersonal/login";
         }
-
         APRequest request = apRequestDao.getAPRequest(idRequest);
         if (request != null) {
             request.setEstado(es.uji.ei1027.clubesportiu.model.Estado.aprobado); 
             apRequestDao.updateEstadoAPRequest(request);
         }
-
         return "redirect:/AsistentePersonal/solicitudes";
     }
 
@@ -332,13 +312,11 @@ public class AsistentePersonalController {
         if (asistente == null) {
             return "redirect:/AsistentePersonal/login";
         }
-
         APRequest request = apRequestDao.getAPRequest(idRequest);
         if (request != null) {
             request.setEstado(es.uji.ei1027.clubesportiu.model.Estado.rechazada); 
             apRequestDao.updateEstadoAPRequest(request);
         }
-
         return "redirect:/AsistentePersonal/solicitudes";
     }
 
@@ -348,10 +326,8 @@ public class AsistentePersonalController {
         if (asistente == null) {
             return "redirect:/AsistentePersonal/login";
         }
-
-        List<Contrato> contratos = ContratoDao.getContratosByAsistente(asistente.getIdAsistente());
-        model.addAttribute("contratos", contratos);
-
+        List<Contrato> contratos = contratoDao.getContratosByAsistente(asistente.getIdAsistente()); // Corrección
+        model.addAttribute("contratosAsistente", contratos);
         return "AsistentePersonal/contratos";
     }
 }

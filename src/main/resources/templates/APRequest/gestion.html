@@ -101,7 +101,7 @@
 
                         <!-- Caso 1: Hay un asistente asignado pero AÚN NO se ha generado el contrato -->
                         <div th:if="${request.idSeleccion != null and contrato == null}">
-                            <a th:href="@{/contrato/crear/{idRequest}/{idAsistente}/{idUsuario}(idRequest=${request.idRequest}, idAsistente=${request.idSeleccion}, idUsuario=${request.idUsuario})}"
+                            <a th:href="@{/contrato/crear/{idRequest}/{idSeleccion}/{idUsuario}(idRequest=${request.idRequest}, idSeleccion=${request.idSeleccion}, idUsuario=${request.idUsuario})}"
                                class="btn btn-sg-primary btn-lg text-start py-3 fs-6 fw-bold w-100 d-flex align-items-center gap-2">
                                 <i class="bi bi-file-earmark-plus-fill fs-5" aria-hidden="true"></i>
                                 <span>Generar Contrato</span>

@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpSession;
 public class UsuarioOVIController {
 
     private UsuarioOVIDao usuarioOVIDao;
-    private ContratoDao ContratoDao;
+    private ContratoDao contratoDao; // Corrección de nomenclatura
 
     @Autowired
     public void setUsuarioOVIDao(UsuarioOVIDao usuarioOVIDao) {
@@ -40,7 +40,7 @@ public class UsuarioOVIController {
 
     @Autowired
     public void setRegistroContratoDao(ContratoDao registroContratoDao) {
-        this.ContratoDao = registroContratoDao;
+        this.contratoDao = registroContratoDao; // Corrección
     }
 
     @ModelAttribute("provincias")
@@ -95,6 +95,7 @@ public class UsuarioOVIController {
 
         return "UsuarioOVI/list";
     }
+
     @RequestMapping(value = "/register")
     public String addForm(Model model) {
         model.addAttribute("usuario", new UsuarioOVI());
@@ -104,17 +105,13 @@ public class UsuarioOVIController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String addSubmit(@ModelAttribute("usuario") UsuarioOVI usuario, BindingResult bindingResult) {
         UsuarioOVIValidator validator = new UsuarioOVIValidator(usuarioOVIDao);
-        
         validator.validate(usuario, bindingResult);
         if (bindingResult.hasErrors()) {
             return "UsuarioOVI/register";
         }
-        
         BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
         String passEncriptada = passwordEncryptor.encryptPassword(usuario.getPassword());
-    
         usuario.setPassword(passEncriptada);
-
         usuario.setEstadoAceptado(false);
         usuarioOVIDao.addUsuarioOVI(usuario);
         return "redirect:/UsuarioOVI/pending";
@@ -133,14 +130,11 @@ public class UsuarioOVIController {
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable int id, HttpSession session) {
         UsuarioOVI usuarioSesion = (UsuarioOVI) session.getAttribute("usuarioLogueado");
-
         usuarioOVIDao.deleteUsuarioOVI(id);
-
         if (usuarioSesion != null && usuarioSesion.getIdUsuario() == id) {
             session.invalidate();
             return "redirect:/";
         }
-
         return "redirect:/UsuarioOVI/list";
     }
 
@@ -153,13 +147,11 @@ public class UsuarioOVIController {
     @RequestMapping(value="/login", method=RequestMethod.POST)
     public String checkLogin(@ModelAttribute("user") UserDetails userDetails, 
                              BindingResult bindingResult, HttpSession session, Model model) {
-        
         if (bindingResult.hasErrors()) {
             return "UsuarioOVI/login";
         }
 
         UsuarioOVI usuario = usuarioOVIDao.loadUserByUsername(userDetails.getUsuario());
-
         if (usuario == null) {
             model.addAttribute("error", "Credenciales incorrectas");
             return "/UsuarioOVI/login";
@@ -204,11 +196,9 @@ public class UsuarioOVIController {
     @GetMapping("/perfil")
     public String perfil(HttpSession session, Model model) {
         UsuarioOVI usuario = (UsuarioOVI) session.getAttribute("usuarioLogueado");
-
         if (usuario == null) {
             return "redirect:/UsuarioOVI/login";
         }
-
         model.addAttribute("usuario", usuario);
         return "UsuarioOVI/perfil";
     }
@@ -216,11 +206,9 @@ public class UsuarioOVIController {
     @GetMapping("/edit")
     public String editarPerfil(HttpSession session, Model model) {
         UsuarioOVI usuario = (UsuarioOVI) session.getAttribute("usuarioLogueado");
-
         if (usuario == null) {
             return "redirect:/UsuarioOVI/login";
         }
-
         model.addAttribute("usuario", usuario);
         return "UsuarioOVI/edit";
     }
@@ -229,9 +217,7 @@ public class UsuarioOVIController {
     public String guardarEdicion(@ModelAttribute("usuario") UsuarioOVI usuario,
                                  BindingResult bindingResult,
                                  HttpSession session) {
-
         UsuarioOVI usuarioSesion = (UsuarioOVI) session.getAttribute("usuarioLogueado");
-
         if (usuarioSesion == null) {
             return "redirect:/UsuarioOVI/login";
         }
@@ -256,16 +242,11 @@ public class UsuarioOVIController {
 
     @GetMapping("/ver-candidatos")
     public String verCandidatos(HttpSession session, Model model) {
-
-        UsuarioOVI usuario =
-            (UsuarioOVI) session.getAttribute("usuarioLogueado");
-
+        UsuarioOVI usuario = (UsuarioOVI) session.getAttribute("usuarioLogueado");
         if (usuario == null) {
             return "redirect:/UsuarioOVI/login";
         }
-
         model.addAttribute("usuarios", usuarioOVIDao.getUsuariosOVI());
-
         return "UsuarioOVI/ver-candidatos";
     }
 
@@ -278,37 +259,28 @@ public class UsuarioOVIController {
         }
 
         UsuarioOVI usuario = usuarioOVIDao.getUsuarioOVI(id);
-        
         if (usuario != null) {
             usuario.setEstadoAceptado(true);
-            
             usuarioOVIDao.updateUsuarioOVI(usuario);
-
             model.addAttribute("correoUsuario", usuario.getEmail());
-
             return "UsuarioOVI/correo";
         }
-
         return "redirect:/UsuarioOVI/list";
     }
 
     @RequestMapping("/rechazar/{idUsuario}")
     public String rechazar(@PathVariable int idUsuario, HttpSession session, Model model) {
-
         TecnicoOVI tecnico = (TecnicoOVI) session.getAttribute("tecnicoLogueado");
         if (tecnico == null) {
             session.invalidate();
             return "redirect:/";
         }
-
         UsuarioOVI usuario = usuarioOVIDao.getUsuarioOVI(idUsuario);
-
         if (usuario != null) {
             usuarioOVIDao.deleteUsuarioOVI(idUsuario);
             model.addAttribute("correoUsuario", usuario.getEmail());
             return "UsuarioOVI/correoDenegado";
         }
-
         return "redirect:/UsuarioOVI/list";
     }
 
@@ -318,10 +290,8 @@ public class UsuarioOVIController {
         if (usuario == null) {
             return "redirect:/UsuarioOVI/login";
         }
-
-        List<es.uji.ei1027.clubesportiu.model.Contrato> contratos = ContratoDao.getContratosByUsuario(usuario.getIdUsuario());
+        List<es.uji.ei1027.clubesportiu.model.Contrato> contratos = contratoDao.getContratosByUsuario(usuario.getIdUsuario()); // Corrección
         model.addAttribute("contratos", contratos);
-
         return "UsuarioOVI/contratos";
     }
 }

@@ -1,6 +1,9 @@
 package es.uji.ei1027.clubesportiu.controller;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,9 +39,12 @@ public class ContratoController {
     @Autowired
     private es.uji.ei1027.clubesportiu.dao.UsuarioOVIDao usuarioOVIDao;
 
-    @GetMapping("/crear/{idRequest}/{idAsistente}/{idUsuario}")
+    @Autowired 
+    private es.uji.ei1027.clubesportiu.dao.SeleccionDao seleccionDao;
+
+    @GetMapping("/crear/{idRequest}/{idSeleccion}/{idUsuario}")
     public String vistaCrear(@PathVariable("idRequest") int idRequest,
-                             @PathVariable("idAsistente") int idAsistente,
+                             @PathVariable("idSeleccion") int idSeleccion,
                              @PathVariable("idUsuario") int idUsuario,
                              Model model, HttpSession session,
                              RedirectAttributes redirectAttributes) {
@@ -52,7 +58,15 @@ public class ContratoController {
             redirectAttributes.addFlashAttribute("error", "Ya existe un contrato para esta solicitud.");
             return "redirect:/APRequest/gestion/" + idRequest;
         }
-
+        
+        // Prevención de NullPointerException
+        var seleccion = seleccionDao.getSeleccion(idSeleccion);
+        if (seleccion == null) {
+            redirectAttributes.addFlashAttribute("error", "La selección especificada no existe.");
+            return "redirect:/APRequest/gestion/" + idRequest;
+        }
+        
+        int idAsistente = seleccion.getIdAsistente();
         APRequest request = apRequestDao.getAPRequest(idRequest);
         AsistentePersonal asistente = asistentePersonalDao.getAsistentePersonal(idAsistente);
         UsuarioOVI usuario = usuarioOVIDao.getUsuarioOVI(idUsuario);
@@ -71,8 +85,10 @@ public class ContratoController {
     @PostMapping("/crear")
     public String guardarContrato(@RequestParam("idRequest") int idRequest,
                                   @RequestParam("idAsistente") int idAsistente,
-                                    @RequestParam("idUsuario") int idUsuario,
+                                  @RequestParam("idUsuario") int idUsuario,
                                   @RequestParam("contenidoHtml") String contenidoHtml,
+                                  @RequestParam(value = "fechaInicio", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaInicio,
+                                  @RequestParam(value = "fechaFin", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaFin,
                                   HttpSession session,
                                   RedirectAttributes redirectAttributes) {
         
@@ -90,19 +106,28 @@ public class ContratoController {
         c.setIdAsistente(idAsistente);
         c.setIdUsuario(idUsuario);
         c.setContenidoHtml(contenidoHtml);
+        c.setFechaInicio(fechaInicio);
+        c.setFechaFin(fechaFin);
 
         contratoDao.crearContrato(c);
         return "redirect:/APRequest/gestion/" + idRequest;
     }
 
     @GetMapping("/firmar-usuario/{idContrato}")
-    public String vistaFirmarUsuario(@PathVariable("idContrato") int idContrato, Model model, HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") == null) {
+    public String vistaFirmarUsuario(@PathVariable("idContrato") int idContrato, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        UsuarioOVI usuarioLogueado = (UsuarioOVI) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado == null) {
             return "redirect:/UsuarioOVI/login";
         }
         
         Contrato contrato = contratoDao.getContrato(idContrato);
         if (contrato == null) return "redirect:/APRequest/list";
+        
+        // Mitigación IDOR: Verificar que el contrato pertenezca al usuario logueado
+        if (contrato.getIdUsuario() != usuarioLogueado.getIdUsuario()) {
+            redirectAttributes.addFlashAttribute("error", "No tienes permiso para ver o firmar este contrato.");
+            return "redirect:/UsuarioOVI/dashboard";
+        }
         
         model.addAttribute("contrato", contrato);
         return "contrato/firmar-usuario";
@@ -111,9 +136,17 @@ public class ContratoController {
     @PostMapping("/firmar-usuario")
     public String procesarFirmaUsuario(@RequestParam("idContrato") int idContrato,
                                        @RequestParam("firmaBase64") String firmaBase64,
-                                       HttpServletRequest request, HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") == null) {
+                                       HttpServletRequest request, HttpSession session, RedirectAttributes redirectAttributes) {
+        UsuarioOVI usuarioLogueado = (UsuarioOVI) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado == null) {
             return "redirect:/UsuarioOVI/login";
+        }
+
+        Contrato contrato = contratoDao.getContrato(idContrato);
+        // Mitigación IDOR
+        if (contrato == null || contrato.getIdUsuario() != usuarioLogueado.getIdUsuario()) {
+            redirectAttributes.addFlashAttribute("error", "Acceso denegado.");
+            return "redirect:/UsuarioOVI/dashboard";
         }
 
         String ip = request.getRemoteAddr();
@@ -122,14 +155,20 @@ public class ContratoController {
     }
 
     @GetMapping("/firmar-asistente/{idContrato}")
-    public String vistaFirmarAsistente(@PathVariable("idContrato") int idContrato, Model model, HttpSession session) {
-        // Asumiendo que el asistente se loguea como "asistenteLogueado" (ajusta la clave de sesión si es diferente)
-        if (session.getAttribute("asistenteLogueado") == null && session.getAttribute("tecnicoLogueado") == null) {
-            return "redirect:/";
+    public String vistaFirmarAsistente(@PathVariable("idContrato") int idContrato, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        AsistentePersonal asistenteLogueado = (AsistentePersonal) session.getAttribute("asistenteLogueado");
+        if (asistenteLogueado == null) {
+            return "redirect:/AsistentePersonal/login";
         }
 
         Contrato contrato = contratoDao.getContrato(idContrato);
         if (contrato == null) return "redirect:/APRequest/list";
+
+        // Mitigación IDOR: Verificar que el contrato corresponda al asistente
+        if (contrato.getIdAsistente() != asistenteLogueado.getIdAsistente()) {
+            redirectAttributes.addFlashAttribute("error", "No tienes permiso para ver o firmar este contrato.");
+            return "redirect:/AsistentePersonal/main";
+        }
 
         model.addAttribute("contrato", contrato);
         return "contrato/firmar-asistente";
@@ -138,7 +177,20 @@ public class ContratoController {
     @PostMapping("/firmar-asistente")
     public String procesarFirmaAsistente(@RequestParam("idContrato") int idContrato,
                                          @RequestParam("firmaBase64") String firmaBase64,
-                                         HttpServletRequest request) {
+                                         HttpServletRequest request, HttpSession session, RedirectAttributes redirectAttributes) {
+        
+        // Reparada la vulnerabilidad de sesión nula
+        AsistentePersonal asistenteLogueado = (AsistentePersonal) session.getAttribute("asistenteLogueado");
+        if (asistenteLogueado == null) {
+            return "redirect:/AsistentePersonal/login";
+        }
+
+        Contrato contrato = contratoDao.getContrato(idContrato);
+        // Mitigación IDOR
+        if (contrato == null || contrato.getIdAsistente() != asistenteLogueado.getIdAsistente()) {
+            redirectAttributes.addFlashAttribute("error", "Acceso denegado.");
+            return "redirect:/AsistentePersonal/main";
+        }
 
         String ip = request.getRemoteAddr();
         contratoDao.registrarFirmaAsistente(idContrato, firmaBase64, ip);
