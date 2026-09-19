@@ -14,7 +14,15 @@ BEGIN
             'con_contrato',
             'CON_CONTRATO',
             'finalizada',
-            'FINALIZADA'
+            'FINALIZADA',
+            'pendiente_firma',
+            'PENDIENTE_FIRMA'
+            'pendiente_firma_usuario',
+            'PENDIENTE_FIRMA_USUARIO',
+            'pendiente_firma_asistente',
+            'PENDIENTE_FIRMA_ASISTENTE'
+            'firmado',
+            'FIRMADO'
         );
     END IF;
 END $$;
@@ -103,20 +111,27 @@ CREATE TABLE IF NOT EXISTS comunicacionusuarioovipap (
 );
 
 -- 7. Tabla: contrato
-CREATE TABLE IF NOT EXISTS contrato (
-    idcontrato SERIAL PRIMARY KEY,
-    fechainicio DATE NOT NULL,
-    fechafin DATE NOT NULL,
-    documentopdf VARCHAR(255),
-    estado estado NOT NULL,
-    idrequest INT NOT NULL,
-    idseleccion INT NOT NULL,
-    CONSTRAINT fk_contrato_request FOREIGN KEY (idrequest) 
+CREATE TABLE contrato (
+    id_contrato SERIAL PRIMARY KEY,
+    id_request INT NOT NULL UNIQUE, -- UNIQUE para evitar duplicar contratos por solicitud
+    id_asistente INT NOT NULL,
+    fecha_inicio DATE, 
+    fecha_fin DATE,
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(50) NOT NULL DEFAULT 'pendiente_firma', -- Desvinculado del ENUM original para mayor flexibilidad o usar el ENUM ampliado
+    contenido_html TEXT,
+    firma_usuario TEXT,
+    fecha_firma_usuario TIMESTAMP,
+    ip_usuario VARCHAR(50),
+    firma_asistente TEXT,
+    fecha_firma_asistente TIMESTAMP,
+    ip_asistente VARCHAR(50),
+    ruta_pdf VARCHAR(255),
+    CONSTRAINT fk_contrato_request FOREIGN KEY (id_request) 
         REFERENCES aprequest(idrequest) ON DELETE CASCADE,
-    CONSTRAINT fk_contrato_seleccion FOREIGN KEY (idseleccion) 
-        REFERENCES seleccion(idseleccion) ON DELETE CASCADE
+    CONSTRAINT fk_contrato_asistente FOREIGN KEY (id_asistente) 
+        REFERENCES asistentepersonal(idasistente) ON DELETE CASCADE
 );
-
 -- 8. Tabla: chatsession
 CREATE TABLE IF NOT EXISTS chatsession (
     idchat SERIAL PRIMARY KEY,
@@ -246,10 +261,7 @@ INSERT INTO comunicacionusuarioovipap (idseleccion, fecha, mensaje, emisor, rece
 -- =============================================================================
 -- 7. REGISTRO DE CONTRATOS (3 Contratos asociados a las Solicitudes y Selecciones)
 -- =============================================================================
-INSERT INTO registrocontrato (fechainicio, fechafin, documentopdf, estado, idrequest, idseleccion) VALUES
-('2026-02-15', '2026-08-15', '/docs/contratos/contrato_req1_sel1.pdf', 'en_revision', 1, 1),
-('2026-03-05', '2026-09-05', '/docs/contratos/contrato_req2_sel2.pdf', 'con_contrato', 2, 2),
-('2026-01-20', '2026-02-20', '/docs/contratos/contrato_req3_sel3.pdf', 'finalizada', 3, 3);
+
 
 -- =============================================================================
 -- 8. CHATSESSION (3 Sesiones de chat entre Usuario, Asistente y Solicitud)

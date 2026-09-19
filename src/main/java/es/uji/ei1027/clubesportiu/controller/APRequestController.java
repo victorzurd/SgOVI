@@ -150,9 +150,6 @@ public class APRequestController {
             }
         }
 
-        Map<Integer, Contrato> contratosMap = ContratoDao.getContratosMap(); 
-        model.addAttribute("contratosMap", contratosMap);
-
         model.addAttribute("requests", requests);
         model.addAttribute("rol", rol);
         model.addAttribute("buscar", buscar);
@@ -413,6 +410,9 @@ public class APRequestController {
         }
         
         String nombreUsuario = apRequestDao.getNombreUsuarioPorId(request.getIdUsuario());
+
+        Contrato contrato = ContratoDao.getContratoPorRequest(request.getIdRequest());
+        model.addAttribute("contrato", contrato);
 
         model.addAttribute("request", request);
         model.addAttribute("nombreUsuario", nombreUsuario);
