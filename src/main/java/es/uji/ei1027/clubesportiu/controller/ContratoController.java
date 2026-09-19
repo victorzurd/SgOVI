@@ -16,6 +16,7 @@ import es.uji.ei1027.clubesportiu.dao.ContratoDao;
 import es.uji.ei1027.clubesportiu.model.APRequest;
 import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
 import es.uji.ei1027.clubesportiu.model.Contrato;
+import es.uji.ei1027.clubesportiu.model.UsuarioOVI;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -32,9 +33,13 @@ public class ContratoController {
     @Autowired
     private AsistentePersonalDao asistentePersonalDao;
 
-    @GetMapping("/crear/{idRequest}/{idAsistente}")
+    @Autowired
+    private es.uji.ei1027.clubesportiu.dao.UsuarioOVIDao usuarioOVIDao;
+
+    @GetMapping("/crear/{idRequest}/{idAsistente}/{idUsuario}")
     public String vistaCrear(@PathVariable("idRequest") int idRequest,
                              @PathVariable("idAsistente") int idAsistente,
+                             @PathVariable("idUsuario") int idUsuario,
                              Model model, HttpSession session,
                              RedirectAttributes redirectAttributes) {
 
@@ -50,12 +55,14 @@ public class ContratoController {
 
         APRequest request = apRequestDao.getAPRequest(idRequest);
         AsistentePersonal asistente = asistentePersonalDao.getAsistentePersonal(idAsistente);
+        UsuarioOVI usuario = usuarioOVIDao.getUsuarioOVI(idUsuario);
 
         String plantilla = "<p><strong>CONTRATO DE PRESTACIÓN DE SERVICIOS DE ASISTENCIA PERSONAL</strong></p>" +
                 "<p>En Castellón, se acuerda la prestación de servicios entre las partes indicadas bajo la supervisión de SgOVI.</p>";
 
         model.addAttribute("request", request);
         model.addAttribute("asistente", asistente);
+        model.addAttribute("usuario", usuario);
         model.addAttribute("plantillaBase", plantilla);
 
         return "contrato/crear";
@@ -64,6 +71,7 @@ public class ContratoController {
     @PostMapping("/crear")
     public String guardarContrato(@RequestParam("idRequest") int idRequest,
                                   @RequestParam("idAsistente") int idAsistente,
+                                    @RequestParam("idUsuario") int idUsuario,
                                   @RequestParam("contenidoHtml") String contenidoHtml,
                                   HttpSession session,
                                   RedirectAttributes redirectAttributes) {
@@ -80,6 +88,7 @@ public class ContratoController {
         Contrato c = new Contrato();
         c.setIdRequest(idRequest);
         c.setIdAsistente(idAsistente);
+        c.setIdUsuario(idUsuario);
         c.setContenidoHtml(contenidoHtml);
 
         contratoDao.crearContrato(c);

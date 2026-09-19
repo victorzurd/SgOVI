@@ -14,6 +14,7 @@ public class ContratoRowMapper implements RowMapper<Contrato> {
         c.setIdContrato(rs.getInt("id_contrato"));
         c.setIdRequest(rs.getInt("id_request"));
         c.setIdAsistente(rs.getInt("id_asistente"));
+        c.setIdUsuario(rs.getInt("id_usuario"));
         c.setFechaInicio(rs.getDate("fecha_inicio"));
         c.setFechaFin(rs.getDate("fecha_fin"));
         c.setFechaCreacion(rs.getTimestamp("fecha_creacion"));

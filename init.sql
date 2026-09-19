@@ -115,6 +115,7 @@ CREATE TABLE contrato (
     id_contrato SERIAL PRIMARY KEY,
     id_request INT NOT NULL UNIQUE, -- UNIQUE para evitar duplicar contratos por solicitud
     id_asistente INT NOT NULL,
+    id_usuario INT NOT NULL,
     fecha_inicio DATE, 
     fecha_fin DATE,
     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -130,7 +131,9 @@ CREATE TABLE contrato (
     CONSTRAINT fk_contrato_request FOREIGN KEY (id_request) 
         REFERENCES aprequest(idrequest) ON DELETE CASCADE,
     CONSTRAINT fk_contrato_asistente FOREIGN KEY (id_asistente) 
-        REFERENCES asistentepersonal(idasistente) ON DELETE CASCADE
+        REFERENCES asistentepersonal(idasistente) ON DELETE CASCADE,
+    CONSTRAINT fk_contrato_usuario FOREIGN KEY (id_usuario) 
+        REFERENCES usuarioovi(idusuario) ON DELETE CASCADE
 );
 -- 8. Tabla: chatsession
 CREATE TABLE IF NOT EXISTS chatsession (

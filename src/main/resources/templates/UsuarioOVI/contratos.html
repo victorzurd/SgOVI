@@ -5,152 +5,183 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SgOVI - Mis Contratos</title>
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <!-- Frameworks externos (CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <link rel="stylesheet"
-          type="text/css"
-          th:href="@{/css/usuarioOVI.css}" />
+    <!-- Sistema de Diseño Centralizado SgOVI -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/sgovi-style.css}" href="/css/sgovi-style.css" />
 </head>
 
-<body class="bg-light">
+<body class="bg-light d-flex flex-column min-vh-100">
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
-    <div class="container">
+    <!-- Barra de Accesibilidad -->
+    <div class="accessibility-bar" role="region" aria-label="Herramientas de accesibilidad">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
+            <div class="d-flex gap-4">
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto">
+                    <i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +
+                </button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Disminuir tamaño de texto">
+                    <i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -
+                </button>
+                <button type="button" onclick="toggleContrast()" aria-label="Cambiar a modo alto contraste">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste
+                </button>
+            </div>
+        </div>
+    </div>
 
-        <a class="navbar-brand text-teal fw-bold"
-           th:href="@{/UsuarioOVI/dashboard}">
-            SgOVI - Área Personal
-        </a>
-
-        <div class="d-flex align-items-center">
-            <a th:href="@{/UsuarioOVI/logout}"
-               class="btn btn-outline-danger btn-sm">
-                Cerrar Sesión
+    <!-- Navegación Principal -->
+    <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
+        <div class="container justify-content-between">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/UsuarioOVI/dashboard}">
+                <i class="bi bi-person-badge-fill text-teal" aria-hidden="true"></i>
+                <span>SgOVI - Área Personal</span>
             </a>
+            <div class="d-flex align-items-center gap-2">
+                <a th:href="@{/UsuarioOVI/dashboard}" class="btn btn-sg-outline btn-sm px-3 py-2 fw-bold">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver al Panel
+                </a>
+                <a th:href="@{/UsuarioOVI/logout}" class="btn btn-outline-danger btn-sm px-3 py-2 fw-bold">
+                    <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="container py-4 flex-grow-1">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+                <h1 class="h3 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                    <i class="bi bi-file-earmark-text-fill text-teal" aria-hidden="true"></i>
+                    <span>Mis Contratos de Asistencia</span>
+                </h1>
+                <p class="text-muted-custom small mb-0">Listado de los acuerdos de prestación de servicios vinculados a tus solicitudes.</p>
+            </div>
         </div>
 
-    </div>
-</nav>
-
-<main class="container">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <h2 class="text-teal fw-bold mb-0">
-            Mis Contratos de Asistencia
-        </h2>
-
-        <a th:href="@{/UsuarioOVI/dashboard}"
-           class="btn btn-teal">
-            Volver
-        </a>
-
-    </div>
-
-    <th:block
-        th:replace="~{fragments/buscador(action='/UsuarioOVI/contratos')}"/>
-
-    <div class="card shadow-sm border-0 rounded-3">
-
-        <div class="table-responsive">
-
-            <table class="table table-hover align-middle mb-0">
-
-                <thead class="table-light">
-
-                    <tr>
-                        <th class="ps-4">ID Contrato</th>
-                        <th>Fecha Inicio</th>
-                        <th>Fecha Fin</th>
-                        <th>Estado</th>
-                        <th class="text-center">Documento</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    <tr th:each="contrato : ${contratos}">
-
-                        <td class="ps-4 fw-bold text-teal"
-                            th:text="'#' + ${contrato.idContrato}">
-                        </td>
-
-                        <td th:text="${contrato.fechaInicio}">
-                        </td>
-
-                        <td th:text="${contrato.fechaFin != null ? contrato.fechaFin : 'Indefinido'}">
-                        </td>
-
-                        <td>
-
-                            <div th:switch="${contrato.estado}">
-
-                                <span th:case="'con_contrato'"
-                                      class="badge rounded-pill bg-primary">
-                                    Vigente
-                                </span>
-
-                                <span th:case="'finalizada'"
-                                      class="badge rounded-pill bg-secondary">
-                                    Finalizado
-                                </span>
-
-                                <span th:case="*"
-                                      class="badge rounded-pill bg-dark"
-                                      th:text="${contrato.estado}">
-                                </span>
-
-                            </div>
-
-                        </td>
-
-                        <td class="text-center">
-
-                            <a th:if="${contrato.documentoPdf != null}"
-                               th:href="@{/contratos/{pdf}(pdf=${contrato.documentoPdf})}"
-                               target="_blank"
-                               class="btn btn-outline-primary btn-sm">
-
-                                📄 Ver contrato
-
-                            </a>
-
-                            <span th:if="${contrato.documentoPdf == null}"
-                                  class="text-muted">
-
-                                Pendiente de generar
-
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-                    <tr th:if="${#lists.isEmpty(contratos)}">
-
-                        <td colspan="5"
-                            class="text-center py-5 text-muted">
-
-                            No dispones de ningún contrato actualmente.
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
+        <!-- Fragmento de Buscador -->
+        <div class="mb-4">
+            <th:block th:replace="~{fragments/buscador(action='/UsuarioOVI/contratos')}"/>
         </div>
 
+        <div class="pillar-card p-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4 py-3">ID Contrato</th>
+                            <th class="py-3">Fecha Inicio</th>
+                            <th class="py-3">Fecha Fin</th>
+                            <th class="py-3">Estado</th>
+                            <th class="text-center py-3">Acciones / Documento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Iteración de Contratos -->
+                        <tr th:each="contrato : ${contratos}">
+                            
+                            <td class="ps-4 fw-bold text-teal" th:text="'#' + ${contrato.idContrato}"></td>
+                            
+                            <!-- Formateo seguro de fechas -->
+                            <td th:text="${#temporals.format(contrato.fechaInicio, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${contrato.fechaFin != null ? #temporals.format(contrato.fechaFin, 'dd/MM/yyyy') : 'Indefinido'}"></td>
+
+                            <!-- Adaptación de los Estados Atómicos del DAO -->
+                            <td>
+                                <div th:switch="${contrato.estado}">
+                                    <span th:case="'firmado'" class="badge bg-success px-3 py-2">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Vigente
+                                    </span>
+                                    
+                                    <span th:case="'pendiente_firma_usuario'" class="badge bg-warning text-dark px-3 py-2 border border-warning">
+                                        <i class="bi bi-pen-fill me-1"></i> Requiere tu firma
+                                    </span>
+                                    
+                                    <span th:case="'pendiente_firma_asistente'" class="badge bg-info text-dark px-3 py-2">
+                                        <i class="bi bi-clock-history me-1"></i> Esperando al asistente
+                                    </span>
+                                    
+                                    <span th:case="'pendiente_firma'" class="badge bg-secondary px-3 py-2">
+                                        <i class="bi bi-hourglass-split me-1"></i> Pendiente
+                                    </span>
+
+                                    <span th:case="'finalizado'" class="badge bg-dark px-3 py-2">
+                                        <i class="bi bi-archive-fill me-1"></i> Finalizado
+                                    </span>
+                                    
+                                    <span th:case="*" class="badge bg-light text-dark px-3 py-2 border" th:text="${contrato.estado}"></span>
+                                </div>
+                            </td>
+
+                            <!-- Botonera inteligente basada en estado -->
+                            <td class="text-center">
+                                
+                                <!-- Si falta la firma del usuario, le instamos a firmar -->
+                                <a th:if="${contrato.estado == 'pendiente_firma_usuario' or contrato.estado == 'pendiente_firma'}"
+                                   th:href="@{/contrato/firmar-usuario/{id}(id=${contrato.idContrato})}"
+                                   class="btn btn-sg-primary btn-sm fw-bold px-3">
+                                    <i class="bi bi-vector-pen me-1"></i> Firmar Ahora
+                                </a>
+
+                                <!-- Si ya está totalmente firmado o finalizado, puede ver el PDF -->
+                                <a th:if="${contrato.estado == 'firmado' or contrato.estado == 'finalizado'}"
+                                   th:href="@{/contrato/ver/{id}(id=${contrato.idContrato})}"
+                                   target="_blank"
+                                   class="btn btn-outline-primary btn-sm fw-bold px-3">
+                                    <i class="bi bi-file-earmark-pdf-fill me-1"></i> Ver Contrato
+                                </a>
+
+                                <!-- Si lo ha firmado el usuario, pero el asistente no, solo mostrar texto informativo -->
+                                <span th:if="${contrato.estado == 'pendiente_firma_asistente'}" class="text-muted small italic">
+                                    <i class="bi bi-info-circle me-1"></i> En proceso
+                                </span>
+
+                            </td>
+                        </tr>
+
+                        <!-- Caso sin datos -->
+                        <tr th:if="${#lists.isEmpty(contratos)}">
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-folder-x fs-1 d-block mb-2 text-secondary"></i>
+                                No dispones de ningún contrato de asistencia actualmente.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Fragmento de Paginación -->
+    <div class="container mb-4">
+        <th:block th:replace="~{fragments/paginacion :: paginacion('/UsuarioOVI/contratos')}"/>
     </div>
 
-    <th:block
-        th:replace="~{fragments/paginacion :: paginacion('/UsuarioOVI/contratos')}"/>
+    <!-- Pie de página -->
+    <footer class="bg-white border-top py-3 text-center text-muted-custom small mt-auto">
+        <div class="container">
+            <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
+        </div>
+    </footer>
 
-</main>
+    <!-- Scripts Base y Accesibilidad -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleFontSize(action) {
+            const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+            if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
+            if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
+        }
 
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+    </script>
 </body>
 </html>

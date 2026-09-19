@@ -5,101 +5,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SgOVI - Firma de Contrato (Usuario)</title>
+    <!-- Frameworks externos (CDN) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- CSS propio -->
     <link rel="stylesheet" type="text/css" th:href="@{/css/sgovi-style.css}" href="/css/sgovi-style.css">
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Barra de Accesibilidad -->
     <div class="accessibility-bar" role="region" aria-label="Herramientas de accesibilidad">
-        <div class="container d-flex justify-content-between align-items-center">
-            <span><i class="bi bi-universal-access me-1"></i> Accesibilidad</span>
-            <div class="d-flex gap-3">
-                <button type="button" onclick="toggleFontSize('increase')">Texto +</button>
-                <button type="button" onclick="toggleFontSize('decrease')">Texto -</button>
-                <button type="button" onclick="toggleContrast()">Alto Contraste</button>
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
+            <div class="d-flex gap-4">
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto">
+                    <i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +
+                </button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Disminuir tamaño de texto">
+                    <i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -
+                </button>
+                <button type="button" onclick="toggleContrast()" aria-label="Cambiar a modo alto contraste">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste
+                </button>
             </div>
         </div>
     </div>
 
-    <nav class="navbar navbar-custom sticky-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold" th:href="@{/usuario/dashboard}">SgOVI - Portal Usuario</a>
+    <!-- Navegación Principal -->
+    <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
+        <div class="container justify-content-between">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/UsuarioOVI/dashboard}">
+                <i class="bi bi-heart-pulse-fill text-teal" aria-hidden="true"></i>
+                <span>SgOVI - Portal Usuario</span>
+            </a>
+            <a th:href="@{/UsuarioOVI/dashboard}" class="btn btn-sg-outline btn-sm px-3">
+                <i class="bi bi-house-door-fill me-1" aria-hidden="true"></i> Inicio
+            </a>
         </div>
     </nav>
 
+    <!-- Contenido Principal -->
     <main class="container py-4 flex-grow-1">
+        <!-- Mensaje de error si existe -->
+        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
         <div class="pillar-card p-4 p-md-5">
 
-            <!-- Estado de Firmas -->
-            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+            <!-- Encabezado y Estado de Firmas -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap border-bottom pb-3 mb-4 gap-3">
                 <div>
-                    <span class="hero-badge mb-2"><i class="bi bi-pen-fill"></i> Firma Digital Requsita</span>
+                    <span class="hero-badge mb-2"><i class="bi bi-pen-fill"></i> Firma Digital Requerida</span>
                     <h1 class="h3 fw-bold text-dark m-0">Revisión y Firma del Contrato</h1>
                 </div>
                 <div class="text-end">
-                    <span th:if="${contrato.firmaUsuario != null}" class="badge bg-success"><i class="bi bi-check-circle"></i> Firmado por ti</span>
-                    <span th:if="${contrato.firmaUsuario == null}" class="badge bg-warning text-dark"><i class="bi bi-clock"></i> Pendiente tu firma</span>
+                    <span th:if="${contrato.firmaUsuario != null}" class="badge bg-success fs-6 px-3 py-2">
+                        <i class="bi bi-check-circle-fill me-1"></i> Firmado por ti
+                    </span>
+                    <span th:if="${contrato.firmaUsuario == null}" class="badge bg-warning text-dark fs-6 px-3 py-2">
+                        <i class="bi bi-clock-fill me-1"></i> Pendiente tu firma
+                    </span>
                 </div>
             </div>
 
-            <!-- Visor del Contrato -->
-            <div class="border rounded p-4 bg-light mb-4" style="max-height: 350px; overflow-y: auto;" th:utext="${contrato.contenidoHtml}">
-                <!-- Contenido dinámico renderizado HTML -->
+            <!-- Visor del Contrato (Solo Lectura) -->
+            <div class="mb-4">
+                <h2 class="h6 fw-bold text-muted-custom mb-2">Contenido del documento:</h2>
+                <div class="border rounded p-4 bg-light text-dark" style="max-height: 400px; overflow-y: auto;" th:utext="${contrato.contenidoHtml}">
+                    <!-- El texto con las cláusulas se inyecta aquí -->
+                </div>
             </div>
 
-            <!-- Panel de Firma -->
+            <!-- Panel de Firma (Muestra solo si no ha firmado) -->
             <div th:if="${contrato.firmaUsuario == null}">
                 <form th:action="@{/contrato/firmar-usuario}" method="post" id="formFirma">
+                    <!-- Envío de ID vital para el UPDATE en base de datos -->
                     <input type="hidden" name="idContrato" th:value="${contrato.idContrato}" />
                     <input type="hidden" name="firmaBase64" id="firmaInput" />
 
-                    <div class="card p-3 border mb-3">
-                        <label class="form-label fw-bold"><i class="bi bi-vector-pen me-1"></i> Dibuje su firma en el recuadro:</label>
-                        <canvas id="canvasFirma" width="500" height="180" class="border rounded bg-white w-100" style="touch-action: none; cursor: crosshair;"></canvas>
+                    <div class="card p-4 border bg-light mb-4 shadow-sm">
+                        <label class="form-label fw-bold text-dark fs-5 mb-3">
+                            <i class="bi bi-vector-pen me-2 text-teal"></i> Dibuje su firma en el recuadro inferior:
+                        </label>
                         
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <button type="button" class="btn btn-sm btn-sg-outline" onclick="limpiarCanvas()">
-                                <i class="bi bi-eraser-fill me-1"></i> Limpiar Trazo
+                        <!-- Contenedor responsivo para el canvas -->
+                        <div class="w-100 overflow-hidden bg-white border rounded border-secondary" style="touch-action: none;">
+                            <canvas id="canvasFirma" width="800" height="250" class="w-100" style="cursor: crosshair; touch-action: none; display: block;"></canvas>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+                            <button type="button" class="btn btn-outline-danger" onclick="limpiarCanvas()">
+                                <i class="bi bi-eraser-fill me-1"></i> Borrar y repetir
                             </button>
-                            <small class="text-muted">Asegúrese de realizar el trazo de forma clara antes de enviar.</small>
+                            <small class="text-muted"><i class="bi bi-info-circle me-1"></i> Al firmar digitalmente, se registrará un sello temporal.</small>
                         </div>
                     </div>
 
-                    <div class="form-check mb-4">
+                    <div class="form-check mb-4 mt-3">
                         <input class="form-check-input" type="checkbox" id="checkAcepto" required />
-                        <label class="form-check-label small" for="checkAcepto">
-                            Declaro que he leído y acepto íntegramente las condiciones reflejadas en el presente contrato.
+                        <label class="form-check-label text-dark fw-medium" for="checkAcepto">
+                            Declaro que he leído y acepto íntegramente las condiciones reflejadas en el presente contrato de asistencia.
                         </label>
                     </div>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-sg-primary px-4 w-100">
-                            <i class="bi bi-file-earmark-check-fill me-1"></i> Confirmar Firma del Usuario
-                        </button>
-                    </div>
+                    <button type="submit" class="btn btn-sg-primary px-4 py-3 w-100 fs-5 fw-bold shadow-sm">
+                        <i class="bi bi-file-earmark-check-fill me-2"></i> Confirmar Firma y Formalizar
+                    </button>
                 </form>
             </div>
 
-            <div th:if="${contrato.firmaUsuario != null}" class="alert alert-success border-0 mb-0">
-                <i class="bi bi-check-circle-fill me-2"></i> Ya has firmado este contrato correctamente el <strong th:text="${#dates.format(contrato.fechaFirmaUsuario, 'dd/MM/yyyy HH:mm')}"></strong>.
+            <!-- Panel Post-Firma (Solo lectura si ya firmó) -->
+            <div th:if="${contrato.firmaUsuario != null}" class="alert alert-success border-0 mb-0 p-4 shadow-sm">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-check-circle-fill me-2 fs-3 text-success"></i> 
+                    <h3 class="h5 m-0 fw-bold">Firma registrada correctamente</h3>
+                </div>
+                <hr>
+                <p class="mb-1">Fecha y hora del registro: <strong th:text="${#dates.format(contrato.fechaFirmaUsuario, 'dd/MM/yyyy HH:mm:ss')}"></strong>.</p>
+                <p class="mb-0">Se ha adjuntado su firma gráfica al documento final de forma segura.</p>
             </div>
 
         </div>
     </main>
 
+    <!-- Pie de página -->
+    <footer class="bg-white border-top py-3 text-center text-muted-custom small mt-auto">
+        <div class="container">
+            <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
+        </div>
+    </footer>
+
+    <!-- Scripts Base -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Lógica del Canvas y Accesibilidad -->
     <script>
+        // Configuración del Canvas para dibujar la firma
         const canvas = document.getElementById('canvasFirma');
         if (canvas) {
             const ctx = canvas.getContext('2d');
             let dibujando = false;
 
+            // Ajustar coordenadas independientemente del tamaño de la pantalla
             function getPos(e) {
                 const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return { x: clientX - rect.left, y: clientY - rect.top };
+                return { 
+                    x: (clientX - rect.left) * scaleX, 
+                    y: (clientY - rect.top) * scaleY 
+                };
             }
 
             function empezar(e) {
@@ -107,44 +164,68 @@
                 const p = getPos(e);
                 ctx.beginPath();
                 ctx.moveTo(p.x, p.y);
-                e.preventDefault();
+                e.preventDefault(); // Previene el scroll en móviles al dibujar
             }
 
             function dibujar(e) {
                 if (!dibujando) return;
                 const p = getPos(e);
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 3;
                 ctx.lineCap = 'round';
-                ctx.strokeStyle = '#0B2545';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = '#0B2545'; // Color de la tinta (azul oscuro SgOVI)
                 ctx.lineTo(p.x, p.y);
                 ctx.stroke();
                 e.preventDefault();
             }
 
-            function terminar() { dibujando = false; }
+            function terminar() { 
+                dibujando = false; 
+            }
 
+            // Eventos de ratón
             canvas.addEventListener('mousedown', empezar);
             canvas.addEventListener('mousemove', dibujar);
             canvas.addEventListener('mouseup', terminar);
-            canvas.addEventListener('touchstart', empezar);
-            canvas.addEventListener('touchmove', dibujar);
+            canvas.addEventListener('mouseout', terminar);
+
+            // Eventos táctiles (Móviles / Tablets)
+            canvas.addEventListener('touchstart', empezar, {passive: false});
+            canvas.addEventListener('touchmove', dibujar, {passive: false});
             canvas.addEventListener('touchend', terminar);
 
+            // Borrar lienzo
             function limpiarCanvas() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
 
+            // Antes de enviar el formulario, capturar el dibujo a Base64
             document.getElementById('formFirma').addEventListener('submit', function (e) {
-                const data = canvas.toDataURL();
-                document.getElementById('firmaInput').value = data;
+                // Validación básica para evitar envíos en blanco
+                const canvasData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                const isEmpty = !canvasData.some(channel => channel !== 0);
+                
+                if (isEmpty) {
+                    e.preventDefault();
+                    alert("Por favor, realice su firma en el recuadro antes de continuar.");
+                    return false;
+                }
+                
+                // Inyectar en el input hidden
+                document.getElementById('firmaInput').value = canvas.toDataURL('image/png');
             });
         }
 
+        // Funciones de Accesibilidad
         function toggleFontSize(action) {
-            const size = parseFloat(window.getComputedStyle(document.body).fontSize);
-            document.body.style.fontSize = (action === 'increase' ? size + 1.5 : size - 1.5) + 'px';
+            const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+            if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
+            if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
         }
-        function toggleContrast() { document.body.classList.toggle('high-contrast'); }
+
+        function toggleContrast() { 
+            document.body.classList.toggle('high-contrast'); 
+        }
     </script>
 </body>
 </html>

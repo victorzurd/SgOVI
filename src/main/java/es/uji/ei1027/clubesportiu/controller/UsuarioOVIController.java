@@ -311,4 +311,17 @@ public class UsuarioOVIController {
 
         return "redirect:/UsuarioOVI/list";
     }
+
+    @RequestMapping("/contratos")
+    public String verContratos(HttpSession session, Model model) {
+        UsuarioOVI usuario = (UsuarioOVI) session.getAttribute("usuarioLogueado");
+        if (usuario == null) {
+            return "redirect:/UsuarioOVI/login";
+        }
+
+        List<es.uji.ei1027.clubesportiu.model.Contrato> contratos = ContratoDao.getContratosByUsuario(usuario.getIdUsuario());
+        model.addAttribute("contratos", contratos);
+
+        return "UsuarioOVI/contratos";
+    }
 }

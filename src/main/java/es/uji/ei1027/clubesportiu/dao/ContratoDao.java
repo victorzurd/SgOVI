@@ -1,5 +1,7 @@
 package es.uji.ei1027.clubesportiu.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,9 +17,9 @@ public class ContratoDao {
     private JdbcTemplate jdbcTemplate;
 
     public void crearContrato(Contrato c) {
-        String sql = "INSERT INTO contrato (id_request, id_asistente, contenido_html, estado) " +
-                     "VALUES (?, ?, ?, 'pendiente_firma')";
-        jdbcTemplate.update(sql, c.getIdRequest(), c.getIdAsistente(), c.getContenidoHtml());
+        String sql = "INSERT INTO contrato (id_request, id_asistente, id_usuario, contenido_html, estado) " +
+                     "VALUES (?, ?, ?, ?, 'pendiente_firma')";
+        jdbcTemplate.update(sql, c.getIdRequest(), c.getIdAsistente(), c.getIdUsuario(), c.getContenidoHtml());
     }
 
     @Transactional
@@ -58,5 +60,15 @@ public class ContratoDao {
         } catch (EmptyResultDataAccessException e) {
             return null; 
         }
+    }
+
+    public List<Contrato> getContratosByAsistente(int idAsistente) {
+        String sql = "SELECT * FROM contrato WHERE id_asistente = ?";
+        return jdbcTemplate.query(sql, new ContratoRowMapper(), idAsistente);
+    }
+
+    public List<Contrato> getContratosByUsuario(int idUsuario) {
+        String sql = "SELECT * FROM contrato WHERE id_usuario = ?";
+        return jdbcTemplate.query(sql, new ContratoRowMapper(), idUsuario);
     }
 }

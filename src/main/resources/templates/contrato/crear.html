@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +10,6 @@
 </head>
 
 <body>
-    <!-- Barra de Accesibilidad -->
     <div class="accessibility-bar" role="region" aria-label="Herramientas de accesibilidad">
         <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
             <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
@@ -23,7 +21,6 @@
         </div>
     </div>
 
-    <!-- Navegación -->
     <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
         <div class="container justify-content-between">
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/TecnicoOVI/dashboard}">
@@ -36,41 +33,26 @@
         </div>
     </nav>
 
-    <!-- Formulario Principal -->
     <main class="container py-4 flex-grow-1">
         <div class="pillar-card p-4 p-md-5">
             <div class="mb-4 border-bottom pb-3">
                 <span class="hero-badge mb-2"><i class="bi bi-file-earmark-text-fill"></i> Nuevo Contrato</span>
                 <h1 class="h3 fw-bold text-dark m-0">Generación de Contrato de Servicio</h1>
-                <p class="text-muted-custom small m-0 mt-1">Solicitud #<span th:text="${request.idRequest}"></span> | Asistente Seleccionado: <strong th:text="${asistente.nombre + ' ' + asistente.apellidos}"></strong></p>
+                <p class="text-muted-custom small m-0 mt-1">Solicitud #<span th:text="${request.idRequest}"></span> | Asistente Seleccionado: <strong th:text="${asistente.nombre + ' ' + asistente.apellidos}"></strong> | Usuario: <strong th:text="${usuario.nombre + ' ' + usuario.apellidos}"></strong></p>
             </div>
 
             <form th:action="@{/contrato/crear}" method="post">
                 <input type="hidden" name="idRequest" th:value="${request.idRequest}" />
                 <input type="hidden" name="idAsistente" th:value="${asistente.idAsistente}" />
+                <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}" />
 
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label for="fechaInicio" class="form-label fw-bold">Fecha de Inicio del Servicio</label>
-                        <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="fechaFin" class="form-label fw-bold">Fecha de Finalización (Opcional)</label>
-                        <input type="date" id="fechaFin" name="fechaFin" class="form-control" />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="horasSemanales" class="form-label fw-bold">Horas Semanales de Prestación</label>
-                        <input type="number" id="horasSemanales" name="horasSemanales" step="0.5" class="form-control" placeholder="Ej. 20" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="salarioHora" class="form-label fw-bold">Tarifa por Hora (€)</label>
-                        <input type="number" id="salarioHora" name="salarioHora" step="0.01" class="form-control" placeholder="Ej. 12.50" required />
-                    </div>
-                </div>
+                <!-- Eliminados campos que no existen en el Modelo Java -->
+                <!-- <div class="row g-3 mb-4"> ... </div> -->
 
                 <div class="mb-4">
-                    <label for="contenidoHtml" class="form-label fw-bold">Cláusulas del Contrato / Modificaciones</label>
-                    <textarea id="contenidoHtml" name="contenidoHtml" class="form-control" rows="8" required th:text="${plantillaBase}"></textarea>
+                    <label for="contenidoHtml" class="form-label fw-bold">Cláusulas del Contrato (Edición Libre)</label>
+                    <textarea id="contenidoHtml" name="contenidoHtml" class="form-control" rows="12" required th:text="${plantillaBase}"></textarea>
+                    <small class="text-muted">Este texto será el que vean y firmen digitalmente tanto el usuario como el asistente.</small>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import es.uji.ei1027.clubesportiu.dao.AsistentePersonalDao;
 import es.uji.ei1027.clubesportiu.model.APRequest;
 import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
+import es.uji.ei1027.clubesportiu.model.Contrato;
 import es.uji.ei1027.clubesportiu.model.Provincia;
 import es.uji.ei1027.clubesportiu.model.TecnicoOVI;
 import es.uji.ei1027.clubesportiu.model.UserDetails;
@@ -30,6 +31,7 @@ public class AsistentePersonalController {
 
     private AsistentePersonalDao asistentePersonalDao;
     private es.uji.ei1027.clubesportiu.dao.APRequestDao apRequestDao;
+    private es.uji.ei1027.clubesportiu.dao.ContratoDao ContratoDao;
     @Autowired
     public void setAsistentePersonalDao(AsistentePersonalDao dao) {
         this.asistentePersonalDao = dao;
@@ -38,6 +40,11 @@ public class AsistentePersonalController {
     @Autowired
     public void setAPRequestDao(es.uji.ei1027.clubesportiu.dao.APRequestDao dao) {
         this.apRequestDao = dao;
+    }
+
+    @Autowired
+    public void setContratoDao(es.uji.ei1027.clubesportiu.dao.ContratoDao dao) {
+        this.ContratoDao = dao;
     }
 
     @ModelAttribute("provincias")
@@ -333,5 +340,18 @@ public class AsistentePersonalController {
         }
 
         return "redirect:/AsistentePersonal/solicitudes";
+    }
+
+    @RequestMapping ("/contratos")
+    public String verContratosPaginados(HttpSession session, Model model) {
+        AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
+        if (asistente == null) {
+            return "redirect:/AsistentePersonal/login";
+        }
+
+        List<Contrato> contratos = ContratoDao.getContratosByAsistente(asistente.getIdAsistente());
+        model.addAttribute("contratos", contratos);
+
+        return "AsistentePersonal/contratos";
     }
 }

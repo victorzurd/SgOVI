@@ -6,6 +6,7 @@ public class Contrato {
     private int idContrato;
     private int idRequest;
     private int idAsistente;
+    private int idUsuario;
     private Date fechaInicio;
     private Date fechaFin;
     private Date fechaCreacion;
@@ -66,4 +67,7 @@ public class Contrato {
 
     public String getRutaPdf() { return rutaPdf; }
     public void setRutaPdf(String rutaPdf) { this.rutaPdf = rutaPdf; }
+
+    public int getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }
 }
