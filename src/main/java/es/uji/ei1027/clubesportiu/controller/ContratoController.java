@@ -196,4 +196,52 @@ public class ContratoController {
         contratoDao.registrarFirmaAsistente(idContrato, firmaBase64, ip);
         return "redirect:/contrato/firmar-asistente/" + idContrato;
     }
+    @GetMapping("/ver/{idContrato}")
+    public String verContrato(@PathVariable("idContrato") int idContrato, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        
+        // Obtener los posibles usuarios logueados de la sesión
+        UsuarioOVI usuarioLogueado = (UsuarioOVI) session.getAttribute("usuarioLogueado");
+        AsistentePersonal asistenteLogueado = (AsistentePersonal) session.getAttribute("asistenteLogueado");
+        Object tecnicoLogueado = session.getAttribute("tecnicoLogueado"); // El técnico suele tener acceso global
+
+        // Si no hay nadie logueado, redirigir al login principal
+        if (usuarioLogueado == null && asistenteLogueado == null && tecnicoLogueado == null) {
+            return "redirect:/"; 
+        }
+
+        Contrato contrato = contratoDao.getContrato(idContrato);
+        if (contrato == null) {
+            redirectAttributes.addFlashAttribute("error", "El contrato solicitado no existe.");
+            return "redirect:/"; // Redirigir a inicio o panel correspondiente
+        }
+
+        // Mitigación IDOR: Comprobar que quien accede tiene permiso para ver ESTE contrato
+        boolean tienePermiso = false;
+        
+        if (tecnicoLogueado != null) {
+            tienePermiso = true; // El técnico puede ver todos
+        } else if (usuarioLogueado != null && contrato.getIdUsuario() == usuarioLogueado.getIdUsuario()) {
+            tienePermiso = true; // El usuario solo ve los suyos
+        } else if (asistenteLogueado != null && contrato.getIdAsistente() == asistenteLogueado.getIdAsistente()) {
+            tienePermiso = true; // El asistente solo ve los suyos
+        }
+
+        if (!tienePermiso) {
+            redirectAttributes.addFlashAttribute("error", "Acceso denegado. No tienes permiso para ver este documento.");
+            // Redirigir al sitio correcto según quién intentó entrar
+            if (usuarioLogueado != null) return "redirect:/usuarioOVI/contratos";
+            if (asistenteLogueado != null) return "redirect:/asistentePersonal/contratos";
+            return "redirect:/";
+        }
+
+        // Pasar variables a la vista
+        model.addAttribute("contrato", contrato);
+        
+        // Variable para renderizar un botón de volver dinámico dependiendo del rol
+        if(usuarioLogueado != null) model.addAttribute("rutaVolver", "/usuarioOVI/contratos");
+        else if(asistenteLogueado != null) model.addAttribute("rutaVolver", "/asistentePersonal/contratos");
+        else model.addAttribute("rutaVolver", "/TecnicoOVI/dashboard");
+
+        return "contrato/ver";
+    }
 }
