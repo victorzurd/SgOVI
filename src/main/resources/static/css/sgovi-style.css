@@ -1082,3 +1082,68 @@ body.high-contrast .pagination-sg .page-item.disabled .page-link {
     color: #666666 !important;
     border-color: #666666 !important;
 }
+/* ==========================================================================
+   MÓDULO DE CONFIRMACIÓN Y MENSAJES DE ÉXITO (SgOVI)
+   ========================================================================== */
+
+/* Contenedor circular e insignia para acciones completadas */
+.pillar-icon-success {
+    background-color: #DCFCE7 !important;
+    color: #166534 !important;
+    width: 72px;
+    height: 72px;
+    font-size: 2.25rem;
+}
+
+.badge-success-sg {
+    background-color: #DCFCE7;
+    color: #166534;
+}
+
+/* Soporte para Alto Contraste (WCAG 2.1 AAA) en páginas de éxito */
+body.high-contrast .pillar-icon-success {
+    background-color: #000000 !important;
+    border: 2px solid #00FF00 !important;
+    color: #00FF00 !important;
+}
+
+body.high-contrast .badge-success-sg {
+    background-color: #000000 !important;
+    border: 2px solid #00FF00 !important;
+    color: #00FF00 !important;
+}
+
+/* ==========================================================================
+   MÓDULO DE PETICIONES EN REVISIÓN / ESTADO INFORMATIVO (SgOVI)
+   ========================================================================== */
+
+/* Contenedor circular e insignia para procesos pendientes o recibidos */
+.pillar-icon-info {
+    background-color: #E0F2FE !important;
+    color: #0369A1 !important;
+    width: 72px;
+    height: 72px;
+    font-size: 2.25rem;
+}
+
+.badge-info-sg {
+    background-color: #E0F2FE;
+    color: #0369A1;
+}
+
+.max-w-sm {
+    max-width: 280px;
+}
+
+/* Soporte para Alto Contraste (WCAG 2.1 AAA) en tarjetas informativas */
+body.high-contrast .pillar-icon-info {
+    background-color: #000000 !important;
+    border: 2px solid #00FFFF !important;
+    color: #00FFFF !important;
+}
+
+body.high-contrast .badge-info-sg {
+    background-color: #000000 !important;
+    border: 2px solid #00FFFF !important;
+    color: #00FFFF !important;
+}

@@ -1,33 +1,123 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SgOVI - Request enviada</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/apRequest.css}" />
+    <title>SgOVI - Petición Enviada</title>
+
+    <!-- Frameworks externos (CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Hoja de estilos principal SgOVI -->
+    <link rel="stylesheet" th:href="@{/css/sgovi-style.css}" href="css/sgovi-style.css">
 </head>
+
 <body>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 text-center">
-                <div class="card shadow-sm border-0 rounded-4 p-5">
-                    <div class="mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="#20c997" class="bi bi-clock-history" viewBox="0 0 16 16">
-                            <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.24l.585-.811c.19.137.373.284.55.441l-.696.71zm1.71 1.99a7.017 7.017 0 0 0-.21-.454l.842-.54c.105.163.203.332.292.507l-.924.487zM8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                            <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
-                        </svg>
-                    </div>
-                    <h2 class="fw-bold text-teal mb-3">Petición enviada correctamente</h2>
-                    <p class="text-muted mb-4">
-                        ¡Hola! Hemos recibido tu petición correctamente. Un técnico de <strong>SgOVI</strong> revisará la petición y asignará un listado de técnicos que se adecuen a tus necesidades.
-                    </p>
-                    <div class="mt-4">
-                        <a th:href="@{/UsuarioOVI/dashboard}" class="btn btn-teal px-4 fw-bold">Volver</a>
-                    </div>
-                </div>
+
+    <!-- Enlace de salto de navegación para accesibilidad por teclado -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Barra Superior de Accesibilidad -->
+    <div class="accessibility-bar">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
+            <div class="d-flex gap-4">
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto">
+                    <i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +
+                </button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Disminuir tamaño de texto">
+                    <i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -
+                </button>
+                <button type="button" onclick="toggleContrast()" aria-label="Alternar modo de alto contraste (Atajo: Alt + C)">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste
+                </button>
             </div>
         </div>
     </div>
+
+    <!-- Navegación Principal -->
+    <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
+        <div class="container justify-content-between">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/UsuarioOVI/dashboard}">
+                <i class="bi bi-heart-pulse-fill text-teal" aria-hidden="true"></i> SgOVI - Área Personal
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a th:href="@{/UsuarioOVI/dashboard}" class="btn btn-sg-outline btn-sm px-3 py-2">
+                    <i class="bi bi-speedometer2 me-1" aria-hidden="true"></i> Volver al Panel
+                </a>
+                <a th:href="@{/UsuarioOVI/logout}" class="btn btn-outline-danger btn-sm px-3 py-2 fw-semibold">
+                    <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor Principal Centrado -->
+    <main id="main-content" class="container py-5 flex-grow-1 d-flex align-items-center justify-content-center" tabindex="-1">
+        <div class="row justify-content-center w-100">
+            <div class="col-md-8 col-lg-6 col-xl-5">
+
+                <div class="pillar-card text-center p-4 p-md-5">
+
+                    <!-- Icono de Estado: Pendiente de Gestión -->
+                    <div class="pillar-icon pillar-icon-info mx-auto mb-4" aria-hidden="true">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+
+                    <span class="hero-badge badge-info-sg mb-3">
+                        <i class="bi bi-hourglass-split" aria-hidden="true"></i> Petición Registrada
+                    </span>
+
+                    <h1 class="h3 fw-bold text-dark mt-2 mb-3">
+                        Petición enviada correctamente
+                    </h1>
+
+                    <p class="text-muted mb-4">
+                        ¡Hola! Hemos recibido tu petición correctamente. Un técnico de <strong>SgOVI</strong> la revisará y asignará una propuesta con el listado de asistentes que mejor se adecuen a tus necesidades.
+                    </p>
+
+                    <!-- Botón de Acción Principal -->
+                    <div class="d-flex justify-content-center pt-3 border-top">
+                        <a th:href="@{/UsuarioOVI/dashboard}" class="btn btn-sg-primary px-4 py-2 w-100 max-w-sm">
+                            <i class="bi bi-house-door-fill me-1" aria-hidden="true"></i> Volver al Panel
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Pie de Página -->
+    <footer class="bg-white border-top py-4 text-center text-muted small mt-auto">
+        <div class="container">
+            <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
+        </div>
+    </footer>
+
+    <!-- Scripts de Funcionalidad y Accesibilidad -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleFontSize(action) {
+            const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+            if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
+            if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        // Atajo de teclado Alt + C para conmutar Alto Contraste
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey && (e.key === 'c' || e.key === 'C')) {
+                e.preventDefault();
+                toggleContrast();
+            }
+        });
+    </script>
 </body>
 </html>
