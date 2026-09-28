@@ -113,46 +113,46 @@ public class ChatController {
         return "AsistentePersonal/sala";
     }
 
-@PostMapping("/asistente/enviar/{idChat}")
-public String asistenteEnviarMensaje(@PathVariable("idChat") int idChat,
-                                     @RequestParam("contenido") String contenido,
-                                     @RequestParam(value = "idRequest", required = false) Integer idRequest,
-                                     HttpSession session) {
-    
-    
-    AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
-    if (asistente == null) {
-        return "redirect:/AsistentePersonal/login";
-    }
+    @PostMapping("/asistente/enviar/{idChat}")
+    public String asistenteEnviarMensaje(@PathVariable("idChat") int idChat,
+                                        @RequestParam("contenido") String contenido,
+                                        @RequestParam(value = "idRequest", required = false) Integer idRequest,
+                                        HttpSession session) {
+        
+        
+        AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
+        if (asistente == null) {
+            return "redirect:/AsistentePersonal/login";
+        }
 
-    int idAsistenteReal = asistente.getIdAsistente();
+        int idAsistenteReal = asistente.getIdAsistente();
 
-    
-    if (idChat == 0 && idRequest != null) {
-        es.uji.ei1027.clubesportiu.model.APRequest sol = apRequestDao.getAPRequest(idRequest);
-        if (sol != null) {
-            chatDao.iniciarChat(sol.getIdUsuario(), idAsistenteReal, idRequest);
-            
-            
-            List<ChatSession> todos = chatDao.getTodosLosChats();
-            for (ChatSession cs : todos) {
-                if (cs.getIdRequest() == idRequest && cs.getIdAsistente() == idAsistenteReal) {
-                    idChat = cs.getIdChat();
-                    break;
+        
+        if (idChat == 0 && idRequest != null) {
+            es.uji.ei1027.clubesportiu.model.APRequest sol = apRequestDao.getAPRequest(idRequest);
+            if (sol != null) {
+                chatDao.iniciarChat(sol.getIdUsuario(), idAsistenteReal, idRequest);
+                
+                
+                List<ChatSession> todos = chatDao.getTodosLosChats();
+                for (ChatSession cs : todos) {
+                    if (cs.getIdRequest() == idRequest && cs.getIdAsistente() == idAsistenteReal) {
+                        idChat = cs.getIdChat();
+                        break;
+                    }
                 }
             }
         }
-    }
 
-    
-    if (idChat > 0 && contenido != null && !contenido.trim().isEmpty()) {
-        chatDao.guardarMensaje(idChat, "ASISTENTE", contenido.trim());
-    }
+        
+        if (idChat > 0 && contenido != null && !contenido.trim().isEmpty()) {
+            chatDao.guardarMensaje(idChat, "ASISTENTE", contenido.trim());
+        }
 
-    
-    
-    return "redirect:/chat/asistente/sala/" + idChat;
-}
+        
+        
+        return "redirect:/chat/asistente/sala/" + idChat;
+    }
 
     @GetMapping("/iniciar/{idAsistente}/{idReq}")
     public String iniciarChatDesdeCandidato(@PathVariable("idAsistente") int idAsistente, 

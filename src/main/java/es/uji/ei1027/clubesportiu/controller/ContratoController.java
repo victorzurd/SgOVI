@@ -164,7 +164,6 @@ public class ContratoController {
         Contrato contrato = contratoDao.getContrato(idContrato);
         if (contrato == null) return "redirect:/APRequest/list";
 
-        // Mitigación IDOR: Verificar que el contrato corresponda al asistente
         if (contrato.getIdAsistente() != asistenteLogueado.getIdAsistente()) {
             redirectAttributes.addFlashAttribute("error", "No tienes permiso para ver o firmar este contrato.");
             return "redirect:/AsistentePersonal/main";
@@ -179,14 +178,13 @@ public class ContratoController {
                                          @RequestParam("firmaBase64") String firmaBase64,
                                          HttpServletRequest request, HttpSession session, RedirectAttributes redirectAttributes) {
         
-        // Reparada la vulnerabilidad de sesión nula
         AsistentePersonal asistenteLogueado = (AsistentePersonal) session.getAttribute("asistenteLogueado");
         if (asistenteLogueado == null) {
             return "redirect:/AsistentePersonal/login";
         }
 
         Contrato contrato = contratoDao.getContrato(idContrato);
-        // Mitigación IDOR
+
         if (contrato == null || contrato.getIdAsistente() != asistenteLogueado.getIdAsistente()) {
             redirectAttributes.addFlashAttribute("error", "Acceso denegado.");
             return "redirect:/AsistentePersonal/main";
@@ -199,12 +197,10 @@ public class ContratoController {
     @GetMapping("/ver/{idContrato}")
     public String verContrato(@PathVariable("idContrato") int idContrato, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         
-        // Obtener los posibles usuarios logueados de la sesión
         UsuarioOVI usuarioLogueado = (UsuarioOVI) session.getAttribute("usuarioLogueado");
         AsistentePersonal asistenteLogueado = (AsistentePersonal) session.getAttribute("asistenteLogueado");
         Object tecnicoLogueado = session.getAttribute("tecnicoLogueado"); // El técnico suele tener acceso global
 
-        // Si no hay nadie logueado, redirigir al login principal
         if (usuarioLogueado == null && asistenteLogueado == null && tecnicoLogueado == null) {
             return "redirect:/"; 
         }
@@ -212,10 +208,9 @@ public class ContratoController {
         Contrato contrato = contratoDao.getContrato(idContrato);
         if (contrato == null) {
             redirectAttributes.addFlashAttribute("error", "El contrato solicitado no existe.");
-            return "redirect:/"; // Redirigir a inicio o panel correspondiente
+            return "redirect:/"; 
         }
 
-        // Mitigación IDOR: Comprobar que quien accede tiene permiso para ver ESTE contrato
         boolean tienePermiso = false;
         
         if (tecnicoLogueado != null) {
@@ -228,13 +223,11 @@ public class ContratoController {
 
         if (!tienePermiso) {
             redirectAttributes.addFlashAttribute("error", "Acceso denegado. No tienes permiso para ver este documento.");
-            // Redirigir al sitio correcto según quién intentó entrar
             if (usuarioLogueado != null) return "redirect:/usuarioOVI/contratos";
             if (asistenteLogueado != null) return "redirect:/asistentePersonal/contratos";
             return "redirect:/";
         }
 
-        // Pasar variables a la vista
         model.addAttribute("contrato", contrato);
         
         // Variable para renderizar un botón de volver dinámico dependiendo del rol

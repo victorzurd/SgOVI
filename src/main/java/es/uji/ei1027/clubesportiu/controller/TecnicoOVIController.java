@@ -81,7 +81,6 @@ public class TecnicoOVIController {
         int nuevosAsistentes = asistentePersonalDao.countAsistentesPendientes();
         int peticionesPendientes = apRequestDao.countPeticionesPendientesOEnRevision();
 
-        // Enviar variables al modelo de Thymeleaf
         model.addAttribute("notifUsuarios", nuevosUsuarios);
         model.addAttribute("notifAsistentes", nuevosAsistentes);
         model.addAttribute("notifPeticiones", peticionesPendientes);
