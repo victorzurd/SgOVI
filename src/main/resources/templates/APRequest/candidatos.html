@@ -3,121 +3,232 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>SgOVI - Candidatos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${rol == 'TECNICO'} ? 'SgOVI - Lista de Candidatos' : 'SgOVI - Candidatos Propuestos'">SgOVI - Candidatos</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/database.css}">
+    <!-- Frameworks externos (CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <style>
-        .text-teal { color: #0d9488 !important; }
-        .btn-teal { background-color: #0d9488 !important; color: white !important; }
-        .btn-teal:hover { background-color: #0f766e !important; }
-    </style>
+    <!-- Hoja de estilos principal SgOVI -->
+    <link rel="stylesheet" th:href="@{/css/sgovi-style.css}" href="css/sgovi-style.css">
 </head>
 
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-light bg-white shadow-sm mb-4">
-    <div class="container">
-        <a class="navbar-brand text-teal fw-bold"
-           th:href="${rol == 'TECNICO'} ? @{/APRequest/list} : @{/UsuarioOVI/list}">
-            SgOVI - Candidatos
-        </a>
-    </div>
-</nav>
+    <!-- Enlace de salto de navegación para accesibilidad por teclado -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
-<main class="container py-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <h2 class="text-teal fw-bold mb-0"
-            th:text="${rol == 'TECNICO'} ? 'Lista de candidatos' : 'Candidatos propuestos'">
-        </h2>
-
-        <!-- VOLVER -->
-        <a th:if="${rol == 'TECNICO'}"
-            th:href="@{/APRequest/assign/{id}(id=${idSolicitud})}"
-            class="btn btn-teal">
-                Volver
-        </a>
-
-        <a th:if="${rol == 'USUARIO'}"
-            th:href="@{/APRequest/list}"
-            class="btn btn-teal">
-                Volver
-        </a>
-
-    </div>
-
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-
-            <div class="table-responsive">
-
-                <table class="table table-hover align-middle mb-0 database">
-
-                    <thead class="table-light">
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Zona</th>
-                        <th>Disponibilidad</th>
-                        <th>Acción</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-
-                    <tr th:each="asistente : ${candidatos}">
-
-                        <td class="fw-bold"
-                            th:text="${asistente.nombre + ' ' + asistente.apellidos}">
-                        </td>
-
-                        <td th:text="${asistente.email}"></td>
-                        <td th:text="${asistente.telefono}"></td>
-                        <td th:text="${asistente.zona}"></td>
-                        <td th:text="${asistente.disponibilidad}"></td>
-
-                        <td>
-
-                            <!-- TÉCNICO: quitar -->
-                            <a th:if="${rol == 'TECNICO'}"
-                               th:href="@{/APRequest/candidatos/delete/{idSolicitud}/{idAsistente}(
-                                    idSolicitud=${idSolicitud},
-                                    idAsistente=${asistente.idAsistente})}"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('¿Quitar este candidato?')">
-                                Quitar candidato
-                            </a>
-
-                            <!-- USUARIO: chat -->
-                            <a th:if="${rol == 'USUARIO'}"
-                               th:href="@{/Chat/{id}(id=${asistente.idAsistente})}"
-                               class="btn btn-primary btn-sm">
-                                Chat
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    <tr th:if="${#lists.isEmpty(candidatos)}">
-                        <td colspan="6" class="text-center text-muted py-5">
-                            No hay candidatos
-                        </td>
-                    </tr>
-
-                    </tbody>
-
-                </table>
-
+    <!-- Barra Superior de Accesibilidad -->
+    <div class="accessibility-bar">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-universal-access me-1" aria-hidden="true"></i> Accesibilidad y Usabilidad</span>
+            <div class="d-flex gap-4">
+                <button type="button" onclick="toggleFontSize('increase')" aria-label="Aumentar tamaño de texto">
+                    <i class="bi bi-zoom-in" aria-hidden="true"></i> Texto +
+                </button>
+                <button type="button" onclick="toggleFontSize('decrease')" aria-label="Disminuir tamaño de texto">
+                    <i class="bi bi-zoom-out" aria-hidden="true"></i> Texto -
+                </button>
+                <button type="button" onclick="toggleContrast()" aria-label="Alternar modo de alto contraste (Atajo: Alt + C)">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i> Alto Contraste
+                </button>
             </div>
-
         </div>
     </div>
 
-</main>
+    <!-- Navegación Principal -->
+    <nav class="navbar navbar-custom sticky-top" aria-label="Navegación principal">
+        <div class="container justify-content-between">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2"
+               th:href="${rol == 'TECNICO'} ? @{/APRequest/list} : @{/UsuarioOVI/list}">
+                <i class="bi bi-heart-pulse-fill text-teal" aria-hidden="true"></i> SgOVI - Candidatos
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a th:if="${rol == 'TECNICO'}" th:href="@{/APRequest/assign/{id}(id=${idSolicitud})}" class="btn btn-sg-outline btn-sm px-3 py-2">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver a Asignación
+                </a>
+                <a th:if="${rol == 'USUARIO'}" th:href="@{/APRequest/list}" class="btn btn-sg-outline btn-sm px-3 py-2">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver a Solicitudes
+                </a>
+                <a th:href="@{/UsuarioOVI/logout}" class="btn btn-outline-danger btn-sm px-3 py-2 fw-semibold">
+                    <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor Principal -->
+    <main id="main-content" class="container py-4 flex-grow-1" tabindex="-1">
+
+        <!-- Cabecera de Página con Botones de Navegación -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <span class="hero-badge mb-2">
+                    <i class="bi bi-people-fill" aria-hidden="true"></i>
+                    <span th:text="${rol == 'TECNICO'} ? 'Gestión de Selección' : 'Asistentes Recomendados'">Candidatos</span>
+                </span>
+                <h1 class="h3 fw-bold text-dark m-0"
+                    th:text="${rol == 'TECNICO'} ? 'Lista de candidatos' : 'Candidatos propuestos'">
+                    Lista de candidatos
+                </h1>
+            </div>
+
+            <div>
+                <a th:if="${rol == 'TECNICO'}"
+                   th:href="@{/APRequest/assign/{id}(id=${idSolicitud})}"
+                   class="btn btn-sg-outline px-4">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver
+                </a>
+                <a th:if="${rol == 'USUARIO'}"
+                   th:href="@{/APRequest/list}"
+                   class="btn btn-sg-outline px-4">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver
+                </a>
+            </div>
+        </div>
+
+        <!-- Filtro Dinámico de Búsqueda Instantánea -->
+        <div class="filter-bar mb-4" th:if="${!#lists.isEmpty(candidatos)}">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-8 col-lg-5">
+                    <label for="searchFilter" class="filter-label">
+                        <i class="bi bi-search me-1" aria-hidden="true"></i> Buscar Candidato
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-filter" aria-hidden="true"></i></span>
+                        <input type="text" id="searchFilter" class="form-control" placeholder="Filtrar por nombre, zona o disponibilidad..." aria-label="Filtrar candidatos en la tabla">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta Contenedora de la Tabla -->
+        <div class="pillar-card p-0 overflow-hidden shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-sg table-hover align-middle mb-0" id="candidatesTable">
+                    <thead>
+                        <tr>
+                            <th scope="col"><i class="bi bi-person me-1" aria-hidden="true"></i> Nombre</th>
+                            <th scope="col"><i class="bi bi-envelope me-1" aria-hidden="true"></i> Email</th>
+                            <th scope="col"><i class="bi bi-telephone me-1" aria-hidden="true"></i> Teléfono</th>
+                            <th scope="col"><i class="bi bi-geo-alt me-1" aria-hidden="true"></i> Zona</th>
+                            <th scope="col"><i class="bi bi-clock me-1" aria-hidden="true"></i> Disponibilidad</th>
+                            <th scope="col" class="text-end"><i class="bi bi-gear me-1" aria-hidden="true"></i> Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filas de Candidatos -->
+                        <tr th:each="asistente : ${candidatos}" class="candidate-row">
+                            <td class="fw-bold text-dark">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar-circle-sm" aria-hidden="true">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                    <span th:text="${asistente.nombre + ' ' + asistente.apellidos}">Nombre Completo</span>
+                                </div>
+                            </td>
+                            <td>
+                                <a th:href="'mailto:' + ${asistente.email}" class="text-decoration-none text-body" th:text="${asistente.email}">email@ejemplo.com</a>
+                            </td>
+                            <td>
+                                <a th:href="'tel:' + ${asistente.telefono}" class="text-decoration-none text-body" th:text="${asistente.telefono}">600000000</a>
+                            </td>
+                            <td>
+                                <span class="status-pill status-pill-info">
+                                    <i class="bi bi-pin-map-fill" aria-hidden="true"></i>
+                                    <span th:text="${asistente.zona}">Zona</span>
+                                </span>
+                            </td>
+                            <td th:text="${asistente.disponibilidad}">Disponibilidad</td>
+                            <td class="text-end">
+                                <!-- Rol TÉCNICO: Opción para quitar candidato -->
+                                <a th:if="${rol == 'TECNICO'}"
+                                   th:href="@{/APRequest/candidatos/delete/{idSolicitud}/{idAsistente}(
+                                        idSolicitud=${idSolicitud},
+                                        idAsistente=${asistente.idAsistente})}"
+                                   class="btn btn-outline-danger btn-sm px-3"
+                                   onclick="return confirm('¿Quitar este candidato de la propuesta?')">
+                                    <i class="bi bi-trash-fill me-1" aria-hidden="true"></i> Quitar candidato
+                                </a>
+
+                                <!-- Rol USUARIO: Opción para abrir chat -->
+                                <a th:if="${rol == 'USUARIO'}"
+                                   th:href="@{/Chat/{id}(id=${asistente.idAsistente})}"
+                                   class="btn btn-sg-primary btn-sm px-3">
+                                    <i class="bi bi-chat-dots-fill me-1" aria-hidden="true"></i> Chat
+                                </a>
+                            </td>
+                        </tr>
+
+                        <!-- Estado Vacío cuando no hay datos -->
+                        <tr th:if="${#lists.isEmpty(candidatos)}">
+                            <td colspan="6" class="text-center py-5">
+                                <div class="py-3">
+                                    <div class="icon-box mx-auto mb-3" aria-hidden="true">
+                                        <i class="bi bi-people"></i>
+                                    </div>
+                                    <h2 class="h5 fw-bold text-dark">No hay candidatos</h2>
+                                    <p class="text-muted small mb-0">En este momento no existen candidatos disponibles o asignados para mostrar.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Pie de Página -->
+    <footer class="bg-white border-top py-4 text-center text-muted small mt-auto">
+        <div class="container">
+            <p class="m-0 fw-medium"><strong>SgOVI</strong> &copy; 2026 - Plataforma de Gestión de Vida Independiente</p>
+        </div>
+    </footer>
+
+    <!-- Scripts de Funcionalidad -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Filtro dinámico cliente para la tabla de candidatos
+            const searchFilter = document.getElementById('searchFilter');
+            const candidateRows = document.querySelectorAll('.candidate-row');
+
+            if (searchFilter) {
+                searchFilter.addEventListener('input', function () {
+                    const term = this.value.toLowerCase().trim();
+
+                    candidateRows.forEach(row => {
+                        const rowText = row.textContent.toLowerCase();
+                        if (rowText.includes(term)) {
+                            row.classList.remove('d-none');
+                        } else {
+                            row.classList.add('d-none');
+                        }
+                    });
+                });
+            }
+        });
+
+        // Controles del motor de accesibilidad
+        function toggleFontSize(action) {
+            const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+            if (action === 'increase' && currentSize < 24) document.body.style.fontSize = (currentSize + 1.5) + 'px';
+            if (action === 'decrease' && currentSize > 14) document.body.style.fontSize = (currentSize - 1.5) + 'px';
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        // Atajo de teclado Alt + C para Alto Contraste
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey && (e.key === 'c' || e.key === 'C')) {
+                e.preventDefault();
+                toggleContrast();
+            }
+        });
+    </script>
 </body>
 </html>

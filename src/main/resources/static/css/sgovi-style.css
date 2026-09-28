@@ -1147,3 +1147,50 @@ body.high-contrast .badge-info-sg {
     border: 2px solid #00FFFF !important;
     color: #00FFFF !important;
 }
+/* ==========================================================================
+   ELEMENTOS DE LISTA Y MINIATURAS EN TABLAS (SgOVI)
+   ========================================================================== */
+
+/* Avatar circular pequeño para elementos de tabla */
+.avatar-circle-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--sg-primary-light);
+    color: var(--sg-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+/* Adaptación para Alto Contraste (WCAG 2.1 AAA) */
+body.high-contrast .avatar-circle-sm {
+    background-color: #000000 !important;
+    border: 1px solid #FFFF00 !important;
+    color: #FFFF00 !important;
+}
+
+/* ==========================================================================
+   TARJETAS Y BOTONES DE SELECCIÓN DE CANDIDATOS (SgOVI)
+   ========================================================================== */
+
+/* Estilos de botones deshabilitados en tarjetas */
+.btn-secondary:disabled {
+    background-color: #94A3B8 !important;
+    color: #FFFFFF !important;
+    opacity: 0.85;
+}
+
+/* Adaptación para Alto Contraste (WCAG 2.1 AAA) */
+body.high-contrast .btn-secondary:disabled {
+    background-color: #333333 !important;
+    color: #888888 !important;
+    border: 2px solid #888888 !important;
+}
+
+body.high-contrast .candidate-card-col .pillar-card {
+    background-color: #000000 !important;
+    border: 2px solid #FFFFFF !important;
+}
