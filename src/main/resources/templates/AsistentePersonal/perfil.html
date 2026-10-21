@@ -230,9 +230,9 @@
                 </div>
                 <div class="modal-footer bg-light border-top-0 d-flex justify-content-center gap-2">
                     <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
-                    <a th:if="${asistente != null}" th:href="@{/AsistentePersonal/delete/{id}(id=${asistente.idAsistente})}" class="btn btn-danger px-4 fw-bold">
-                        Sí, Darse de Baja
-                    </a>
+                    <form th:if="${asistente != null}" th:action="@{/AsistentePersonal/delete/{id}(id=${asistente.idAsistente})}" method="post">
+                        <button type="submit" class="btn btn-danger px-4 fw-bold">Sí, Darse de Baja</button>
+                    </form>
                 </div>
             </div>
         </div>

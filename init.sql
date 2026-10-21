@@ -16,11 +16,11 @@ BEGIN
             'finalizada',
             'FINALIZADA',
             'pendiente_firma',
-            'PENDIENTE_FIRMA'
+            'PENDIENTE_FIRMA',
             'pendiente_firma_usuario',
             'PENDIENTE_FIRMA_USUARIO',
             'pendiente_firma_asistente',
-            'PENDIENTE_FIRMA_ASISTENTE'
+            'PENDIENTE_FIRMA_ASISTENTE',
             'firmado',
             'FIRMADO'
         );

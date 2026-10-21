@@ -37,6 +37,13 @@ public class CandidatoDao {
         );
     }
 
+    public boolean esCandidato(int idRequest, int idAsistente) {
+        Integer count = jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM candidato WHERE idrequest = ? AND idasistente = ?",
+            Integer.class, idRequest, idAsistente);
+        return count != null && count > 0;
+    }
+
     
     public List<AsistentePersonal> getAsistentesCandidatos(int idRequest) {
         String sql = "SELECT a.* FROM asistentepersonal a " +

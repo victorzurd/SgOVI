@@ -167,6 +167,7 @@ Las rutas que incluyen identificadores requieren sustituir los marcadores, por e
 ## Seguridad
 
 - Las contraseñas se procesan con `BasicPasswordEncryptor` de Jasypt antes de guardarse y se verifican durante el inicio de sesión. Es un hash/verificador unidireccional, no una contraseña cifrada para recuperarla en texto claro.
+- Las contraseñas antiguas de técnicos que estén en texto plano se convierten a hash al iniciar la aplicación. La contraseña inicial de ejemplo sigue siendo la misma para no romper el acceso de demostración.
 - Según la configuración inicial del proyecto, todas las cuentas ya creadas comparten una misma contraseña inicial(admin123). 
 - Cambia también las credenciales de ejemplo de PostgreSQL antes de cualquier despliegue.
 - Usa contraseñas únicas y robustas, y no guardes secretos, tokens ni datos personales en Git.

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import es.uji.ei1027.clubesportiu.dao.APRequestDao;
 import es.uji.ei1027.clubesportiu.dao.ChatDao;
+import es.uji.ei1027.clubesportiu.dao.CandidatoDao;
 import es.uji.ei1027.clubesportiu.dao.MensajeChatDao;
 import es.uji.ei1027.clubesportiu.model.AsistentePersonal;
 import es.uji.ei1027.clubesportiu.model.ChatSession;
@@ -27,6 +28,7 @@ public class ChatController {
 
     private ChatDao chatDao;
     private APRequestDao apRequestDao; 
+    private CandidatoDao candidatoDao;
 
     @Autowired
     public void setChatDao(ChatDao chatDao) {
@@ -37,6 +39,9 @@ public class ChatController {
     public void setApRequestDao(APRequestDao apRequestDao) {
         this.apRequestDao = apRequestDao;
     }
+
+    @Autowired
+    public void setCandidatoDao(CandidatoDao candidatoDao) { this.candidatoDao = candidatoDao; }
 
     
     
@@ -76,7 +81,9 @@ public class ChatController {
             return "redirect:/UsuarioOVI/login";
         }
 
-        if (idChat > 0 && contenido != null && !contenido.trim().isEmpty()) {
+        ChatSession chat = idChat > 0 ? chatDao.getChat(idChat) : null;
+        if (chat != null && chat.getIdUsuario() == usuario.getIdUsuario()
+                && contenido != null && !contenido.trim().isEmpty()) {
             chatDao.guardarMensaje(idChat, "USUARIO", contenido.trim());
         }
 
@@ -130,7 +137,7 @@ public class ChatController {
         
         if (idChat == 0 && idRequest != null) {
             es.uji.ei1027.clubesportiu.model.APRequest sol = apRequestDao.getAPRequest(idRequest);
-            if (sol != null) {
+            if (sol != null && candidatoDao.esCandidato(idRequest, idAsistenteReal)) {
                 chatDao.iniciarChat(sol.getIdUsuario(), idAsistenteReal, idRequest);
                 
                 
@@ -145,7 +152,9 @@ public class ChatController {
         }
 
         
-        if (idChat > 0 && contenido != null && !contenido.trim().isEmpty()) {
+        ChatSession chat = idChat > 0 ? chatDao.getChat(idChat) : null;
+        if (chat != null && chat.getIdAsistente() == idAsistenteReal
+                && contenido != null && !contenido.trim().isEmpty()) {
             chatDao.guardarMensaje(idChat, "ASISTENTE", contenido.trim());
         }
 
@@ -163,6 +172,11 @@ public class ChatController {
         if (usuario == null) return "redirect:/UsuarioOVI/login";
 
         
+        es.uji.ei1027.clubesportiu.model.APRequest solicitud = apRequestDao.getAPRequest(idRequest);
+        if (solicitud == null || solicitud.getIdUsuario() != usuario.getIdUsuario()
+                || !candidatoDao.esCandidato(idRequest, idAsistente)) {
+            return "redirect:/APRequest/list";
+        }
         chatDao.iniciarChat(usuario.getIdUsuario(), idAsistente, idRequest);
 
         

@@ -164,8 +164,9 @@ public class APRequestController {
         return "APRequest/aceptada";
     }
 
-    @GetMapping("/delete/{id}")
-    public String processDelete(@PathVariable int id) {
+    @PostMapping("/delete/{id}")
+    public String processDelete(@PathVariable int id, HttpSession session) {
+        if (session.getAttribute("tecnicoLogueado") == null) return "redirect:/TecnicoOVI/login";
         apRequestDao.deleteAPRequest(id);
         return "redirect:/APRequest/list";
     }
@@ -248,6 +249,9 @@ public class APRequestController {
         }
 
         APRequest solicitud = apRequestDao.getAPRequest(idSolicitud);
+        if (solicitud == null || solicitud.getIdUsuario() != usuario.getIdUsuario()) {
+            return "redirect:/APRequest/list";
+        }
         boolean tieneAsistente = (solicitud != null && solicitud.getIdSeleccion() != null);
         List<AsistentePersonal> candidatos = candidatoDao.getAsistentesCandidatos(idSolicitud);
 
@@ -271,10 +275,16 @@ public class APRequestController {
         }
 
         APRequest solicitud = apRequestDao.getAPRequest(idSolicitud);
-        if (solicitud != null && solicitud.getIdSeleccion() != null) {
+        if (solicitud == null || solicitud.getIdUsuario() != usuario.getIdUsuario()) {
+            return "redirect:/APRequest/list";
+        }
+        if (solicitud.getIdSeleccion() != null) {
             return "redirect:/APRequest/candidatos/" + idSolicitud + "?error=ya_asignado";
         }
 
+        if (!candidatoDao.esCandidato(idSolicitud, idAsistente)) {
+            return "redirect:/APRequest/list";
+        }
         apRequestDao.asignarAsistente(idSolicitud, idAsistente, usuario.getIdUsuario());
         return "redirect:/APRequest/list"; 
     }
@@ -304,6 +314,7 @@ public class APRequestController {
 
         UsuarioOVI usuario = (UsuarioOVI) session.getAttribute("usuarioLogueado");
         if (usuario != null) {
+            if (request == null || request.getIdUsuario() != usuario.getIdUsuario()) return "redirect:/APRequest/list";
             model.addAttribute("usuario", usuario);
             model.addAttribute("rol", "USUARIO"); 
             return "UsuarioOVI/candidatos";

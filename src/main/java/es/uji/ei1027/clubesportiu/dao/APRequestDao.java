@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.uji.ei1027.clubesportiu.model.APRequest;
 
@@ -65,6 +66,7 @@ public class APRequestDao {
         );
     }
 
+    @Transactional
     public void asignarAsistente(int idSolicitud, int idAsistente, int idUsuario) {
         String insertSeleccion = "INSERT INTO seleccion (fechaseleccion, estado, idusuario, idasistente) " +
                                  "VALUES (CURRENT_DATE, CAST('pendiente' AS estado), ?, ?) RETURNING idseleccion";
@@ -104,7 +106,7 @@ public class APRequestDao {
 
     public List<APRequest> getAPRequestsByAsistente(int idAsistente) {
         String sql = "SELECT r.* FROM aprequest r " +
-                    "JOIN seleccion s ON r.idrequest = s.idseleccion " + 
+                    "JOIN seleccion s ON r.idseleccion = s.idseleccion " +
                     "WHERE s.idasistente = ?";
                     
         return jdbcTemplate.query(sql, new APRequestRowMapper(), idAsistente);

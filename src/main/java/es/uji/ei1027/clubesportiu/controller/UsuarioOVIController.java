@@ -65,7 +65,9 @@ public class UsuarioOVIController {
             @RequestParam(name = "buscar", required = false, defaultValue = "") String buscar,
             @RequestParam(name = "provincia", required = false, defaultValue = "") String provincia,
             @RequestParam(name = "estado", required = false, defaultValue = "") String estado,
-            Model model) {
+            Model model, HttpSession session) {
+
+        if (session.getAttribute("tecnicoLogueado") == null) return "redirect:/TecnicoOVI/login";
 
         String queryBusqueda = (buscar != null) ? buscar.trim() : "";
         String queryProvincia = (provincia != null) ? provincia.trim() : "";
@@ -130,6 +132,8 @@ public class UsuarioOVIController {
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable int id, HttpSession session) {
         UsuarioOVI usuarioSesion = (UsuarioOVI) session.getAttribute("usuarioLogueado");
+        if (usuarioSesion == null && session.getAttribute("tecnicoLogueado") == null) return "redirect:/TecnicoOVI/login";
+        if (usuarioSesion != null && usuarioSesion.getIdUsuario() != id) return "redirect:/UsuarioOVI/dashboard";
         usuarioOVIDao.deleteUsuarioOVI(id);
         if (usuarioSesion != null && usuarioSesion.getIdUsuario() == id) {
             session.invalidate();

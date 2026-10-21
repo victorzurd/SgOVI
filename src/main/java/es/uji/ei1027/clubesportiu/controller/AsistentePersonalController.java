@@ -32,6 +32,7 @@ public class AsistentePersonalController {
     private AsistentePersonalDao asistentePersonalDao;
     private es.uji.ei1027.clubesportiu.dao.APRequestDao apRequestDao;
     private es.uji.ei1027.clubesportiu.dao.ContratoDao contratoDao; // Corrección de nomenclatura
+    private es.uji.ei1027.clubesportiu.dao.CandidatoDao candidatoDao;
 
     @Autowired
     public void setAsistentePersonalDao(AsistentePersonalDao dao) {
@@ -47,6 +48,9 @@ public class AsistentePersonalController {
     public void setContratoDao(es.uji.ei1027.clubesportiu.dao.ContratoDao dao) {
         this.contratoDao = dao; // Corrección
     }
+
+    @Autowired
+    public void setCandidatoDao(es.uji.ei1027.clubesportiu.dao.CandidatoDao dao) { this.candidatoDao = dao; }
 
     @ModelAttribute("provincias")
     public Provincia[] getProvincias() {
@@ -70,7 +74,9 @@ public class AsistentePersonalController {
             @RequestParam(name = "buscar", required = false, defaultValue = "") String buscar,
             @RequestParam(name = "provincia", required = false, defaultValue = "") String provincia,
             @RequestParam(name = "estado", required = false, defaultValue = "") String estado,
-            Model model) {
+            Model model, HttpSession session) {
+
+        if (session.getAttribute("tecnicoLogueado") == null) return "redirect:/TecnicoOVI/login";
 
         String queryBusqueda = (buscar != null) ? buscar.trim() : "";
         String queryProvincia = (provincia != null) ? provincia.trim() : "";
@@ -103,7 +109,8 @@ public class AsistentePersonalController {
     }
 
     @RequestMapping("/list/pendientes")
-    public String listPendientes(Model model) {
+    public String listPendientes(Model model, HttpSession session) {
+        if (session.getAttribute("tecnicoLogueado") == null) return "redirect:/TecnicoOVI/login";
         model.addAttribute("asistentes", asistentePersonalDao.getAsistentesPersonalesPendientes());
         return "AsistentePersonal/TecnicoSolicitudes";
     }
@@ -197,7 +204,10 @@ public class AsistentePersonalController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String editSubmit(@ModelAttribute("asistente") AsistentePersonal asistente,
-                             BindingResult result) {
+                             BindingResult result, HttpSession session) {
+        AsistentePersonal sesion = (AsistentePersonal) session.getAttribute("asistenteLogueado");
+        if (sesion == null) return "redirect:/AsistentePersonal/login";
+        asistente.setIdAsistente(sesion.getIdAsistente());
         AsistentePersonalValidator validator = new AsistentePersonalValidator(asistentePersonalDao);
         validator.validate(asistente, result);
         if (result.hasErrors()) {
@@ -205,19 +215,25 @@ public class AsistentePersonalController {
         }
 
         AsistentePersonal asistenteBD = asistentePersonalDao.getAsistentePersonalByEmail(asistente.getEmail());
-        if (asistenteBD != null && !(asistenteBD.getIdAsistente() == asistente.getIdAsistente())) {
+        if (asistenteBD != null && asistenteBD.getIdAsistente() != sesion.getIdAsistente()) {
             result.rejectValue("email", "duplicate", "El email ya está registrado por otro asistente");
             return "AsistentePersonal/update";
         }
 
-        asistente.setContraseña(asistenteBD.getContraseña()); 
+        asistente.setContraseña(sesion.getContraseña());
+        asistente.setEstadoAceptado(sesion.isEstadoAceptado());
+        asistente.setActivo(sesion.isActivo());
         asistentePersonalDao.updateAsistentePersonal(asistente);
+        session.setAttribute("asistenteLogueado", asistente);
         return "redirect:main";
     }
 
-    @RequestMapping("/delete/{idAsistente}")
-    public String delete(@PathVariable int idAsistente) {
+    @RequestMapping(value = "/delete/{idAsistente}", method = RequestMethod.POST)
+    public String delete(@PathVariable int idAsistente, HttpSession session) {
+        AsistentePersonal asistente = (AsistentePersonal) session.getAttribute("asistenteLogueado");
+        if (asistente == null || asistente.getIdAsistente() != idAsistente) return "redirect:/AsistentePersonal/login";
         asistentePersonalDao.deleteAsistentePersonal(idAsistente);
+        session.invalidate();
         return "redirect:/";
     }
 
@@ -261,7 +277,8 @@ public class AsistentePersonalController {
     }
 
     @RequestMapping("/eliminar/{idAsistente}")
-    public String eliminar(@PathVariable int idAsistente) {
+    public String eliminar(@PathVariable int idAsistente, HttpSession session) {
+        if (session.getAttribute("tecnicoLogueado") == null) return "redirect:/TecnicoOVI/login";
         asistentePersonalDao.deleteAsistentePersonal(idAsistente);
         return "redirect:/AsistentePersonal/list";
     }
@@ -299,7 +316,7 @@ public class AsistentePersonalController {
             return "redirect:/AsistentePersonal/login";
         }
         APRequest request = apRequestDao.getAPRequest(idRequest);
-        if (request != null) {
+        if (request != null && candidatoDao.esCandidato(idRequest, asistente.getIdAsistente())) {
             request.setEstado(es.uji.ei1027.clubesportiu.model.Estado.aprobado); 
             apRequestDao.updateEstadoAPRequest(request);
         }
@@ -313,7 +330,7 @@ public class AsistentePersonalController {
             return "redirect:/AsistentePersonal/login";
         }
         APRequest request = apRequestDao.getAPRequest(idRequest);
-        if (request != null) {
+        if (request != null && candidatoDao.esCandidato(idRequest, asistente.getIdAsistente())) {
             request.setEstado(es.uji.ei1027.clubesportiu.model.Estado.rechazada); 
             apRequestDao.updateEstadoAPRequest(request);
         }
